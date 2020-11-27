@@ -3,7 +3,7 @@
 # Set up a pristine eZ database and accompanying user (mysql only)
 # NB: drops both the db and the user if they are pre-existing!
 #
-# Uses env vars: EZ_VERSION, INSTALL_TAGSBUNDLE, TRAVIS, DB_EZ_DATABASE, DB_EZ_PASSWORD, DB_EZ_USER, DB_HOST, DB_ROOT_PASSWORD, DB_TYPE, DB_CHARSET
+# Uses env vars: EZ_VERSION, TRAVIS, DB_EZ_DATABASE, DB_EZ_PASSWORD, DB_EZ_USER, DB_HOST, DB_ROOT_PASSWORD, DB_TYPE, DB_CHARSET
 
 # @todo support a -v option
 # @todo finish support for postgres
