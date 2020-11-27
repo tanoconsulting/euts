@@ -24,7 +24,7 @@ _Stay tuned for the first release..._
 Requirements
 ------------
 
-* Docker version ...
+* Docker version 1.13 or later
 * Docker Compose version ...
 * Bash shell
 * Git (for a quick way to install this tool)
@@ -53,6 +53,12 @@ Quick Start
    In the config file, you need to set values at the very least for EZ_PACKAGES and EZ_BUNDLES - those are the Composer
    packages that are required to run your tests and the Symfony bundles that will be loaded in the eZP kernel
 
+2. make sure that your project's `composer.json` is compatible with the Test Stack:
+
+   * if you are using phpunit for your tests, your composer.json file should have it in the `require-dev` section
+   * the `require-dev` section should not contain the packages defined in the EZ_PACKAGES config variable (this
+     commonly includes the eZPlatform bundle)
+
 2. build the tests stack
 
        ./teststack/teststack build
@@ -78,6 +84,9 @@ Quick Start
 
        ./teststack/teststack stop
 
+5. don't forget to add the `/teststack` folder to your .gitignore file to avoid accidentally committing it to your
+   project's source code
+
 Troubleshooting
 ---------------
 
@@ -98,6 +107,21 @@ How to start a shell session in the container where tests are executed:
 
     ./teststack/teststack enter
 
+How It Works
+------------
+
+### Integration tests vs. unit tests
+
+...
+
+### What is the deal with composer.json
+
+...
+
+### What is the deal with the vendor folder?
+
+...
+
 Advanced Usage
 --------------
 
@@ -106,14 +130,5 @@ Advanced Usage
 ...
 
 ### Running tests on PostgreSQL
-
-...
-
-Tool Architecture & Design Decisions
-------------------------------------
-
-### Integration tests vs. unit tests
-
-### What is the deal with the vendor folder?
 
 ...
