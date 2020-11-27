@@ -132,3 +132,15 @@ Advanced Usage
 ### Running tests on PostgreSQL
 
 ...
+
+FAQ
+---
+
+Q: what is installed out of the box in the test Container?
+
+A: besides php, you get apache, git, memcached, redis, varnish.
+   Installed php extensions are: curl gd intl json memcached mysql pgsql xdebug xsl.
+
+Q: Why not use the Docker containers definition from eZPlatform?
+
+A: Because we have to be able to test against eZPublish-Community, as well as eZPlatform 1 and eZPlatform 2
