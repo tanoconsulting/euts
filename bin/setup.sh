@@ -2,6 +2,7 @@
 
 # Set up fully the test environment (except for installing required sw packages): php, mysql, eZ, etc...
 # Has to be useable from Docker as well as from Travis.
+# Has to be run from the project (bundle) top dir.
 #
 # Uses env vars: TRAVIS_PHP_VERSION
 
@@ -10,7 +11,9 @@
 
 set -e
 
-cd $(dirname ${BASH_SOURCE[0]})/../..
+BIN_DIR=$(dirname -- ${BASH_SOURCE[0]})
+
+#cd $(dirname ${BASH_SOURCE[0]})/../..
 
 # For php 5.6, Composer needs humongous amounts of ram - which we don't have on Travis. Enable swap as workaround
 if [ "${TRAVIS_PHP_VERSION}" = "5.6" ]; then
@@ -39,23 +42,23 @@ fi
 #    composer selfupdate
 #fi
 
-./Tests/bin/setup/php-config.sh
+${BIN_DIR}/setup/php-config.sh
 
-./Tests/bin/setup/composer-dependencies.sh
+${BIN_DIR}/setup/composer-dependencies.sh
 
 if [ "${TRAVIS_PHP_VERSION}" = "5.6" ]; then
     sudo systemctl start mysql
 fi
 
 # Set up eZ configuration files
-./Tests/bin/setup/ez-config.sh
+${BIN_DIR}/setup/ez-config.sh
 
 # Create the database from sql files present in either the legacy stack or kernel (has to be run after composer install)
-./Tests/bin/create-db.sh
+${BIN_DIR}/create-db.sh
 
 # TODO are these needed at all?
-#$(dirname ${BASH_SOURCE[0]})/sfconsole.sh assetic:dump
-#$(dirname ${BASH_SOURCE[0]})/sfconsole.sh cache:clear --no-debug
+#${BIN_DIR}/sfconsole.sh assetic:dump
+#${BIN_DIR}/sfconsole.sh cache:clear --no-debug
 
 # TODO for eZPlatform, do we need to set up SOLR as well ?
 #if [ "$EZ_VERSION" != "ezpublish" ]; then ./vendor/ezsystems/ezplatform-solr-search-engine && bin/.travis/init_solr.sh; fi

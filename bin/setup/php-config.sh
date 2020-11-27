@@ -6,11 +6,13 @@
 
 set -e
 
+STACK_DIR=$(dirname -- $(dirname -- $(dirname -- ${BASH_SOURCE[0]})))
+
 echo "Setting up php configuration..."
 
 # Increase php memory limit (need to do this now or we risk composer failing)
 if [ "${TRAVIS}" = "true" ]; then
-    phpenv config-add Tests/config/php/zzz_php.ini
+    phpenv config-add ${STACK_DIR}/config/php/zzz_php.ini
 else
     INI_PATH=$(php -i | grep 'Scan this dir for additional .ini files')
     INI_PATH=${INI_PATH/Scan this dir for additional .ini files => /}

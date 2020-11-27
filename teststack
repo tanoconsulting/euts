@@ -208,10 +208,10 @@ cleanup() {
             done
         ;;
         ez-cache)
-            docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c './Tests/bin/cleanup.sh ez-cache'
+            docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c "../teststack/bin/cleanup.sh ez-cache"
         ;;
         ez-logs)
-            docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c './Tests/bin/cleanup.sh ez-cache'
+            docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c "../teststack/bin/cleanup.sh ez-cache"
         ;;
         logs)
             find ./logs/ -type f ! -name .gitkeep -delete
@@ -301,7 +301,7 @@ setup_app() {
     fi
 
     echo "[$(date)] Setting up eZ..."
-    docker exec "${WEB_CONTAINER}" su "${WEB_USER}" -c "cd /home/test/bundle && ./Tests/bin/setup.sh; echo \$? > /tmp/setup_ok"
+    docker exec "${WEB_CONTAINER}" su "${WEB_USER}" -c "cd /home/test/bundle && ../teststack/bin/setup.sh; echo \$? > /tmp/setup_ok"
 
     # @bug WEB_CONTAINER is not defined in subshell ?
     echo "[$(date)] Setup finished. Exit code: $(docker exec "${WEB_CONTAINER}" cat /tmp/setup_ok)"
@@ -442,9 +442,14 @@ fi
 
 load_config
 
+# @todo allow installation of the Test Stack elsewhere than as direct subfolder of the project
+TESTSTACK_DIR=$(basename -- $(dirname -- ${BASH_SOURCE[0]}))
+
 cd $(dirname -- ${BASH_SOURCE[0]})/docker
 
-WEB_CONTAINER=$(${DOCKER_COMPOSE_QUIET} config | grep 'container_name: .*_ez$' | sed -e 's/ \+container_name: \+//g')
+# Since the line below relies on knowing the contents of the yml file anyway, let's be more efficient...
+#WEB_CONTAINER=$(${DOCKER_COMPOSE_QUIET} config | grep 'container_name: .*_ez$' | sed -e 's/ \+container_name: \+//g')
+WEB_CONTAINER=${COMPOSE_PROJECT_NAME:-euts}_ez
 
 case "${COMMAND}" in
     build)
@@ -462,12 +467,12 @@ case "${COMMAND}" in
 
     console | ezconsole | sfconsole)
         # @todo allow this to be run from within the test container
-        docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c './Tests/bin/sfconsole.sh "$@"' -- "$@"
+        docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c '../teststack/bin/sfconsole.sh "$@"' -- "$@"
     ;;
 
     dbconsole | dbcli | dbclient)
         # @todo allow this to be run from within the test container
-        docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c './Tests/bin/dbconsole.sh "$@"' -- "$@"
+        docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c '../teststack/bin/dbconsole.sh "$@"' -- "$@"
     ;;
 
     # courtesy command alias - same as 'ps'
@@ -509,13 +514,13 @@ case "${COMMAND}" in
     resetdb)
         # @todo allow this to be run from within the test container
         # q: do we need -ti ?
-        docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c './Tests/bin/create-db.sh'
+        docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c "../teststack/bin/create-db.sh"
     ;;
 
     runtests)
         shift
         # q: do we need -ti ?
-        docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c '"$0" "$@"' -- ./Tests/bin/runtests.sh ${RESET} ${VERBOSITY} "$@"
+        docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c '"$0" "$@"' -- ../teststack/bin/runtests.sh ${RESET} ${VERBOSITY} "$@"
     ;;
 
     setup)

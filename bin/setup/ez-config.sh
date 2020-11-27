@@ -9,6 +9,8 @@
 
 #set -e
 
+STACK_DIR=$(dirname -- $(dirname -- $(dirname -- ${BASH_SOURCE[0]})))
+
 echo "Setting up eZ configuration..."
 
 source $(dirname $(dirname ${BASH_SOURCE[0]}))/set-env-vars.sh
@@ -43,19 +45,19 @@ fi
 if [ -f ${CONFIG_DIR}/parameters.yml.dist ]; then
     cp ${CONFIG_DIR}/parameters.yml.dist ${CONFIG_DIR}/parameters.yml
 fi
-if [ -f Tests/config/${EZ_VERSION}/config_behat.yml ]; then
+if [ -f ${STACK_DIR}/config/${EZ_VERSION}/config_behat.yml ]; then
     # @todo if config_behat_orig.yml exists, rename it as well
     grep -q 'config_behat_orig.yml' ${CONFIG_DIR}/config_behat.yml || mv ${CONFIG_DIR}/config_behat.yml ${CONFIG_DIR}/config_behat_orig.yml
-    cp Tests/config/${EZ_VERSION}/config_behat.yml ${CONFIG_DIR}/config_behat.yml
+    cp ${STACK_DIR}/config/${EZ_VERSION}/config_behat.yml ${CONFIG_DIR}/config_behat.yml
 fi
-cp Tests/config/common/config_behat.php ${CONFIG_DIR}/config_behat.php
-if [ -f Tests/config/${EZ_VERSION}/ezpublish_behat.yml ]; then
+cp ${STACK_DIR}/config/common/config_behat.php ${CONFIG_DIR}/config_behat.php
+if [ -f ${STACK_DIR}/config/${EZ_VERSION}/ezpublish_behat.yml ]; then
     grep -q 'ezpublish_behat_orig.yml' ${CONFIG_DIR}/ezpublish_behat.yml || mv ${CONFIG_DIR}/ezpublish_behat.yml ${CONFIG_DIR}/ezpublish_behat_orig.yml
-    cp Tests/config/${EZ_VERSION}/ezpublish_behat.yml ${CONFIG_DIR}/ezpublish_behat.yml
+    cp ${STACK_DIR}/config/${EZ_VERSION}/ezpublish_behat.yml ${CONFIG_DIR}/ezpublish_behat.yml
 fi
-if [ -f Tests/config/${EZ_VERSION}/ezplatform.yml ]; then
+if [ -f ${STACK_DIR}/config/${EZ_VERSION}/ezplatform.yml ]; then
     mv ${CONFIG_DIR}/packages/behat/ezplatform.yaml ${CONFIG_DIR}/packages/behat/ezplatform_orig.yaml
-    cp Tests/config/${EZ_VERSION}/ezplatform.yml ${CONFIG_DIR}/packages/behat/ezplatform.yaml
+    cp ${STACK_DIR}/config/${EZ_VERSION}/ezplatform.yml ${CONFIG_DIR}/packages/behat/ezplatform.yaml
 fi
 
 if [ -n "${EZ_TEST_CONFIG_SYMFONY}" ]; then
@@ -67,13 +69,6 @@ else
     echo "# It is replaced by a symlink to a yaml file with settings useful for running tests when the env var EZ_TEST_CONFIG_SYMFONY is set" >> ${CONFIG_DIR}/config_behat_bundle.yml
 fi
 
-# Load the migration bundle in the Sf kernel
-#fgrep -q 'new Kaliop\eZMigrationBundle\EzMigrationBundle()' ${KERNEL_DIR}/${KERNEL_CLASS}.php
-#if [ $? -ne 0 ]; then
-#    sed -i 's/$bundles = array(/$bundles = array(new Kaliop\\eZMigrationBundle\\EzMigrationBundle(),/' ${KERNEL_DIR}/${KERNEL_CLASS}.php
-#    sed -i 's/$bundles = \[/$bundles = \[new Kaliop\\eZMigrationBundle\\EzMigrationBundle(),/' ${KERNEL_DIR}/${KERNEL_CLASS}.php
-#fi
-
 # Load the custom bundles in the Sf kernel
 for BUNDLE in ${EZ_BUNDLES}; do
     fgrep -q "new ${BUNDLE}()" ${KERNEL_DIR}/${KERNEL_CLASS}.php
@@ -82,51 +77,6 @@ for BUNDLE in ${EZ_BUNDLES}; do
         sed -i "/${LAST_BUNDLE}()/i new ${BUNDLE}()," ${KERNEL_DIR}/${KERNEL_CLASS}.php
     fi
 done
-
-## And optionally the EzCoreExtraBundle bundle
-#if [ "${EZ_VERSION}" = "ezplatform2" ]; then
-#    fgrep -q 'new Lolautruche\EzCoreExtraBundle\EzCoreExtraBundle()' ${KERNEL_DIR}/${KERNEL_CLASS}.php
-#    if [ $? -ne 0 ]; then
-#        sed -i "/${LAST_BUNDLE}()/i new Lolautruche\\\\\EzCoreExtraBundle\\\\\EzCoreExtraBundle()," ${KERNEL_DIR}/${KERNEL_CLASS}.php
-#    fi
-#fi
-#
-#if [ "${INSTALL_MATRIXBUNDLE}" = "1" ]; then
-#    fgrep -q 'new EzSystems\MatrixBundle\EzSystemsMatrixBundle()' ${KERNEL_DIR}/${KERNEL_CLASS}.php
-#    if [ $? -ne 0 ]; then
-#        sed -i "/${LAST_BUNDLE}()/i new EzSystems\\\\\MatrixBundle\\\\\EzSystemsMatrixBundle()," ${KERNEL_DIR}/${KERNEL_CLASS}.php
-#    fi
-#fi
-#
-#if [ "${INSTALL_MATRIXFIELDTYPEBUNDLE}" = "1" ]; then
-#    fgrep -q 'new EzSystems\EzPlatformMatrixFieldtypeBundle\EzPlatformMatrixFieldtypeBundle()' ${KERNEL_DIR}/${KERNEL_CLASS}.php
-#    if [ $? -ne 0 ]; then
-#        sed -i "/${LAST_BUNDLE}()/i new EzSystems\\\\\EzPlatformMatrixFieldtypeBundle\\\\\EzPlatformMatrixFieldtypeBundle()," ${KERNEL_DIR}/${KERNEL_CLASS}.php
-#    fi
-#fi
-#
-## And optionally the Netgen tags bundle
-#if [ "${INSTALL_TAGSBUNDLE}" = "1" ]; then
-#    fgrep -q 'new Netgen\TagsBundle\NetgenTagsBundle()' ${KERNEL_DIR}/${KERNEL_CLASS}.php
-#    if [ $? -ne 0 ]; then
-#        sed -i "/${LAST_BUNDLE}()/i new Netgen\\\\\TagsBundle\\\\\NetgenTagsBundle()," ${KERNEL_DIR}/${KERNEL_CLASS}.php
-#    fi
-#fi
-#
-#if [ "${INSTALL_SOLRBUNDLE}" = "1" ]; then
-#    fgrep -q 'new EzSystems\EzPlatformSolrSearchEngineBundle\EzSystemsEzPlatformSolrSearchEngineBundle()' ${KERNEL_DIR}/${KERNEL_CLASS}.php
-#    if [ $? -ne 0 ]; then
-#        sed -i "/${LAST_BUNDLE}()/i new EzSystems\\\\\EzPlatformSolrSearchEngineBundle\\\\\EzSystemsEzPlatformSolrSearchEngineBundle()," ${KERNEL_DIR}/${KERNEL_CLASS}.php
-#    fi
-#fi
-#
-## For eZPlatform, load the xmltext bundle
-#if [ "${EZ_VERSION}" = "ezplatform" -o "${EZ_VERSION}" = "ezplatform2" ]; then
-#    fgrep -q 'new EzSystems\EzPlatformXmlTextFieldTypeBundle\EzSystemsEzPlatformXmlTextFieldTypeBundle()' ${KERNEL_DIR}/${KERNEL_CLASS}.php
-#    if [ $? -ne 0 ]; then
-#        sed -i "/${LAST_BUNDLE}()/i new EzSystems\\\\\EzPlatformXmlTextFieldTypeBundle\\\\\EzSystemsEzPlatformXmlTextFieldTypeBundle()," ${KERNEL_DIR}/${KERNEL_CLASS}.php
-#    fi
-#fi
 
 # Fix the eZ5/eZPlatform autoload configuration for the unexpected directory layout
 if [ -f "${KERNEL_DIR}/autoload.php" ]; then
@@ -161,7 +111,7 @@ fi
 
 # Set up legacy settings and generate legacy autoloads
 if [ "${EZ_VERSION}" = "ezpublish-community" ]; then
-    cat Tests/config/ezpublish-legacy/config.php > vendor/ezsystems/ezpublish-legacy/config.php
+    cat ${STACK_DIR}/config/ezpublish-legacy/config.php > vendor/ezsystems/ezpublish-legacy/config.php
     cd vendor/ezsystems/ezpublish-legacy && php bin/php/ezpgenerateautoloads.php && cd ../../..
 fi
 

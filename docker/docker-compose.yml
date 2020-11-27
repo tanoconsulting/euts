@@ -39,6 +39,7 @@ services:
             # As opposed to TRAVIS=true ;-)
             - DOCKER=true
         volumes:
+            - ../:/home/test/teststack
             - ${COMPOSE_APP_DIR:-../../}:/home/test/bundle
             - ${COMPOSE_DATA_DIR:-./data}/.composer/:/home/test/.composer
 
