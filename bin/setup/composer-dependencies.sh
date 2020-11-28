@@ -23,7 +23,7 @@ else
     echo "Installing packages via Composer: the ones in composer.json plus ${EZ_PACKAGES}..."
 
     if [ -n "${TESTSTACK_PROJECT_NAME}" ]; then
-        export COMPOSER="composer_${TESTSTACK_PROJECT_NAME}"
+        export COMPOSER="composer_${TESTSTACK_PROJECT_NAME}.json"
         cp composer.json ${COMPOSER}
     fi
     # we split require from update to (hopefully) save some ram
