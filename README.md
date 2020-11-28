@@ -1,25 +1,24 @@
 The eZPlatform Ultimate Test Stack
 ==================================
 
-Makes it easy to run _integration_ or _functional_ tests for eZPlatform/eZPublish bundles, supporting CI scenarios.
+Makes it easy to run _integration_ or _functional_ tests for eZPlatform/eZPublish bundles, both locally (via Docker) and
+on popular CI services such as Travis or GitHub Actions.
 
 The target users are developers of open-source bundles for eZPlatform/eZPublish, who want to make sure their code works
-with a specific version of the CMS, or a combination of versions.
-
-It works by setting up a set of Docker Containers as test environment. In the main container, the desired version of eZP
-is installed and the database is created with the stock schema definition. At this point, the testsuite of the bundle in
-question can be executed.
+with a specific version of the CMS, or on a combination of versions.
 
 Features:
 
 * allows to run your bundle's tests on any version of eZPublish-Community, eZPlatform 1 and eZPlatform 2
-* allows to run your bundle's tests on many versions of MySQL
 * allows to run your bundle's tests on multiple versions of eZPlatform/eZPublish from a single source directory
 * allows to specify extra composer packages to be installed and bundles to be activated
+* allows to run your bundle's tests on many versions of MySQL (local execution only)
 * provides a single command-line tool for managing the test stack and running tests, including maintenance operations
-  such as database reset, logs cleanup, etc...
+  such as database reset, logs cleanup, etc... (local execution only)
 
-_Stay tuned for the first release..._
+It works by setting up a set of Docker Containers as test environment. In the main container, the desired version of eZP
+is installed and configured and the database is created with the stock schema definition.
+At this point, the testsuite of the bundle in question can be executed.
 
 Requirements
 ------------
@@ -27,7 +26,7 @@ Requirements
 * Docker version 1.13 or later
 * Docker Compose version ...
 * Bash shell
-* Git (for a quick way to install this tool)
+* Git (for a quick way to download this tool)
 
 Installation
 ------------
@@ -59,14 +58,14 @@ Quick Start
    * the `require-dev` section should not contain the packages defined in the EZ_PACKAGES config variable (this
      commonly includes the eZPlatform bundle)
 
-2. build the tests stack
+3. build the tests stack
 
        ./teststack/teststack build
 
    NB: this will take a long time. Also, it is recommended to have available a fast internet connection and lots of disk
    space.
 
-3. run your tests
+4. run your tests
 
        ./teststack/teststack runtests
 
@@ -80,12 +79,20 @@ Quick Start
 
        ./teststack/teststack exec My/Test/SCript
 
-4. stop the test stack
+5. stop the test stack
 
        ./teststack/teststack stop
 
-5. don't forget to add the `/teststack` folder to your .gitignore file to avoid accidentally committing it to your
-   project's source code
+6. commit the `.euts.env` file into version control. Don't forget to add the `/teststack` folder to your .gitignore file
+   to avoid accidentally committing it to your project's source code
+
+7. Set up your tests to be run on Travis
+
+...
+
+8. Set up your tests to be run on GitHub Actions
+
+...
 
 Troubleshooting
 ---------------
@@ -133,6 +140,14 @@ Advanced Usage
 
 ...
 
+### Using custom php configuration for your tests
+
+...
+
+### Using custom Symfony configuration for your tests
+
+...
+
 FAQ
 ---
 
@@ -144,3 +159,12 @@ A: besides php, you get apache, git, memcached, redis, varnish.
 Q: Why not use the Docker containers definition from eZPlatform?
 
 A: Because we have to be able to test against eZPublish-Community, as well as eZPlatform 1 and eZPlatform 2
+
+Q: why can't I install the Test Stack via Composer?
+
+A: because of the way we handle installation of Composer dependencies, this tool would have to be installed _before_ all
+   other dependencies as well as in a _separate_ vendor folder. It thus makes little sense to use Composer for it
+
+Q: how are you testing this Test Stack itself?
+
+A: Inception!!!
