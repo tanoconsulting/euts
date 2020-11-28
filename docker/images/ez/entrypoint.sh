@@ -132,8 +132,9 @@ if [ "${TESTSTACK_SETUP_APP_ON_BOOT}" != 'skip' ]; then
     #       such as php exts installed) are changed since we last did it...
 
     if [ -f "${CONTAINER_USER_HOME}/setup_ok" ]; then
-        if [ "$(< ${CONTAINER_USER_HOME}/setup_ok)" != '0' ]; then
-            echo "[$(date)] Previous Application setup failed!"
+        RETCODE=$(cat ${CONTAINER_USER_HOME}/setup_ok)
+        if [ "${RETCODE}" != '0' ]; then
+            echo "[$(date)] Previous Application setup failed! Exit code: ${RETCODE}"
             TESTSTACK_SETUP_APP_ON_BOOT=force
         fi
     fi
