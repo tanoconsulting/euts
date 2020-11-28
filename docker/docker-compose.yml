@@ -6,13 +6,13 @@ services:
         build:
             context: images/ez
             args:
-                debian_mirror: ${COMPOSE_DEBIAN_MIRROR:-none}
-                debian_version: ${COMPOSE_DEBIAN_VERSION:-buster}
-                php_version: ${COMPOSE_PHP_VERSION:-default}
-                timezone: ${COMPOSE_TZ:-none}
-                do_update_os: ${COMPOSE_UPDATE_OS_ON_BUILD:-true}
+                debian_mirror: ${TESTSTACK_DEBIAN_MIRROR:-none}
+                debian_version: ${TESTSTACK_DEBIAN_VERSION:-buster}
+                php_version: ${TESTSTACK_PHP_VERSION:-default}
+                timezone: ${TESTSTACK_TZ:-none}
+                do_update_os: ${TESTSTACK_UPDATE_OS_ON_BUILD:-true}
         hostname: ez
-        container_name: ${COMPOSE_PROJECT_NAME:-euts}_ez
+        container_name: ${TESTSTACK_PROJECT_NAME:-euts}_ez
         environment:
             - CONTAINER_USER_UID=${CONTAINER_USER_UID:-1000}
             - CONTAINER_USER_GID=${CONTAINER_USER_GID:-1000}
@@ -25,14 +25,14 @@ services:
             - DB_EZ_USER=${DB_EZ_USER:-ezp}
             - DB_EZ_PASSWORD=${DB_EZ_PASSWORD:-ezp}
             - DB_EZ_DATABASE=${DB_EZ_DATABASE:-behattestdb}
-            - COMPOSE_SETUP_APP_ON_BOOT
+            - TESTSTACK_PROJECT_NAME
+            - TESTSTACK_SETUP_APP_ON_BOOT
             # Configuration for the eZ test env to build
             - EZ_PACKAGES=${EZ_PACKAGES:-ezsystems/ezplatform:^2.5.0 ezsystems/ezplatform-xmltext-fieldtype:^1.8 ezsystems/behatbundle:^6.5 netgen/tagsbundle:^3.0 sensio/generator-bundle overblog/graphiql-bundle}
             - EZ_COMPOSER_LOCK
             - EZ_BUNDLES=${EZ_BUNDLES:-Kaliop\eZMigrationBundle\EzMigrationBundle Lolautruche\EzCoreExtraBundle\EzCoreExtraBundle EzSystems\EzPlatformXmlTextFieldTypeBundle\EzSystemsEzPlatformXmlTextFieldTypeBundle Netgen\TagsBundle\NetgenTagsBundle}
             # Name of a symfony config file containing parameters and services used by the tests
             - EZ_TEST_CONFIG_SYMFONY
-            - COMPOSER_VENDOR_DIR
             # Configuration used by Symfony when running via phpunit
             - APP_ENV=${APP_ENV:-behat}
             - SYMFONY_ENV=${SYMFONY_ENV:-behat}
@@ -40,11 +40,11 @@ services:
             - DOCKER=true
         volumes:
             - ../:/home/test/teststack
-            - ${COMPOSE_APP_DIR:-../../}:/home/test/bundle
-            - ${COMPOSE_DATA_DIR:-./data}/.composer/:/home/test/.composer
+            - ${TESTSTACK_APP_DIR:-../../}:/home/test/bundle
+            - ${TESTSTACK_DATA_DIR:-./data}/.composer/:/home/test/.composer
 
 #networks:
 #    default:
 #        ipam:
 #            config:
-#                - subnet: "${COMPOSE_SUBNET:-172.19.30}.0/24"
+#                - subnet: "${TESTSTACK_SUBNET:-172.19.30}.0/24"

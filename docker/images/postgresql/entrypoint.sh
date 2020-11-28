@@ -9,6 +9,7 @@ clean_up() {
     if [ -f /var/run/bootstrap_ok ]; then
         rm /var/run/bootstrap_ok
     fi
+    echo "[$(date)] Exiting"
     exit
 }
 
@@ -43,7 +44,7 @@ if [ -d /tmpfs ]; then
     chmod 0777 /tmpfs
 fi
 
-echo "[$(date)] Handing over control to /entrypoint.sh..."
+echo "[$(date)] Handing over control to /docker-entrypoint.sh..."
 
 trap clean_up TERM
 

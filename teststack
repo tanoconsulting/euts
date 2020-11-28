@@ -79,7 +79,7 @@ Advanced Options:
 
 create_compose_command() {
     DOCKER_COMPOSE="${DOCKER_COMPOSE} -f docker-compose.yml -f docker-compose-${DB_TYPE}.yml"
-    DOCKER_COMPOSE_QUIET=${DOCKER_COMPOSE/ --verbose/}
+    DOCKER_TESTSTACK_QUIET=${DOCKER_COMPOSE/ --verbose/}
 }
 
 build() {
@@ -104,8 +104,8 @@ build() {
         # 1 get list of images
         # 2 for each, run 'docker image history $img', remove <missing>
         # 3 take last image id, run `docker image ls | grep f6dcff9b59af`, take the first 2 cols (or use `docker image inspect --format='{{index .RepoTags 0}}`)
-        if [ -n "${COMPOSE_DEBIAN_VERSION}"]; then
-            DIMG="debian:${COMPOSE_DEBIAN_VERSION}"
+        if [ -n "${TESTSTACK_DEBIAN_VERSION}"]; then
+            DIMG="debian:${TESTSTACK_DEBIAN_VERSION}"
         else
             DIMG="debian:buster"
         fi
@@ -127,23 +127,19 @@ build() {
 
     echo "[$(date)] Building Containers..."
 
-    ${DOCKER_COMPOSE} build ${PARALLEL_BUILD} ${DOCKER_NO_CACHE}
-    RETCODE=$?
-    if [ ${RETCODE} -ne 0 ]; then
-        exit ${RETCODE}
-    fi
+    ${DOCKER_COMPOSE} build ${PARALLEL_BUILD} ${DOCKER_NO_CACHE} || exit $?
 
     # q: do we really need to have 2 different env vars and an EXPORT call?
     if [ "${SETUP_APP_ON_BOOT}" != '' ]; then
-        export COMPOSE_SETUP_APP_ON_BOOT=${SETUP_APP_ON_BOOT}
+        export TESTSTACK_SETUP_APP_ON_BOOT=${SETUP_APP_ON_BOOT}
     fi
 
     echo "[$(date)] Starting Containers..."
 
     if [ ${RECREATE} = 'true' ]; then
-        ${DOCKER_COMPOSE} up -d --force-recreate
+        ${DOCKER_COMPOSE} up -d --force-recreate || exit $?
     else
-        ${DOCKER_COMPOSE} up -d
+        ${DOCKER_COMPOSE} up -d || exit $?
     fi
 
     wait_for_bootstrap all
@@ -156,7 +152,7 @@ build() {
     if [ "${SETUP_APP_ON_BOOT}" = skip ]; then
         echo "[$(date)] Build finished"
     else
-        echo "[$(date)] Build finished. Exit code: $(docker exec "${WEB_CONTAINER}" cat /tmp/setup_ok)"
+        echo "[$(date)] Build finished. Exit code: $(docker exec "${WEB_CONTAINER}" cat /home/test/setup_ok)"
     fi
 
     exit ${RETCODE}
@@ -199,7 +195,7 @@ cleanup() {
             cleanup_dead_docker_images
         ;;
         docker-logs)
-            for CONTAINER in $(${DOCKER_COMPOSE_QUIET} ps -q)
+            for CONTAINER in $(${DOCKER_TESTSTACK_QUIET} ps -q)
             do
                 LOGFILE=$(docker inspect --format='{{.LogPath}}' ${CONTAINER})
                 if [ -n "${LOGFILE}" ]; then
@@ -236,7 +232,7 @@ cleanup_dead_docker_images() {
 # @todo add support for setting up file Tests/docker/data/.composer/auth.json
 create_default_config() {
     if [ ! -f ${DEFAULT_CONFIG_FILE} ]; then
-        echo "[$(date)] Setting up the configuration file..."
+        echo "[$(date)] Setting up the configuration file '${DEFAULT_CONFIG_FILE}'..."
 
         CURRENT_USER_UID=$(id -u)
         CURRENT_USER_GID=$(id -g)
@@ -291,20 +287,16 @@ setup_app() {
     echo "[$(date)] Starting all Containers..."
 
     # avoid automatic app setup being triggered here
-    export COMPOSE_SETUP_APP_ON_BOOT=skip
-    ${DOCKER_COMPOSE} up -d
+    export TESTSTACK_SETUP_APP_ON_BOOT=skip
+    ${DOCKER_COMPOSE} up -d || exit $?
 
-    wait_for_bootstrap all
-    RETCODE=$?
-    if [ ${RETCODE} -ne 0 ]; then
-        exit ${RETCODE}
-    fi
+    wait_for_bootstrap all || exit $?
 
-    echo "[$(date)] Setting up eZ..."
-    docker exec "${WEB_CONTAINER}" su "${WEB_USER}" -c "cd /home/test/bundle && ../teststack/bin/setup.sh; echo \$? > /tmp/setup_ok"
+    echo "[$(date)] Setting up the Application..."
+    docker exec "${WEB_CONTAINER}" su "${WEB_USER}" -c "cd /home/test/bundle && ../teststack/bin/setup.sh; echo \$? > /home/test/setup_ok"
 
     # @bug WEB_CONTAINER is not defined in subshell ?
-    echo "[$(date)] Setup finished. Exit code: $(docker exec "${WEB_CONTAINER}" cat /tmp/setup_ok)"
+    echo "[$(date)] Setup finished. Exit code: $(docker exec "${WEB_CONTAINER}" cat /home/test/setup_ok)"
 }
 
 # Wait until containers have fully booted
@@ -317,8 +309,8 @@ wait_for_bootstrap() {
     case "${1}" in
         all)
             # q: check all services or only the running ones?
-            #BOOTSTRAP_CONTAINERS=$(${DOCKER_COMPOSE_QUIET} config --services)
-            BOOTSTRAP_CONTAINERS=$(${DOCKER_COMPOSE_QUIET} ps --services | tr '\n' ' ')
+            #BOOTSTRAP_CONTAINERS=$(${DOCKER_TESTSTACK_QUIET} config --services)
+            BOOTSTRAP_CONTAINERS=$(${DOCKER_TESTSTACK_QUIET} ps --services | tr '\n' ' ')
         ;;
         app)
             BOOTSTRAP_CONTAINERS='ez'
@@ -342,7 +334,7 @@ wait_for_bootstrap() {
             printf "Waiting for ${BS_CONTAINER} ... "
             # @todo fix this check for the case of container not running...
             # @todo speed this up... maybe go back to generating and checking files mounted on the host?
-            ${DOCKER_COMPOSE_QUIET} exec ${BS_CONTAINER} cat ${BOOTSTRAP_OK_FILE} >/dev/null 2>/dev/null
+            ${DOCKER_TESTSTACK_QUIET} exec ${BS_CONTAINER} cat ${BOOTSTRAP_OK_FILE} >/dev/null 2>/dev/null
             RETCODE=$?
             if [ ${RETCODE} -eq 0 ]; then
                 printf "\e[32mdone\e[0m\n"
@@ -448,8 +440,8 @@ TESTSTACK_DIR=$(basename -- $(dirname -- ${BASH_SOURCE[0]}))
 cd $(dirname -- ${BASH_SOURCE[0]})/docker
 
 # Since the line below relies on knowing the contents of the yml file anyway, let's be more efficient...
-#WEB_CONTAINER=$(${DOCKER_COMPOSE_QUIET} config | grep 'container_name: .*_ez$' | sed -e 's/ \+container_name: \+//g')
-WEB_CONTAINER=${COMPOSE_PROJECT_NAME:-euts}_ez
+#WEB_CONTAINER=$(${DOCKER_TESTSTACK_QUIET} config | grep 'container_name: .*_ez$' | sed -e 's/ \+container_name: \+//g')
+WEB_CONTAINER=${TESTSTACK_PROJECT_NAME:-euts}_ez
 
 case "${COMMAND}" in
     build)
@@ -533,9 +525,10 @@ case "${COMMAND}" in
 
     start)
         if [ "${SETUP_APP_ON_BOOT}" != '' ]; then
-            export COMPOSE_SETUP_APP_ON_BOOT=${SETUP_APP_ON_BOOT}
+            export TESTSTACK_SETUP_APP_ON_BOOT=${SETUP_APP_ON_BOOT}
         fi
-        ${DOCKER_COMPOSE} up -d ${2}
+        ${DOCKER_COMPOSE} up -d ${2} || exit $?
+
         if [ -z "${2}" ]; then
             wait_for_bootstrap all
             exit $?

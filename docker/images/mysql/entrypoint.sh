@@ -9,6 +9,7 @@ clean_up() {
     if [ -f /var/run/bootstrap_ok ]; then
         rm /var/run/bootstrap_ok
     fi
+    echo "[$(date)] Exiting"
     exit
 }
 

@@ -2,9 +2,12 @@
 
 # Install dependencies using Composer
 #
-# Uses env vars: EZ_COMPOSER_LOCK, EZ_PACKAGES
+# Uses env vars: EZ_COMPOSER_LOCK, EZ_PACKAGES, TESTSTACK_PROJECT_NAME
 
 # We do not rely on the requirements set in composer.json, but install a different eZ version depending on the test matrix (env vars)
+
+# @todo generate and echo a hash which can be used to determine in the future if we need to run composer again (as it
+#       would install different packages compared to the ones installed currently)
 
 # For the moment, to install eZPlatform, a set of DEV packages has to be allowed (eg roave/security-advisories); really ugly sed expression to alter composer.json follows
 # A different work around for this has been found in setting up an alias for them in the std composer.json require-dev section
@@ -19,17 +22,13 @@ if [ -n "${EZ_COMPOSER_LOCK}" ]; then
 else
     echo "Installing packages via Composer: the ones in composer.json plus ${EZ_PACKAGES}..."
 
-    # composer.lock gets in the way when switching between eZ versions
-    if [ -f composer.lock ]; then
-        rm composer.lock
+    if [ -n "${TESTSTACK_PROJECT_NAME}" ]; then
+        export COMPOSER="composer_${TESTSTACK_PROJECT_NAME}"
+        cp composer.json ${COMPOSER}
     fi
-    cp composer.json composer.json.bak
     # we split require from update to (hopefully) save some ram
     composer require --dev --no-update ${EZ_PACKAGES}
-    cp composer.json composer_last.json
-    composer update --dev
-    # @todo remove composer.json.bak ? (we should also check that no-one has modified it since we saved it...)
-    cp composer.json.bak composer.json
+    composer update
 fi
 
 if [ "${TRAVIS}" = "true" ]; then
