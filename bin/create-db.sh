@@ -10,7 +10,7 @@
 
 set -e
 
-source $(dirname ${BASH_SOURCE[0]})/set-env-vars.sh
+source $(dirname -- ${BASH_SOURCE[0]})/set-env-vars.sh
 
 ROOT_DB_PWD=
 DB_HOST_FLAG=

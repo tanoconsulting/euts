@@ -6,10 +6,6 @@
 
 set -e
 
-#source $(dirname ${BASH_SOURCE[0]})/set-env-vars.sh
-
-#ROOT_DB_USER=root
-#ROOT_DB_PWD=
 DB_HOST_FLAG=
 
 if [ -z "${DB_HOST}" ]; then

@@ -13,7 +13,7 @@ STACK_DIR=$(dirname -- $(dirname -- $(dirname -- ${BASH_SOURCE[0]})))
 
 echo "Setting up eZ configuration..."
 
-source $(dirname $(dirname ${BASH_SOURCE[0]}))/set-env-vars.sh
+source $(dirname $(dirname -- ${BASH_SOURCE[0]}))/set-env-vars.sh
 
 if [ "${EZ_VERSION}" = "ezplatform3" ]; then
     APP_DIR=vendor/ezsystems/ezplatform

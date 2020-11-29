@@ -2,7 +2,7 @@
 
 set -e
 
-source $(dirname ${BASH_SOURCE[0]})/set-env-vars.sh
+source $(dirname -- ${BASH_SOURCE[0]})/set-env-vars.sh
 
 PHPOPTS=
 COVERAGE=
@@ -30,11 +30,11 @@ shift $((OPTIND-1))
 
 if [ "${RESET}" = true ]; then
     echo "Resetting the database..."
-    $(dirname ${BASH_SOURCE[0]})/create-db.sh
+    $(dirname -- ${BASH_SOURCE[0]})/create-db.sh
     echo "Purging eZ caches..."
     # Some manipulations make the SF console fail to run - that's why we prefer to clear the cache via file purge
-    #$(dirname ${BASH_SOURCE[0]})/sfconsole.sh ${VERBOSITY} cache:clear
-    $(dirname ${BASH_SOURCE[0]})/cleanup.sh ez-cache
+    #$(dirname -- ${BASH_SOURCE[0]})/sfconsole.sh ${VERBOSITY} cache:clear
+    $(dirname -- ${BASH_SOURCE[0]})/cleanup.sh ez-cache
     echo "Running the tests..."
 fi
 
