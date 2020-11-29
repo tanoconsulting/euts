@@ -33,7 +33,7 @@ Installation
 
 To install in the `teststack` directory:
 
-    git clone --depth 1 --branch 1.0.0 git@github.com:tanoconsulting/euts.git teststack
+    git clone --depth 1 --branch 1.0.0 https://github.com/tanoconsulting/euts.git teststack
 
 Note that you can use any other name for the folder where this tool will be installed - but so far it has only been
 tested running from within the top-level project folder.
