@@ -12,6 +12,7 @@ Features:
 * allows to run your bundle's tests on any version of eZPublish-Community, eZPlatform 1 and eZPlatform 2
 * allows to run your bundle's tests on multiple versions of eZPlatform/eZPublish from a single source directory
 * allows to specify extra composer packages to be installed and bundles to be activated
+* allows to run your bundle's tests on many versions of PHP (local execution only)
 * allows to run your bundle's tests on many versions of MySQL (local execution only)
 * provides a single command-line tool for managing the test stack and running tests, including maintenance operations
   such as database reset, logs cleanup, etc... (local execution only)
