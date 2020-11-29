@@ -41,6 +41,8 @@ tested running from within the top-level project folder.
 Quick Start
 -----------
 
+0. write some tests for your bundle, which can be executed from the command-line
+
 1. create a configuration file
 
    The default name for the config file is `.euts.env`. You can use a different file name, in which case you would
@@ -50,7 +52,9 @@ Quick Start
        touch .euts.env
 
    In the config file, you need to set values at the very least for EZ_PACKAGES and EZ_BUNDLES - those are the Composer
-   packages that are required to run your tests and the Symfony bundles that will be loaded in the eZP kernel
+   packages that are required to run your tests and the Symfony bundles that will be loaded in the eZP kernel.
+   Some example configuration files can be found in the _doc/config_exaples_ folder.
+   The full list of available config variables and their purpose is found in [.euts.env.example](./.euts.env.example).
 
 2. make sure that your project's `composer.json` is compatible with the Test Stack:
 
@@ -67,17 +71,13 @@ Quick Start
 
 4. run your tests
 
-       ./teststack/teststack runtests
+       ./teststack/teststack runtests My/Test/Folder
 
-   NB: this currently assumes that your test suite uses PhpUnit, and the tests are located in /Tests/.
-
-   If your test are driven by phpunit but located in a different folder, you can use:
-
-        ./teststack/teststack runtests My/Test/Folder
+   NB: this currently assumes that your test suite uses PhpUnit.
 
    If your tests are driven by a shell script, you can use instead:
 
-       ./teststack/teststack exec My/Test/SCript
+       ./teststack/teststack exec My/Test/Script
 
 5. stop the test stack
 
@@ -88,11 +88,14 @@ Quick Start
 
 7. Set up your tests to be run on Travis
 
-...
+   See an example configuration [.travis.yml](doc/config_examples/.travis.yml) file
+
+   Note that, to perform tests on Travis, it is not necessary to run the whole tests stack - for most scenarios eZ
+   can be set up and the test suite execute without building and starting Docker containers.
 
 8. Set up your tests to be run on GitHub Actions
 
-...
+    To be documented...
 
 Troubleshooting
 ---------------
@@ -129,6 +132,14 @@ How It Works
 
 ...
 
+### Build vs. Setup phases
+
+...
+
+### Directory layout within the eZ Container
+
+...
+
 Advanced Usage
 --------------
 
@@ -158,7 +169,8 @@ A: besides php, you get apache, git, memcached, redis, varnish.
 
 Q: Why not use the Docker containers definition from eZPlatform?
 
-A: Because we have to be able to test against eZPublish-Community, as well as eZPlatform 1 and eZPlatform 2
+A: Because we have to be able to test against eZPublish-Community, as well as eZPlatform 1 and eZPlatform 2, which do not
+   come with Docker Containers in their source code
 
 Q: why can't I install the Test Stack via Composer?
 
