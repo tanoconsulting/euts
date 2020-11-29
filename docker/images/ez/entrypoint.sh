@@ -129,7 +129,8 @@ if [ "${TESTSTACK_SETUP_APP_ON_BOOT}" != 'skip' ]; then
     fi
 
     # @todo we should force an app setup as well if current php version or env vars (bundles and other build-config vars
-    #       such as php exts installed) are changed since we last did it...
+    #       such as php exts installed) are changed since we last did it => save the hash of the env vars in setup_ok
+    #       instead of saving the exit code...
 
     if [ -f "${CONTAINER_USER_HOME}/setup_ok" ]; then
         RETCODE=$(cat ${CONTAINER_USER_HOME}/setup_ok)
