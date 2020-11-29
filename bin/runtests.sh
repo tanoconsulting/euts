@@ -61,4 +61,4 @@ fi
 
 # Note: make sure we run the version of phpunit we installed, not the system one. See: https://github.com/sebastianbergmann/phpunit/issues/2014
 
-php ${PHPOPTS} $(dirname $(dirname $(dirname ${BASH_SOURCE[0]})))/vendor/phpunit/phpunit/phpunit --stderr --colors ${VERBOSITY} ${COVERAGE} ${TESTSUITE} "$@"
+php ${PHPOPTS} vendor/phpunit/phpunit/phpunit --stderr --colors ${VERBOSITY} ${COVERAGE} ${TESTSUITE} "$@"
