@@ -4,8 +4,8 @@ The eZPlatform Ultimate Test Stack
 Makes it easy to run _integration_ or _functional_ tests for eZPlatform/eZPublish bundles, both locally (via Docker) and
 on popular CI services such as Travis or GitHub Actions.
 
-The target users are developers of open-source bundles for eZPlatform/eZPublish, who want to make sure their code works
-with a specific version of the CMS, or on a combination of versions.
+The target users are developers of bundles for eZPlatform/eZPublish, who want to make sure their code works with
+a specific version of the CMS, or on a combination of versions.
 
 Features:
 
@@ -74,9 +74,12 @@ Quick Start
 
        ./teststack/teststack runtests My/Test/Folder
 
-   NB: this currently assumes that your test suite uses PhpUnit.
+   To make sure that the eZ database is reset and the eZ caches are cleaned between each test run, use:
 
-   If your tests are driven by a shell script, you can use instead:
+       ./teststack/teststack -r runtests My/Test/Folder
+
+   NB: this currently assumes that your test suite uses PhpUnit.
+   If your tests are driven by any other command, you can use instead:
 
        ./teststack/teststack exec My/Test/Script
 
@@ -177,6 +180,12 @@ Q: why can't I install the Test Stack via Composer?
 
 A: because of the way we handle installation of Composer dependencies, this tool would have to be installed _before_ all
    other dependencies as well as in a _separate_ vendor folder. It thus makes little sense to use Composer for it
+
+Q: my tests need to run with eZ configured to use Redis/Memcached for cache (or other). Is it possible?
+
+A: both Redis and Memcached are installed in the test container, and you can provide custom Symfony configuration that
+   is only activated during testing, to make sure that any of those two is used.
+   Otoh this has not been tested yet, and it is possible that you will need to start the Redis/Memcached service by hand.
 
 Q: how are you testing this Test Stack itself?
 
