@@ -214,7 +214,7 @@ cleanup() {
             #find ../app/var/log/ -type f ! -name .gitkeep -delete
         ;;
         *)
-            printf "\n\e[31mERROR: unknown cleanup target: ${1}\e[0m\n\n" >&2
+            printf "\n\e[31mERROR:\e[0m unknown cleanup target ${1}\n\n" >&2
             help
             exit 1
         ;;
@@ -251,7 +251,7 @@ create_default_config() {
 
 dotenv() {
     if [ ! -f "${1}" ]; then
-        printf "\n\e[31mERROR: configuration file '${1}' not found\e[0m\n\n" >&2
+        printf "\n\e[31mERROR:\e[0m configuration file '${1}' not found\n\n" >&2
 
         exit 1
     fi
@@ -316,7 +316,7 @@ wait_for_bootstrap() {
             BOOTSTRAP_CONTAINERS='ez'
         ;;
         *)
-            #printf "\n\e[31mERROR: unknown booting container: ${1}\e[0m\n\n" >&2
+            #printf "\n\e[31mERROR:\e[0m unknown booting container: '${1}'\n\n" >&2
             #help
             #exit 1
             # @todo add check that this service is actually defined
@@ -410,7 +410,7 @@ do
             DOCKER_NO_CACHE=--no-cache
         ;;
         \?)
-            printf "\n\e[31mERROR: unknown option -${OPTARG}\e[0m\n\n" >&2
+            printf "\n\e[31mERROR:\e[0m unknown option '-${OPTARG}'\n\n" >&2
             help
             exit 1
         ;;
@@ -551,7 +551,7 @@ case "${COMMAND}" in
     ;;
 
     *)
-        printf "\n\e[31mERROR: unknown command '${COMMAND}'\e[0m\n\n" >&2
+        printf "\n\e[31mERROR:\e[0m unknown command '${COMMAND}'\n\n" >&2
         help
         exit 1
     ;;

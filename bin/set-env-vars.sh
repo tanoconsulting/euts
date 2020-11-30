@@ -63,6 +63,6 @@ elif [ "${EZ_VERSION}" = "ezpublish-community" ]; then
         export KERNEL_DIR=vendor/ezsystems/ezpublish-community/ezpublish
     fi
 else
-    printf "\n\e[31mERROR: unsupported eZ version: ${EZ_VERSION}\e[0m\n\n" >&2
+    printf "\n\e[31mERROR:\e[0m unsupported eZ version '${EZ_VERSION}'\n\n" >&2
     exit 1
 fi

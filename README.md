@@ -147,7 +147,7 @@ How It Works
 Advanced Usage
 --------------
 
-### Running tests against multiple versions of eZPlatform
+### Defining a Test Matrix: running tests against multiple versions of eZPlatform
 
 ...
 

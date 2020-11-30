@@ -40,7 +40,7 @@ case "${DB_TYPE}" in
         EZ_DB_COMMAND="psql -h ${DB_HOST} -U ${DB_EZ_USER} -d ${DB_EZ_DATABASE}"
         ;;
     *)
-        printf "\n\e[31mERROR: unknown db type ${DB_TYPE}\e[0m\n\n" >&2
+        printf "\n\e[31mERROR:\e[0m unknown db type '${DB_TYPE}'\n\n" >&2
         exit 1
 esac
 

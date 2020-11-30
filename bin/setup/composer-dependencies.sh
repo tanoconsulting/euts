@@ -13,6 +13,12 @@
 # A different work around for this has been found in setting up an alias for them in the std composer.json require-dev section
 #- 'if [ "$EZ_VERSION" != "ezpublish" ]; then sed -i ''s/"license": "GPL-2.0",/"license": "GPL-2.0", "minimum-stability": "dev", "prefer-stable": true,/'' composer.json; fi'
 
+# Avoid spending time on composer if install will later fail
+if [ ! -d "vendor" ]; then
+    printf "\n\e[31mERROR:\e[0m vendor folder is not a symlink\n\n"
+    exit 1
+fi
+
 # Allow installing a precomputed set of packages. Useful to save memory, eg. for running with php 5.6...
 if [ -n "${EZ_COMPOSER_LOCK}" ]; then
     echo "Installing packages via Composer using existing lock file ${EZ_COMPOSER_LOCK}..."

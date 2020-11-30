@@ -4,6 +4,8 @@ set -e
 
 # Uses env vars: EZ_VERSION
 
+source $(dirname -- ${BASH_SOURCE[0]})/set-env-vars.sh
+
 if [ "${EZ_VERSION}" = "ezplatform3" ]; then
     if [ -z "${VAR_DIR}" ]; then
         VAR_DIR=vendor/ezsystems/ezplatform/var
@@ -24,7 +26,7 @@ elif [ "${EZ_VERSION}" = "ezpublish-community" ]; then
         LEGACY_VAR_DIR=vendor/ezsystems/ezpublish-community-legacy/var
     fi
 else
-    echo "Unsupported eZ version: ${EZ_VERSION}" >&2
+    printf "\n\e[31mERROR:\e[0m unsupported eZ version '${EZ_VERSION}'\n\n" >&2
     exit 1
 fi
 
@@ -41,11 +43,11 @@ case "${1}" in
     ez-logs | logs)
         rm -rf ${VAR_DIR}/logs/*
         if [ -n "${LEGACY_VAR_DIR}" ]; then
-            rm -rf ${LEGACY_VAR_DIR}/cache/*
+            rm -rf ${LEGACY_VAR_DIR}/log/*
             rm -rf ${LEGACY_VAR_DIR}/*/log/*
         fi
     ;;
     *)
-        printf "\n\e[31mERROR: unknown cleanup target\e[0m\n\n" >&2
+        printf "\n\e[31mERROR:\e[0m unknown cleanup target '${1}'\n\n" >&2
         exit 1
 esac

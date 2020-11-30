@@ -33,7 +33,7 @@ fi
 
 echo "[$(date)] Fixing filesystem permissions..."
 
-ORIGPASSWD=$(cat /etc/passwd | grep test)
+ORIGPASSWD=$(cat /etc/passwd | grep '^test:')
 ORIG_UID=$(echo "$ORIGPASSWD" | cut -f3 -d:)
 ORIG_GID=$(echo "$ORIGPASSWD" | cut -f4 -d:)
 CONTAINER_USER_HOME=$(echo "$ORIGPASSWD" | cut -f6 -d:)
@@ -90,8 +90,8 @@ if [ "${TESTSTACK_SETUP_APP_ON_BOOT}" != 'skip' ]; then
 
     # we assume that /home/test/bundle/vendor is never a file...
 
-    if [ ! -L "${CONTAINER_USER_HOME}/bundle/vendor" ]; then
-        printf "\n\e[31mWARNING: vendor folder is not a symlink\e[0m\n\n"
+    if [ -d "${CONTAINER_USER_HOME}/bundle/vendor" -a ! -L "${CONTAINER_USER_HOME}/bundle/vendor" ]; then
+        printf "\n\e[33mWARNING:\e[0m vendor folder is not a symlink\n\n"
     fi
 
     if [ -L "${CONTAINER_USER_HOME}/bundle/vendor" -o ! -d "${CONTAINER_USER_HOME}/bundle/vendor" ]; then

@@ -12,7 +12,7 @@ if [ -z "${CONSOLE_CMD}" ]; then
     elif [ "${EZ_VERSION}" = "ezpublish-community" ]; then
         CONSOLE_CMD=vendor/ezsystems/ezpublish-community/ezpublish/console
     else
-        printf "\n\e[31mERROR: unsupported eZ version: ${EZ_VERSION}\e[0m\n\n" >&2
+        printf "\n\e[31mERROR:\e[0m unsupported eZ version '${EZ_VERSION}'\n\n" >&2
         exit 1
     fi
 fi
