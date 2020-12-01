@@ -4,6 +4,7 @@
 
 imports:
     - { resource: config_behat_orig.yml }
+    - { resource: config_legacy_bridge.yml }
     - { resource: config_behat.php }
     - { resource: config_behat_bundle.yml }
 
