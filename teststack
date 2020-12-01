@@ -207,7 +207,7 @@ cleanup() {
             docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c "../teststack/bin/cleanup.sh ez-cache"
         ;;
         ez-logs)
-            docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c "../teststack/bin/cleanup.sh ez-cache"
+            docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c "../teststack/bin/cleanup.sh ez-logs"
         ;;
         logs)
             find ./logs/ -type f ! -name .gitkeep -delete
