@@ -215,6 +215,11 @@ A: both Redis and Memcached are installed in the test container, and you can pro
    is only activated during testing, to make sure that any of those two is used.
    Otoh this has not been tested yet, and it is possible that you will need to start the Redis/Memcached service by hand.
 
+Q: are there other projects that you know of that have similar goals as this package?
+
+A: Certainly there are. Ones that I know of are f.e. https://github.com/Plopix/symfony-bundle-app-wrapper and
+   https://github.com/g1a/composer-test-scenarios
+
 Q: how are you testing this Test Stack itself?
 
 A: Inception!!!
