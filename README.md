@@ -12,22 +12,29 @@ Features:
 * allows to run your bundle's tests on any version of eZPublish-Community, eZPlatform 1 and eZPlatform 2
 * allows to run your bundle's tests on multiple versions of eZPlatform/eZPublish from a single source directory
 * allows to specify extra composer packages to be installed and bundles to be activated
-* allows to run your bundle's tests on many versions of PHP (local execution only)
-* allows to run your bundle's tests on many versions of MySQL (local execution only)
+* allows to run your bundle's tests on many versions of PHP (Docker execution only)
+* allows to run your bundle's tests on many versions of MySQL (Docker execution only)
 * provides a single command-line tool for managing the test stack and running tests, including maintenance operations
-  such as database reset, logs cleanup, etc... (local execution only)
+  such as database reset, logs cleanup, etc... (Docker execution only)
 
-It works by setting up a set of Docker Containers as test environment. In the main container, the desired version of eZP
-is installed and configured and the database is created with the stock schema definition.
+It works by:
+1. setting up a set of Docker Containers as test environment, with all the components required to run eZ (php, mysql, etc...)
+2. downloading and installing the desired version of eZP and creating the database with the stock schema definition.
 At this point, the testsuite of the bundle in question can be executed.
+
+Step 1 can be omitted when the tests are run on a server which already has php/mysql installed, such as a CI environment.
 
 Requirements
 ------------
 
+* Git (for a quick way to download this tool)
+* Bash shell
+
+For running tests in Docker containers:
 * Docker version 1.13 or later
 * Docker Compose version ...
-* Bash shell
-* Git (for a quick way to download this tool)
+
+For running tests without Docker: see the requirements for the version of eZPlatform that you intend to use
 
 Installation
 ------------
@@ -74,7 +81,7 @@ Quick Start
 
        ./teststack/teststack runtests My/Test/Folder
 
-   To make sure that the eZ database is reset and the eZ caches are cleaned between each test run, use:
+   To make sure that the eZ database is reset and the eZ caches are cleaned on each test run, use:
 
        ./teststack/teststack -r runtests My/Test/Folder
 
@@ -140,9 +147,30 @@ How It Works
 
 ...
 
+### Directory layout on the host
+
+    - Bundle folder (root)
+        - .euts.env
+        - teststack
+            - ...
+        - vendor_xxx
+            - ezsystems
+                - ezplatform (for eZPlatform)
+                - ezpublish-community (for eZPublishPlatform)
+                - ezpublish-legacy (for eZPublishPlatform or eZPlatform with LegacyBrdige)
+                - ...
+            - ... (other dependencies)
+        - ... (your bundle code)
+
 ### Directory layout within the eZ Container
 
-...
+    - /home/tests
+        - teststack (mount of the 'teststack' host folder)
+            - ...
+        - bundle (mount of the 'bundle root' host folder)
+            - vendor (symlink to vendor_xxx)
+            - vendor_xxx
+            - ...
 
 Advanced Usage
 --------------
