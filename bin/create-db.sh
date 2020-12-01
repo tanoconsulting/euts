@@ -10,6 +10,8 @@
 
 set -e
 
+echo "Creating the eZ database and user and loading it with default data..."
+
 source $(dirname -- ${BASH_SOURCE[0]})/set-env-vars.sh
 
 ROOT_DB_PWD=
@@ -18,8 +20,6 @@ DB_HOST_FLAG=
 if [ -z "${DB_HOST}" ]; then
     DB_HOST=${DB_TYPE}
 fi
-
-echo "Creating the eZ database and user and loading it with default data..."
 
 # @todo check if all required vars have a value
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-set -e
-
 # Uses env vars: EZ_VERSION
+
+set -e
 
 source $(dirname -- ${BASH_SOURCE[0]})/set-env-vars.sh
 
@@ -29,8 +29,6 @@ else
     printf "\n\e[31mERROR:\e[0m unsupported eZ version '${EZ_VERSION}'\n\n" >&2
     exit 1
 fi
-
-# @todo find
 
 case "${1}" in
     ez-cache | cache)

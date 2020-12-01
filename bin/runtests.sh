@@ -56,7 +56,7 @@ if [ -n "$*" ]; then
     done
 fi
 
-# @todo detect if the user ahs passed in any code coverage options. if so, or with -c, enable xdebug options
+# @todo detect if the user has passed in any code coverage options. If so, or with -c, enable xdebug options
 #       which support code coverage
 
 # Note: make sure we run the version of phpunit we installed, not the system one. See: https://github.com/sebastianbergmann/phpunit/issues/2014
