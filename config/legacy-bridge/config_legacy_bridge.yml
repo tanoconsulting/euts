@@ -1,8 +1,8 @@
 
-#ez_publish_legacy:
-#    system:
-#        site_admin:
-#            legacy_mode: true
+ez_publish_legacy:
+    system:
+        behat_site_legacy_admin:
+            legacy_mode: true
 
 parameters:
     ezpublish_legacy.root_dir: "%kernel.project_dir%/../ezpublish-legacy"
