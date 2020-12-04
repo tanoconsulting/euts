@@ -129,9 +129,16 @@ How to connect to the database:
 
      ./teststack/teststack dbconsole
 
+(note that the mysql client will be running within the test container, so the path it will 'see' for reading/writing
+files are not the same as the ones in the host computer).
+
 How to start a shell session in the container where tests are executed:
 
     ./teststack/teststack enter
+
+once you are in the container, an easy way to run the Symfony console, regardless of the eZ version installed, is:
+
+    ../teststack/bin/sfconsole.sh
 
 How It Works
 ------------

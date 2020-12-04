@@ -16,6 +16,7 @@ if [ "${TRAVIS}" = "true" ]; then
 else
     INI_PATH=$(php -i | grep 'Scan this dir for additional .ini files')
     INI_PATH=${INI_PATH/Scan this dir for additional .ini files => /}
+    # @todo use a symlink instead
     sudo cp ${STACK_DIR}/config/php/zzz_php.ini ${INI_PATH}
 fi
 
