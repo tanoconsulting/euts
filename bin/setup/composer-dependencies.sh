@@ -38,6 +38,8 @@ else
     composer update
 fi
 
+echo Done
+
 if [ "${TRAVIS}" = "true" ]; then
     # useful for troubleshooting tests failures
     composer show

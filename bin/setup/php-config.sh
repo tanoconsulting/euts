@@ -25,3 +25,5 @@ XDEBUG_INI=${XDEBUG_INI/,/}
 if [ "${XDEBUG_INI}" != "" ]; then
     sudo mv "${XDEBUG_INI}" "${XDEBUG_INI}.off";
 fi
+
+echo Done
