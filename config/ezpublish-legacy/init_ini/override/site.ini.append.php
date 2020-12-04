@@ -84,6 +84,13 @@ DesignLocationCache=enabled
 [DebugSettings]
 DebugOutput=disabled
 DebugRedirection=disabled
+# Allow tests to generate logs
+AlwaysLog[]
+AlwaysLog[]=error
+AlwaysLog[]=warning
+AlwaysLog[]=debug
+AlwaysLog[]=notice
+AlwaysLog[]=strict
 
 [TemplateSettings]
 DevelopmentMode=disabled
