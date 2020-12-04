@@ -11,7 +11,7 @@ Features:
 
 * allows to run your bundle's tests on any version of eZPublish-Community, eZPlatform 1 and eZPlatform 2
 * allows to run your bundle's tests on multiple versions of eZPlatform/eZPublish from a single source directory
-* allows to specify extra composer packages to be installed and bundles to be activated
+* allows to specify extra composer packages to be installed and symfony bundles or legacy extensions to be activated
 * allows to run your bundle's tests on many versions of PHP (Docker execution only)
 * allows to run your bundle's tests on many versions of MySQL (Docker execution only)
 * provides a single command-line tool for managing the test stack and running tests, including maintenance operations
@@ -19,7 +19,7 @@ Features:
 
 It works by:
 1. setting up a set of Docker Containers as test environment, with all the components required to run eZ (php, mysql, etc...)
-2. downloading and installing the desired version of eZP and creating the database with the stock schema definition.
+2. downloading and setting up the desired version of eZP and creating the database with the stock schema definition.
 At this point, the testsuite of the bundle in question can be executed.
 
 Step 1 can be omitted when the tests are run on a server which already has php/mysql installed, such as a CI environment.
@@ -41,7 +41,7 @@ Installation
 
 To install in the `teststack` directory:
 
-    git clone --depth 1 --branch 1.0.0 https://github.com/tanoconsulting/euts.git teststack
+    git clone --depth 1 --branch 0.1.0 https://github.com/tanoconsulting/euts.git teststack
 
 Note that you can use any other name for the folder where this tool will be installed - but so far it has only been
 tested running from within the top-level project folder.
@@ -69,6 +69,11 @@ Quick Start
    * if you are using phpunit for your tests, your composer.json file should have it in the `require-dev` section
    * the `require-dev` section should not contain the packages defined in the EZ_PACKAGES config variable (this
      commonly includes the eZPlatform bundle)
+   * if you are running tests with either eZPublish 5 or the Legacy-Bridge, you should have this configuration:
+
+         "extra": {
+             "ezpublish-legacy-dir": "vendor/ezsystems/ezpublish-legacy"
+         },
 
 3. build the tests stack
 
@@ -194,6 +199,13 @@ Advanced Usage
 FAQ
 ---
 
+Q: which Symfony environment is used to run the tests?
+
+A: by default we run all tests and symfony commands using the `behat` symfony environment.
+   You can change this by setting a value for APP_ENV or SYMFONY_ENV in your .euts config file, but be warned that, at
+   least for the moment, the automatic setting up of the configuration files to make eZP work within the test stack
+   environment will still be done for the `behat` symfony environment.
+
 Q: what is installed out of the box in the test Container?
 
 A: besides php, you get apache, git, memcached, redis, varnish.
@@ -214,6 +226,11 @@ Q: my tests need to run with eZ configured to use Redis/Memcached for cache (or 
 A: both Redis and Memcached are installed in the test container, and you can provide custom Symfony configuration that
    is only activated during testing, to make sure that any of those two is used.
    Otoh this has not been tested yet, and it is possible that you will need to start the Redis/Memcached service by hand.
+
+Q: when I run `teststack start`, there is a long wait while the script says only `Waiting for ez ...` - can I troubleshoot
+   what is going on at that time?
+
+A: Sure. Start a second shell, go to the project's folder and run `./teststack/teststack logs ez`
 
 Q: are there other projects that you know of that have similar goals as this package?
 
