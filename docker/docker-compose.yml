@@ -16,6 +16,8 @@ services:
         environment:
             - CONTAINER_USER_UID=${CONTAINER_USER_UID:-1000}
             - CONTAINER_USER_GID=${CONTAINER_USER_GID:-1000}
+            - TESTSTACK_PROJECT_NAME
+            - TESTSTACK_SETUP_APP_ON_BOOT
             - DB_TYPE=${DB_TYPE:-mysql}
             - DB_HOST
             - MYSQL_VERSION=${MYSQL_VERSION:-5.6}
@@ -25,12 +27,11 @@ services:
             - DB_EZ_USER=${DB_EZ_USER:-ezp}
             - DB_EZ_PASSWORD=${DB_EZ_PASSWORD:-ezp}
             - DB_EZ_DATABASE=${DB_EZ_DATABASE:-behattestdb}
-            - TESTSTACK_PROJECT_NAME
-            - TESTSTACK_SETUP_APP_ON_BOOT
             # Configuration for the eZ test env to build
-            - EZ_PACKAGES=${EZ_PACKAGES:-ezsystems/ezplatform:^2.5.0 ezsystems/ezplatform-xmltext-fieldtype:^1.8 ezsystems/behatbundle:^6.5 netgen/tagsbundle:^3.0 sensio/generator-bundle overblog/graphiql-bundle}
+            - EZ_PACKAGES
             - EZ_COMPOSER_LOCK
-            - EZ_BUNDLES=${EZ_BUNDLES:-Kaliop\eZMigrationBundle\EzMigrationBundle Lolautruche\EzCoreExtraBundle\EzCoreExtraBundle EzSystems\EzPlatformXmlTextFieldTypeBundle\EzSystemsEzPlatformXmlTextFieldTypeBundle Netgen\TagsBundle\NetgenTagsBundle}
+            - EZ_BUNDLES
+            - EZ_LEGACY_EXTENSIONS
             # Name of a symfony config file containing parameters and services used by the tests
             - EZ_TEST_CONFIG_SYMFONY
             # Configuration used by Symfony when running via phpunit

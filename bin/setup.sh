@@ -48,15 +48,15 @@ if [ "${TRAVIS_PHP_VERSION}" = "5.6" ]; then
     sudo systemctl start mysql
 fi
 
-# Set up eZ configuration files
-${BIN_DIR}/setup/ez-config.sh
-
 # Create the database from sql files present in either the legacy stack or kernel (has to be run after composer install)
 ${BIN_DIR}/create-db.sh
 
-# TODO are these needed at all?
-#${BIN_DIR}/sfconsole.sh assetic:dump
+# Set up eZ configuration files
+${BIN_DIR}/setup/ez-config.sh
+
+# TODO are these needed at all? Also: are they available / the same for every eZP version?
 #${BIN_DIR}/sfconsole.sh cache:clear --no-debug
+#${BIN_DIR}/sfconsole.sh assetic:dump
 
 # TODO for eZPlatform, do we need to set up SOLR as well ?
 #if [ "$EZ_VERSION" != "ezpublish" ]; then ./vendor/ezsystems/ezplatform-solr-search-engine && bin/.travis/init_solr.sh; fi
