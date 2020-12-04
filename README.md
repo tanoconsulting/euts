@@ -206,6 +206,10 @@ A: by default we run all tests and symfony commands using the `behat` symfony en
    least for the moment, the automatic setting up of the configuration files to make eZP work within the test stack
    environment will still be done for the `behat` symfony environment.
 
+Q: which eZ Siteaccesses are available to run the tests?
+
+A: behat_site, behat_site_admin as well as behat_site_legacy_admin for eZPublish5 and Legacy-Bridge
+
 Q: what is installed out of the box in the test Container?
 
 A: besides php, you get apache, git, memcached, redis, varnish.
