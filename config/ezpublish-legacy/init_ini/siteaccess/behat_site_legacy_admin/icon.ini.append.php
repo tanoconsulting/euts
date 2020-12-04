@@ -3,4 +3,3 @@
 [IconSettings]
 Theme=crystal-admin
 Size=normal
-*/ ?>

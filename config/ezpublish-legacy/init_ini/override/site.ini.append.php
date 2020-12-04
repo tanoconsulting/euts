@@ -40,10 +40,10 @@ ActiveExtensions[]=ezmbpaex
 SessionNameHandler=custom
 
 [SiteSettings]
-DefaultAccess=site
+DefaultAccess=behat_site
 SiteList[]
-SiteList[]=site
-SiteList[]=legacy_admin
+SiteList[]=behat_site
+SiteList[]=behat_site_legacy_admin
 RootNodeDepth=1
 
 [UserSettings]
@@ -52,8 +52,11 @@ LogoutRedirect=/
 [SiteAccessSettings]
 CheckValidity=false
 AvailableSiteAccessList[]
-AvailableSiteAccessList[]=site
-AvailableSiteAccessList[]=legacy_admin
+AvailableSiteAccessList[]=behat_site
+AvailableSiteAccessList[]=behat_site_legacy_admin
+RelatedSiteAccessList[]
+RelatedSiteAccessList[]=behat_site
+RelatedSiteAccessList[]=behat_site_legacy_admin
 MatchOrder=uri
 HostMatchMapItems[]
 
@@ -86,5 +89,3 @@ DebugRedirection=disabled
 DevelopmentMode=disabled
 ShowUsedTemplates=disabled
 Debug=disabled
-
-*/ ?>

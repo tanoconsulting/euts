@@ -2,4 +2,3 @@
 
 [TagSettings]
 TagPresets[mini]=Simple formatting
-*/ ?>

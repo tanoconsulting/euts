@@ -6,4 +6,3 @@ DashboardBlocks[]=pending_list
 DashboardBlocks[]=drafts
 DashboardBlocks[]=latest_content
 DashboardBlocks[]=all_latest_content
-*/ ?>

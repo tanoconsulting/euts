@@ -2,4 +2,3 @@
 
 [EditorSettings]
 SkinVariant=silver
-*/ ?>

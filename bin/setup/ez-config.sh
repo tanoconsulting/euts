@@ -6,6 +6,7 @@
 
 # @todo check if all required vars have a value
 # @todo replace this with a php script? It is starting to be a mess...
+# @todo make this work when SF env to run tests on is not 'behat'
 
 set -e
 
@@ -150,7 +151,7 @@ if [ "${EZ_VERSION}" = "ezpublish-community" -o "${INSTALL_LEGACY_BRIDGE}" = tru
     fi
 
 # @todo test that this works with CP
-    "${STACK_DIR}/bin/sfconsole.sh ezpublish:legacybundles:install_extensions" --force
+    "${STACK_DIR}/bin/sfconsole.sh" ezpublish:legacybundles:install_extensions --force
 
     # If top-level project is an extension, symlink it
     # We use the same test as LegacyBundleInstallCommand
@@ -177,11 +178,8 @@ if [ "${EZ_VERSION}" = "ezpublish-community" -o "${INSTALL_LEGACY_BRIDGE}" = tru
     fi
 
     # Set up minimal legacy settings
-    if [ -d vendor/ezsystems/legacy-bridge/bundle/Resources/init_ini ]; then
-        cp -r vendor/ezsystems/legacy-bridge/bundle/Resources/init_ini/* vendor/ezsystems/ezpublish_legacy/settings/
-    else
-        cp -r ${STACK_DIR}/config/ezpublish-legacy/init_ini/* vendor/ezsystems/ezpublish_legacy/settings/
-    fi
+    # Note: these are slightly different from the ones coming with the stock Legacy Bridge...
+    cp -r ${STACK_DIR}/config/ezpublish-legacy/init_ini/* vendor/ezsystems/ezpublish-legacy/settings/
 
     # Enable legacy extensions
     for EXTENSION in ${EZ_LEGACY_EXTENSIONS}; do
@@ -203,3 +201,5 @@ if [ "${EZ_VERSION}" = "ezplatform" -o "${EZ_VERSION}" = "ezplatform2" ]; then
 elif [ "${EZ_VERSION}" = "ezplatform3" ]; then
     sed -i 's/"vendor\/ezsystems\/ezpublish-community\/ezpublish"/"vendor\/ezsystems\/ezplatform\/src"/' phpunit.xml.dist
 fi
+
+echo Done

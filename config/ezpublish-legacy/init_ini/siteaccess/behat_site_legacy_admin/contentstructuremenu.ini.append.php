@@ -4,5 +4,3 @@
 Dynamic=enabled
 ShowClasses[]=frontpage
 ShowClasses[]=blog
-
-*/ ?>

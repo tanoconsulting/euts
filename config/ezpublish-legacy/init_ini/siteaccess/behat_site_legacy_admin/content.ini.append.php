@@ -3,5 +3,3 @@
 [VersionView]
 AvailableSiteDesignList[]
 AvailableSiteDesignList[]=site
-
-*/ ?>

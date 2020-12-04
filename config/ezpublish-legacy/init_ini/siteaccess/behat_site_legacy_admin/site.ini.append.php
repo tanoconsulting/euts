@@ -6,9 +6,6 @@ LoginPage=custom
 
 [SiteAccessSettings]
 RequireUserLogin=true
-RelatedSiteAccessList[]
-RelatedSiteAccessList[]=site
-RelatedSiteAccessList[]=legacy_admin
 ShowHiddenNodes=true
 
 [DesignSettings]
@@ -29,4 +26,3 @@ TextTranslation=disabled
 [ContentSettings]
 CachedViewPreferences[full]=admin_navigation_content=1;admin_children_viewmode=list;admin_list_limit=1
 TranslationList=
-*/ ?>

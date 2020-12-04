@@ -23,4 +23,3 @@ Tool[]=admin_bookmarks
 Tool[]
 Tool[]=admin_clear_cache
 Tool[]=admin_quick_settings
-*/ ?>

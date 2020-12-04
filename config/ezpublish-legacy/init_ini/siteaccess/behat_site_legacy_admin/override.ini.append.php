@@ -35,4 +35,3 @@ Source=node/view/embed-inline.tpl
 MatchFile=embed-inline_image.tpl
 Subdir=templates
 Match[class_identifier]=image
-*/ ?>
