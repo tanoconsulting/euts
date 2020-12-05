@@ -5,6 +5,7 @@ PHP_VERSION=$1
 DEBIAN_VERSION=$(lsb_release -s -c)
 
 if [ "${DEBIAN_VERSION}" = jessie ]; then
+    # @todo check if freexian will ever provide freely available php packages for Jessie as alternative...
     echo "ERROR: we currently do not support custom php versions on Debian Jessie"
     exit 1
 fi
