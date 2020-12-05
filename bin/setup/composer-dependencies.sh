@@ -11,7 +11,7 @@
 set -e
 
 # Avoid spending time on composer if install will later fail
-if [ ! -d "vendor" ]; then
+if [ ! -d "vendor" -a -L "vendor" ]; then
     printf "\n\e[31mERROR:\e[0m vendor folder is not a symlink\n\n"
     exit 1
 fi
