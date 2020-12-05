@@ -293,6 +293,7 @@ setup_app() {
     wait_for_bootstrap all || exit $?
 
     echo "[$(date)] Setting up the Application..."
+    docker exec "${WEB_CONTAINER}" /root/boot/symlinkvendors.sh
     docker exec "${WEB_CONTAINER}" su "${WEB_USER}" -c "cd /home/test/bundle && ../teststack/bin/setup.sh; echo \$? > /home/test/setup_ok"
 
     # @bug WEB_CONTAINER is not defined in subshell ?
