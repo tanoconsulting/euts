@@ -7,6 +7,8 @@ Version 0.2
 
 * move to using 'slim' versions of Debian Docker images to save space
 
+* environment variables `http_proxy`, `https_proxy` and `COMPOSER_AUTH` are now exported to the test container
+
 * fix cleaning up eZ caches and logs
 
 * small improvements in error handling
