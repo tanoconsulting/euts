@@ -1,9 +1,11 @@
 Version 0.2
 ===========
 
-* small improvements in error handling
-
 * added support for installing (and automatically setting up) the Legacy Bridge as test dependency
+
+* moved to using 'slim' versions of Debian Docker images to save space
+
+* small improvements in error handling
 
 Version 0.1
 ===========
