@@ -29,6 +29,9 @@ if [ -f /var/run/bootstrap_ok ]; then
     rm /var/run/bootstrap_ok
 fi
 
+# @todo in case this container was not built using our custom dockerfile but is a plain Debian one, we should run all
+#       build actions at boot (and save the results in /var/build_ok)
+
 # Fix UID & GID for user 'test'
 
 echo "[$(date)] Fixing filesystem permissions..."
@@ -76,7 +79,7 @@ trap clean_up TERM
 
 if [ "${TESTSTACK_SETUP_APP_ON_BOOT}" != 'skip' ]; then
 
-    # @todo why not move handling of the 'vendor' symlink to a dedicated shell script ?
+    # @todo handling of the 'vendor' symlink is complex enough to be moved to a dedicated shell script
 
     # WAS: we hash the name of the vendor folder based on packages to install. This allows quick swaps of vendors
     #if [ -z "${TESTSTACK_VENDOR_DIR}" ]; then
@@ -88,7 +91,7 @@ if [ "${TESTSTACK_SETUP_APP_ON_BOOT}" != 'skip' ]; then
     #fi
     TESTSTACK_VENDOR_DIR="vendor_${TESTSTACK_PROJECT_NAME}"
 
-    # we assume that /home/test/bundle/vendor is never a file...
+    # @todo we assume that /home/test/bundle/vendor is never a file...
 
     if [ -d "${CONTAINER_USER_HOME}/bundle/vendor" -a ! -L "${CONTAINER_USER_HOME}/bundle/vendor" ]; then
         printf "\n\e[33mWARNING:\e[0m vendor folder is not a symlink\n\n"
@@ -105,24 +108,23 @@ if [ "${TESTSTACK_SETUP_APP_ON_BOOT}" != 'skip' ]; then
         # The double-symlink craze makes it possible to have the 'vendor' symlink on the host disk (mounted as volume),
         # while allowing each container to have it point to a different target 'real' vendor dir which is also on the
         # host disk
+
+        # @todo what if local_vendor exists and is a dir or file ?
+        if [ -L "${CONTAINER_USER_HOME}/local_vendor" ]; then
+            rm "${CONTAINER_USER_HOME}/local_vendor"
+        fi
+        ln -s "${CONTAINER_USER_HOME}/bundle/${TESTSTACK_VENDOR_DIR}" "${CONTAINER_USER_HOME}/local_vendor"
+
         if [ -L "${CONTAINER_USER_HOME}/bundle/vendor" ]; then
             TARGET=$(readlink -f "${CONTAINER_USER_HOME}/bundle/vendor")
             if [ "${TARGET}" != "${CONTAINER_USER_HOME}/bundle/${TESTSTACK_VENDOR_DIR}" ]; then
                 echo "[$(date)] Fixing vendor folder symlink from ${TARGET} to ${CONTAINER_USER_HOME}/bundle/${TESTSTACK_VENDOR_DIR}..."
                 rm "${CONTAINER_USER_HOME}/bundle/vendor"
-                if [ -L "${CONTAINER_USER_HOME}/local_vendor" ]; then
-                    rm "${CONTAINER_USER_HOME}/local_vendor"
-                fi
-                ln -s "${CONTAINER_USER_HOME}/bundle/${TESTSTACK_VENDOR_DIR}" "${CONTAINER_USER_HOME}/local_vendor"
                 ln -s "${CONTAINER_USER_HOME}/local_vendor" "${CONTAINER_USER_HOME}/bundle/vendor"
                 if [ -f "${CONTAINER_USER_HOME}/setup_ok" ]; then rm "${CONTAINER_USER_HOME}/setup_ok"; fi
             fi
         else
             echo "[$(date)] Creating vendor folder symlink to ${TESTSTACK_VENDOR_DIR}..."
-            if [ -L "${CONTAINER_USER_HOME}/local_vendor" ]; then
-                rm "${CONTAINER_USER_HOME}/local_vendor"
-            fi
-            ln -s "${CONTAINER_USER_HOME}/bundle/${TESTSTACK_VENDOR_DIR}" "${CONTAINER_USER_HOME}/local_vendor"
             ln -s "${CONTAINER_USER_HOME}/local_vendor" "${CONTAINER_USER_HOME}/bundle/vendor"
             if [ -f "${CONTAINER_USER_HOME}/setup_ok" ]; then rm "${CONTAINER_USER_HOME}/setup_ok"; fi
         fi
