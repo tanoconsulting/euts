@@ -180,6 +180,9 @@ if [ "${EZ_VERSION}" = "ezpublish-community" -o "${INSTALL_LEGACY_BRIDGE}" = tru
     # Set up minimal legacy settings
     # Note: these are slightly different from the ones coming with the stock Legacy Bridge...
     cp -r ${STACK_DIR}/config/ezpublish-legacy/init_ini/* vendor/ezsystems/ezpublish-legacy/settings/
+    if [ "${INSTALL_LEGACY_BRIDGE}" = true ]; then
+        sed -i "/#Charset=utf8mb4#/Charset=utf8mb4/" vendor/ezsystems/ezpublish-legacy/settings/override/site.ini.append.php
+    fi
 
     # Enable legacy extensions
     for EXTENSION in ${EZ_LEGACY_EXTENSIONS}; do

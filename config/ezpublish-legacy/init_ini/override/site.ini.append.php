@@ -1,10 +1,11 @@
 <?php /* #?ini charset="utf-8"?
 
 [DatabaseSettings]
-Charset=utf8mb4
+# This is to be enabled only with the Legacy Bridge - not when running eZPublish-Community
+#Charset=utf8mb4#
 
 [FileSettings]
-VarDir=var/site
+VarDir=var/behat_site
 
 [ExtensionSettings]
 ActiveExtensions[]
