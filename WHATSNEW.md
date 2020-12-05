@@ -1,3 +1,8 @@
+Version 0.3.1
+=============
+
+* fix: setup.sh failed on eZPlatform installs without the Legacy Bridge (bug introduced in 0.2)
+
 Version 0.3
 ===========
 
