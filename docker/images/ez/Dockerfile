@@ -17,10 +17,11 @@ RUN if [ "${debian_mirror}" != "none" ]; then printf "deb ${debian_mirror} ${deb
 # -----------------------------------------------------------------------------
 RUN if [ "${timezone}" != "none" ]; then echo "${timezone}" > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata; fi
 
+# Update the preinstalled packages
 # -----------------------------------------------------------------------------
 RUN if [ "${do_update_os}" != "false" ]; then apt-get update && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y; fi
 
-# Required packages
+# Install the required packages
 # -----------------------------------------------------------------------------
 # depending on Debian version, the package list will be different
 COPY getpackages.sh getphp_sury.sh getphp_default.sh /root/
@@ -28,7 +29,7 @@ RUN mkdir -p /usr/share/man/man1; \
     chmod 755 /root/getpackages.sh; chmod 755 /root/getphp_default.sh; chmod 755 /root/getphp_sury.sh; \
     cd /root && ./getpackages.sh "${php_version}"
 
-# Install Composer (a more recent version than the Debian one)
+# Install Composer (a more recent version than the stock one from Debian)
 # -----------------------------------------------------------------------------
 COPY getcomposer.sh /root/
 RUN apt-get remove -y composer || echo An error on the line above is ok; \
@@ -37,7 +38,7 @@ RUN apt-get remove -y composer || echo An error on the line above is ok; \
     mv /usr/local/bin/composer.phar /usr/local/bin/composer && \
     chmod 755 /usr/local/bin/composer
 
-# Local user
+# Create the local user account
 # -----------------------------------------------------------------------------
 COPY createuser.sh /root/
 RUN chmod 755 /root/createuser.sh; \
@@ -48,6 +49,7 @@ RUN chmod 755 /root/createuser.sh; \
 # Shrink image: clear archives in apt cache folder
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# @todo should we move these two commands to the top of the dockerfile to increase shareability ?
 COPY entrypoint.sh /root/entrypoint.sh
 RUN chmod 755 /root/entrypoint.sh
 
