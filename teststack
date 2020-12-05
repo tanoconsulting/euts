@@ -258,6 +258,11 @@ dotenv() {
     set -a
         . "${1}"
     set +a
+
+    # BC with versions 0.1 - 0.2
+    if [ -z "${COMPOSE_PROJECT_NAME}" -a -n "${TESTSTACK_PROJECT_NAME}" ]; then
+        export COMPOSE_PROJECT_NAME="${TESTSTACK_PROJECT_NAME}"
+    fi
 }
 
 load_config() {
@@ -442,7 +447,7 @@ cd $(dirname -- ${BASH_SOURCE[0]})/docker
 
 # Since the line below relies on knowing the contents of the yml file anyway, let's be more efficient...
 #WEB_CONTAINER=$(${DOCKER_TESTSTACK_QUIET} config | grep 'container_name: .*_ez$' | sed -e 's/ \+container_name: \+//g')
-WEB_CONTAINER=${TESTSTACK_PROJECT_NAME:-euts}_ez
+WEB_CONTAINER=${COMPOSE_PROJECT_NAME:-euts}_ez
 
 case "${COMMAND}" in
     build)

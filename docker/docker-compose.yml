@@ -3,7 +3,7 @@ version: '3'
 services:
 
     ez:
-        image: ${TESTSTACK_PROJECT_NAME:-euts}_ez
+        image: ${COMPOSE_PROJECT_NAME:-euts}_ez
         build:
             context: images/ez
             args:
@@ -11,10 +11,10 @@ services:
                 debian_version: ${TESTSTACK_DEBIAN_VERSION:-buster}
                 do_update_os: ${TESTSTACK_UPDATE_OS_ON_BUILD:-true}
                 php_version: ${TESTSTACK_PHP_VERSION:-default}
-                project_name: ${TESTSTACK_PROJECT_NAME:-euts}
+                project_name: ${COMPOSE_PROJECT_NAME:-euts}
                 timezone: ${TESTSTACK_TZ:-none}
         hostname: ez
-        container_name: ${TESTSTACK_PROJECT_NAME:-euts}_ez
+        container_name: ${COMPOSE_PROJECT_NAME:-euts}_ez
         environment:
             ## Configuration used by the boot/setup scripts
             - COMPOSER_AUTH
@@ -22,7 +22,7 @@ services:
             - CONTAINER_USER_GID=${CONTAINER_USER_GID:-1000}
             - http_proxy
             - https_proxy
-            - TESTSTACK_PROJECT_NAME
+            - COMPOSE_PROJECT_NAME
             - TESTSTACK_SETUP_APP_ON_BOOT
             ## Database configuration
             - DB_TYPE=${DB_TYPE:-mysql}

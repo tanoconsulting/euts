@@ -1,3 +1,10 @@
+Version 0.3 (unreleased)
+========================
+
+* fix: make it possible to run multiple copies of the stack in parallel.
+  In order to achieve this, env var TESTSTACK_PROJECT_NAME has been replaced with COMPOSE_PROJECT_NAME in config file .euts.env.
+  In order to retain Backwards Compatibility, the old variable name is still accepted if the new one is not used.
+
 Version 0.2
 ===========
 

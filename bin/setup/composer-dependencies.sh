@@ -3,7 +3,7 @@
 # Install dependencies using Composer
 # We do not rely on the requirements set in composer.json, but install a different eZ version depending on the test matrix (env vars)
 #
-# Uses env vars: EZ_COMPOSER_LOCK, EZ_PACKAGES, TESTSTACK_PROJECT_NAME, TRAVIS
+# Uses env vars: EZ_COMPOSER_LOCK, EZ_PACKAGES, COMPOSE_PROJECT_NAME, TRAVIS
 
 # @todo generate and echo a hash which can be used to determine in the future if we need to run composer again (as it
 #       would install different packages compared to the ones installed currently)
@@ -29,8 +29,8 @@ if [ -n "${EZ_COMPOSER_LOCK}" ]; then
 else
     echo "Installing packages via Composer: the ones in composer.json plus ${EZ_PACKAGES}..."
 
-    if [ -n "${TESTSTACK_PROJECT_NAME}" ]; then
-        export COMPOSER="composer_${TESTSTACK_PROJECT_NAME}.json"
+    if [ -n "${COMPOSE_PROJECT_NAME}" ]; then
+        export COMPOSER="composer_${COMPOSE_PROJECT_NAME}.json"
         cp composer.json ${COMPOSER}
     fi
     # we split require from update to (hopefully) save some ram

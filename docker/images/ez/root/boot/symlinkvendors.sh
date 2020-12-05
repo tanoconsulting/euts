@@ -11,7 +11,7 @@ CONTAINER_USER_HOME=$(echo "$ORIGPASSWD" | cut -f6 -d:)
 #    # @todo to avoid generating uselessly different variations, we should as well sort EZ_PACKAGES
 #    TESTSTACK_VENDOR_DIR=vendor_$(echo "${P_V} ${EZ_PACKAGES}" | md5sum | awk  '{print $1}')
 #fi
-TESTSTACK_VENDOR_DIR="vendor_${TESTSTACK_PROJECT_NAME}"
+TESTSTACK_VENDOR_DIR="vendor_${COMPOSE_PROJECT_NAME}"
 
 # @todo we assume that /home/test/bundle/vendor is never a file...
 
