@@ -41,7 +41,7 @@ Installation
 
 To install in the `teststack` directory:
 
-    git clone --depth 1 --branch 0.1.0 https://github.com/tanoconsulting/euts.git teststack
+    git clone --depth 1 --branch 0.2.0 https://github.com/tanoconsulting/euts.git teststack
 
 Note that you can use any other name for the folder where this tool will be installed - but so far it has only been
 tested running from within the top-level project folder.
@@ -155,7 +155,9 @@ Troubleshooting
 
           "roave/security-advisories": "dev-disablechecks as dev-master"
 
-* If you get an error 'Could not authenticate against github.com', you can set in the .euts.env file
+* If you get an error 'Could not authenticate against github.com', you can set in the .euts.env file something like:
+
+      COMPOSER_AUTH='{"github-oauth": {"github.com": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"}}'
 
 How It Works
 ------------
@@ -260,9 +262,9 @@ Q: When I run `teststack start`, there is a long wait while the script says only
 
 A: sure. Start a second shell, go to the project's folder and run `./teststack/teststack logs ez`
 
-Q: Do you konw of any bundles do make use of this one for testing, so that I can explore how they do it?
+Q: Do you know of any bundles do make use of this one for testing, so that I can explore how they do it?
 
-A: sure! At least the following ones: https://github.com/kaliop/ezobjectwrapper, https://github.com/kaliop-uk/ezmigrationbundle
+A: sure. At least the following ones: https://github.com/kaliop/ezobjectwrapper, https://github.com/kaliop-uk/ezmigrationbundle
 
 Q: Are there other projects that you know of that have similar goals as this package?
 
