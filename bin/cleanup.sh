@@ -22,12 +22,15 @@ elif [ "${EZ_VERSION}" = "ezpublish-community" ]; then
     if [ -z "${VAR_DIR}" ]; then
         VAR_DIR=vendor/ezsystems/ezpublish-community/ezpublish
     fi
-    if [ -z "${LEGACY_VAR_DIR}" ]; then
-        LEGACY_VAR_DIR=vendor/ezsystems/ezpublish-community-legacy/var
-    fi
 else
     printf "\n\e[31mERROR:\e[0m unsupported eZ version '${EZ_VERSION}'\n\n" >&2
     exit 1
+fi
+
+if [ -z "${LEGACY_VAR_DIR}" ]; then
+    if [ -d vendor/ezsystems/ezpublish-legacy/var ]; then
+        LEGACY_VAR_DIR=vendor/ezsystems/ezpublish-legacy/var
+    fi
 fi
 
 case "${1}" in

@@ -35,6 +35,7 @@ if [ "${RESET}" = true ]; then
     # Some manipulations make the SF console fail to run - that's why we prefer to clear the cache via file purge
     #$(dirname -- ${BASH_SOURCE[0]})/sfconsole.sh ${VERBOSITY} cache:clear
     $(dirname -- ${BASH_SOURCE[0]})/cleanup.sh ez-cache
+    $(dirname -- ${BASH_SOURCE[0]})/cleanup.sh ez-logs
     echo "Running the tests..."
 fi
 
