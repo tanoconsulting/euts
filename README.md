@@ -168,8 +168,8 @@ How It Works
         - vendor_xxx
             - ezsystems
                 - ezplatform (for eZPlatform)
-                - ezpublish-community (for eZPublishPlatform)
-                - ezpublish-legacy (for eZPublishPlatform or eZPlatform with LegacyBrdige)
+                - ezpublish-community (for eZPublish-Community)
+                - ezpublish-legacy (for eZPublish-Community or eZPlatform with LegacyBrdige)
                 - ...
             - ... (other dependencies)
         - ... (your bundle code)

@@ -1,11 +1,17 @@
 Version 0.2
 ===========
 
-* added support for installing (and automatically setting up) the Legacy Bridge as test dependency
+* add support for installing (and automatically setting up) the Legacy Bridge as test dependency
 
-* moved to using 'slim' versions of Debian Docker images to save space
+* also, set up legacy siteaccesses configuration when running eZPublish-Community
+
+* move to using 'slim' versions of Debian Docker images to save space
+
+* fix cleaning up eZ caches and logs
 
 * small improvements in error handling
+
+* more verbose messages during build, bootstrap, app setup
 
 Version 0.1
 ===========
