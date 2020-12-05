@@ -2,9 +2,11 @@ ARG postgresql_version=9.5
 
 FROM postgres:${postgresql_version}
 LABEL postgresql.version=${postgresql_version}
+LABEL com.tanoconsulting.euts.project_name=${project_name}
 
 ARG do_shrink_container=true
 ARG do_update_os=true
+ARG project_name=euts
 ARG timezone=none
 
 # Configure timezone

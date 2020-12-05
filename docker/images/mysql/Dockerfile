@@ -2,9 +2,11 @@ ARG mysql_version=5.6
 
 FROM mysql:${mysql_version}
 LABEL mysql.version=${mysql_version}
+LABEL com.tanoconsulting.euts.project_name=${project_name}
 
 ARG do_shrink_container=true
 ARG do_update_os=true
+ARG project_name=euts
 ARG timezone=none
 
 # Configure timezone

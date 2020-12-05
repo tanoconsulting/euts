@@ -3,14 +3,16 @@ version: '3'
 services:
 
     ez:
+        image: ${TESTSTACK_PROJECT_NAME:-euts}_ez
         build:
             context: images/ez
             args:
                 debian_mirror: ${TESTSTACK_DEBIAN_MIRROR:-none}
                 debian_version: ${TESTSTACK_DEBIAN_VERSION:-buster}
-                php_version: ${TESTSTACK_PHP_VERSION:-default}
-                timezone: ${TESTSTACK_TZ:-none}
                 do_update_os: ${TESTSTACK_UPDATE_OS_ON_BUILD:-true}
+                php_version: ${TESTSTACK_PHP_VERSION:-default}
+                project_name: ${TESTSTACK_PROJECT_NAME:-euts}
+                timezone: ${TESTSTACK_TZ:-none}
         hostname: ez
         container_name: ${TESTSTACK_PROJECT_NAME:-euts}_ez
         environment:

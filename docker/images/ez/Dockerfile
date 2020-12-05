@@ -1,11 +1,15 @@
 ARG debian_version=buster
 
 FROM debian:${debian_version}-slim
+LABEL php_version.version=${php_version}
+LABEL com.tanoconsulting.euts.project_name=${project_name}
 
 ARG debian_mirror=none
 ARG debian_version=buster
-ARG php_version=default
+ARG do_shrink_container=true
 ARG do_update_os=true
+ARG php_version=default
+ARG project_name=euts
 ARG timezone=none
 
 # Set up debian mirror
@@ -42,10 +46,9 @@ RUN apt-get remove -y composer || echo An error on the line above is ok; \
 # -----------------------------------------------------------------------------
 RUN /root/build/createuser.sh
 
+# Clear archives in apt cache folder to slim down the image
 # -----------------------------------------------------------------------------
-
-# Shrink image: clear archives in apt cache folder
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN if [ "${do_shrink_container}" != "false" ]; then apt-get clean && rm -rf /var/lib/apt/lists/*; fi
 
 # @todo should we move these two commands to the top of the dockerfile to increase layer shareability ?
 COPY root/boot/*.sh /root/boot/
