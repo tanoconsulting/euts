@@ -58,7 +58,7 @@ Commands:
     unpause [\$svc]    unpause the containers
 
 Options:
-    -e FILE           name of an environment file to use instead of .env (has to be used for 'start', not for 'exec' or 'enter').
+    -e FILE           name of an environment file to use instead of .euts.env (has to be used for 'start', not for 'exec' or 'enter').
                       Path relative to the docker folder.
                       The env var TESTSTACK_CONFIG_FILE can also be used as an alternative to this option.
     -h                print help
