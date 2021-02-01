@@ -112,9 +112,7 @@ elif [ "${EZ_VERSION}" = "ezplatform" -o "${EZ_VERSION}" = "ezplatform2" ]; then
 
 elif [ "${EZ_VERSION}" = "ezplatform3" ]; then
 
-    # @todo for ezplatform3, use the appropriate script instead of looking for an SQL file
-    #php vendor/ezsystems/ezplatform/bin/console ezplatform:install
-    :
+    php vendor/ezsystems/ezplatform/bin/console ezplatform:install clean --skip-indexing
 
 fi
 
