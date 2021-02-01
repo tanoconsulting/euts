@@ -11,7 +11,7 @@
 
 # Figure out EZ_VERSION if required
 if [ -z "${EZ_VERSION}" ]; then
-    EZ_VERSION=$(composer show | grep ezsystems/ezpublish-kernel)
+    EZ_VERSION=$(composer show | grep ezsystems/ezpublish-kernel || true)
     if [ -n "${EZ_VERSION}" ]; then
         if [[ "${EZ_VERSION}" == *" v7."* ]]; then
             export EZ_VERSION=ezplatform2
@@ -23,7 +23,7 @@ if [ -z "${EZ_VERSION}" ]; then
             fi
         fi
     else
-        EZ_VERSION=$(composer show | grep ezsystems/ezplatform-kernel)
+        EZ_VERSION=$(composer show | grep ezsystems/ezplatform-kernel || true)
         if [ -n "${EZ_VERSION}" ]; then
             export EZ_VERSION=ezplatform3
         fi
@@ -39,7 +39,7 @@ if [ "${EZ_VERSION}" = "ezplatform3" ]; then
         export KERNEL_CLASS=Kernel
     fi
     if [ -z "${KERNEL_DIR}" ]; then
-        export KERNEL_DIR=vendor/ezsystems/ezplatform/app
+        export KERNEL_DIR=vendor/ezsystems/ezplatform/src
     fi
 elif [ "${EZ_VERSION}" = "ezplatform2" ]; then
     if [ -z "${KERNEL_CLASS}" ]; then

@@ -85,8 +85,9 @@ esac
 if [ "${EZ_VERSION}" = "ezpublish-community" ]; then
     ${EZ_DB_COMMAND} < vendor/ezsystems/ezpublish-legacy/kernel/sql/${DB_TYPE}/kernel_schema.sql
     ${EZ_DB_COMMAND} < vendor/ezsystems/ezpublish-legacy/kernel/sql/common/cleandata.sql
-elif [ "${EZ_VERSION}" = "ezplatform" -o "${EZ_VERSION}" = "ezplatform2" -o "${EZ_VERSION}" = "ezplatform3" ]; then
-    # @todo for ezplatform3, use the appropriate script instead of looking for an SQL file
+
+elif [ "${EZ_VERSION}" = "ezplatform" -o "${EZ_VERSION}" = "ezplatform2" ]; then
+
     case "${DB_TYPE}" in
         mysql)
             ${EZ_DB_COMMAND} < vendor/ezsystems/ezpublish-kernel/data/${DB_TYPE}/schema.sql
@@ -108,6 +109,13 @@ elif [ "${EZ_VERSION}" = "ezplatform" -o "${EZ_VERSION}" = "ezplatform2" -o "${E
 
     # work around bug https://jira.ez.no/browse/EZP-31586: the db schema delivered in kernel 7.5.7 does not contain _all_ columns!
     [[ $(composer show | grep ezsystems/ezpublish-kernel | grep -F -q 7.5.7) ]] && ${EZ_DB_COMMAND} < vendor/ezsystems/ezpublish-kernel/data/update/${DB_TYPE}/dbupdate-7.5.4-to-7.5.5.sql
+
+elif [ "${EZ_VERSION}" = "ezplatform3" ]; then
+
+    # @todo for ezplatform3, use the appropriate script instead of looking for an SQL file
+    #php vendor/ezsystems/ezplatform/bin/console ezplatform:install
+    :
+
 fi
 
 # @todo do not automatically load the eztags schema, but let the test executor tell us which extra sql files to load
