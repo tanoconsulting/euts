@@ -18,6 +18,8 @@ parameters:
     # Fix for: 'Incompatible use of dynamic environment variables "SESSION_HANDLER_ID" found in parameters.'
     ezplatform.session.handler_id: 'session.handler.native_file'
 
+    ezplatform.behat.enable_enterprise_services: false
+
 doctrine:
     dbal:
         server_version: '5.6'

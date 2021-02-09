@@ -58,8 +58,9 @@ if [ -f "${STACK_DIR}/config/${EZ_VERSION}/ezpublish_behat.yml" ]; then
     grep -q 'ezpublish_behat_orig.yml' "${CONFIG_DIR}/ezpublish_behat.yml" || mv "${CONFIG_DIR}/ezpublish_behat.yml" "${CONFIG_DIR}/ezpublish_behat_orig.yml"
     cp "${STACK_DIR}/config/${EZ_VERSION}/ezpublish_behat.yml" "${CONFIG_DIR}/ezpublish_behat.yml"
 fi
+# only for ezplatform3
 if [ -f "${STACK_DIR}/config/${EZ_VERSION}/ezplatform.yml" ]; then
-    mv "${CONFIG_DIR}/packages/behat/ezplatform.yaml" "${CONFIG_DIR}/packages/behat/ezplatform_orig.yaml"
+    grep -q 'ezplatform_orig.yml' "${CONFIG_DIR}/packages/behat/ezplatform.yaml" || mv "${CONFIG_DIR}/packages/behat/ezplatform.yaml" "${CONFIG_DIR}/packages/behat/ezplatform_orig.yaml"
     cp "${STACK_DIR}/config/${EZ_VERSION}/ezplatform.yml" "${CONFIG_DIR}/packages/behat/ezplatform.yaml"
 fi
 
@@ -86,9 +87,16 @@ for BUNDLE in ${EZ_BUNDLES}; do
     else
         ARG=
     fi
-    if ! fgrep -q "new ${BUNDLE}(${ARG})" "${KERNEL_DIR}/${KERNEL_CLASS}.php"; then
-        BUNDLE=${BUNDLE//\\/\\\\}
-        sed -i "/${LAST_BUNDLE}()/i new ${BUNDLE}(${ARG})," "${KERNEL_DIR}/${KERNEL_CLASS}.php"
+    if [ -f "${CONFIG_DIR}/bundles.php" ]; then
+        if ! fgrep -q "${BUNDLE}::class  => ['all' => true]," "${CONFIG_DIR}/bundles.php"; then
+            BUNDLE=${BUNDLE//\\/\\\\}
+            sed -i "/${LAST_BUNDLE}::class  => ['all' => true],/i new ${BUNDLE}::class  => ['all' => true]," "${CONFIG_DIR}/bundles.php"
+        fi
+    else
+        if ! fgrep -q "new ${BUNDLE}(${ARG})" "${KERNEL_DIR}/${KERNEL_CLASS}.php"; then
+            BUNDLE=${BUNDLE//\\/\\\\}
+            sed -i "/${LAST_BUNDLE}()/i new ${BUNDLE}(${ARG})," "${KERNEL_DIR}/${KERNEL_CLASS}.php"
+        fi
     fi
 done
 
@@ -109,13 +117,18 @@ if [ -f "${CONFIG_DIR}/config.yml" ]; then
     sed -i "s#'%kernel.root_dir%/../vendor/ezsystems/ezplatform-admin-ui-modules/src#'%kernel.root_dir%/../../ezplatform-admin-ui-modules/src#" ${CONFIG_DIR}/config.yml
 fi
 if [ -f "${CONFIG_DIR}/packages/ezplatform_admin_ui.yaml" ]; then
-    sed -i "s#'%kernel.root_dir%/../vendor/ezsystems/ezplatform-admin-ui/src#'%kernel.root_dir%/../../ezplatform-admin-ui/src#" ${CONFIG_DIR}/packages/ezplatform_admin_ui.yaml
-    sed -i "s#'%kernel.root_dir%/../vendor/ezsystems/ezplatform-admin-ui/src/bundle/Resources/translations/#'%kernel.root_dir%/../../ezplatform-admin-ui/src/bundle/Resources/translations/#" ${CONFIG_DIR}/packages/ezplatform_admin_ui.yaml
+    sed -i "s#'%kernel.project_dir%/vendor/ezsystems/ezplatform-admin-ui/src#'%kernel.project_dir%/../ezplatform-admin-ui/src#" ${CONFIG_DIR}/packages/ezplatform_admin_ui.yaml
+    #sed -i "s#'%kernel.project_dir%/vendor/ezsystems/ezplatform-admin-ui/src/bundle/Resources/translations/#'%kernel.root_dir%/../../ezplatform-admin-ui/src/bundle/Resources/translations/#" ${CONFIG_DIR}/packages/ezplatform_admin_ui.yaml
 fi
-if [ -f "${CONFIG_DIR}/packages/ezplatform_admin_ui_modules.yaml" ]; then
-    sed -i "s#'%kernel.root_dir%/../vendor/ezsystems/ezplatform-admin-ui-modules/src#'%kernel.root_dir%/../../ezplatform-admin-ui-modules/src#" ${CONFIG_DIR}/packages/ezplatform_admin_ui_modules.yaml
-    sed -i "s#'%kernel.root_dir%/../vendor/ezsystems/ezplatform-admin-ui-modules/Resources/translations/#'%kernel.root_dir%/../../ezplatform-admin-ui-modules/Resources/translations/#" ${CONFIG_DIR}/packages/ezplatform_admin_ui_modules.yaml
-fi
+
+# @todo for ezpl3, fix as well:
+# - registration of services app/src of demo bundle stuff
+# - EzSystemsEzPlatformGraphQLExtension::PACKAGE_DIR_PATH or the derived ezplatform.graphql.schema.fields_definition_file, ezplatform.graphql.package.root_dir
+# - TranslationResourceFilesPass::getTranslationFiles (line 58) - or find out why the 3d param to translator.default service has not been replaced
+# - doctrine / dbal / url set in (???)
+# - create dir ./public
+# - hack behatbundle's file stages.yaml to disable EzSystems\Behat\Subscriber\PublishInTheFuture
+# - hack behat/ezplatform_orig.yml, comment out line ezplatform.behat.enable_enterprise_services: true - it seems that we can not override that param in our own behat/ezplatform.yml ?
 
 # Fix the eZ console autoload config if needed (ezplatform 2 and ezplatform 3)
 if [ -f "${APP_DIR}/bin/console" ]; then
@@ -197,10 +210,13 @@ if [ "${EZ_VERSION}" = "ezpublish-community" -o "${INSTALL_LEGACY_BRIDGE}" = tru
 fi
 
 # Fix the phpunit configuration if needed
+# @todo is this needed any more ? it is not in kaliop ezmigrationbundle's phpunit.xml.dist...
 if [ "${EZ_VERSION}" = "ezplatform" -o "${EZ_VERSION}" = "ezplatform2" ]; then
     sed -i 's/"vendor\/ezsystems\/ezpublish-community\/ezpublish"/"vendor\/ezsystems\/ezplatform\/app"/' phpunit.xml.dist
 elif [ "${EZ_VERSION}" = "ezplatform3" ]; then
     sed -i 's/"vendor\/ezsystems\/ezpublish-community\/ezpublish"/"vendor\/ezsystems\/ezplatform\/src"/' phpunit.xml.dist
 fi
+
+# @todo why is there a problem with vendor/ezsystems/ezplatform/config/services_behat.yaml ?
 
 echo Done

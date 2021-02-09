@@ -36,7 +36,7 @@ fi
 
 if [ "${EZ_VERSION}" = "ezplatform3" ]; then
     if [ -z "${KERNEL_CLASS}" ]; then
-        export KERNEL_CLASS=Kernel
+        export KERNEL_CLASS=App\\Kernel
     fi
     if [ -z "${KERNEL_DIR}" ]; then
         export KERNEL_DIR=vendor/ezsystems/ezplatform/src
