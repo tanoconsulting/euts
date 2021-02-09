@@ -37,7 +37,7 @@ fi
 
 # hopefully these bundles will stay there :-) it is important that they are loaded after the kernel ones...
 if [ "${EZ_VERSION}" = "ezplatform3" ]; then
-    LAST_BUNDLE=Overblog\GraphiQLBundle\OverblogGraphiQLBundle
+    LAST_BUNDLE='Lexik\\Bundle\\JWTAuthenticationBundle\\LexikJWTAuthenticationBundle'
 elif [ "${EZ_VERSION}" = "ezplatform" -o "${EZ_VERSION}" = "ezplatform2" ]; then
     LAST_BUNDLE=AppBundle
 else
@@ -90,7 +90,7 @@ for BUNDLE in ${EZ_BUNDLES}; do
     if [ -f "${CONFIG_DIR}/bundles.php" ]; then
         if ! fgrep -q "${BUNDLE}::class  => ['all' => true]," "${CONFIG_DIR}/bundles.php"; then
             BUNDLE=${BUNDLE//\\/\\\\}
-            sed -i "/${LAST_BUNDLE}::class  => ['all' => true],/i new ${BUNDLE}::class  => ['all' => true]," "${CONFIG_DIR}/bundles.php"
+            sed -i "/${LAST_BUNDLE}::class *=> *\[/i ${BUNDLE}::class => \['all' => true\]," "${CONFIG_DIR}/bundles.php"
         fi
     else
         if ! fgrep -q "new ${BUNDLE}(${ARG})" "${KERNEL_DIR}/${KERNEL_CLASS}.php"; then
