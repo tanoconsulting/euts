@@ -19,6 +19,7 @@ parameters:
     ezplatform.session.handler_id: 'session.handler.native_file'
 
     ezplatform.behat.enable_enterprise_services: false
+    ezpublish.kernel.root_dir: "%kernel.project_dir%/../../../vendor/ezsystems/ezplatform-kernel"
 
 doctrine:
     dbal:
