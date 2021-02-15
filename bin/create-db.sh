@@ -116,19 +116,23 @@ elif [ "${EZ_VERSION}" = "ezplatform3" ]; then
 
 fi
 
-# @todo do not automatically load the eztags schema, but let the test executor tell us which extra sql files to load
-if [ -f vendor/netgen/tagsbundle/Netgen/TagsBundle/Resources/sql/${DB_TYPE}/schema.sql ]; then
-    ${EZ_DB_COMMAND} < vendor/netgen/tagsbundle/Netgen/TagsBundle/Resources/sql/${DB_TYPE}/schema.sql
-else
-    if [ -f vendor/netgen/tagsbundle/bundle/Resources/sql/${DB_TYPE}/schema.sql ]; then
-        ${EZ_DB_COMMAND} < vendor/netgen/tagsbundle/bundle/Resources/sql/${DB_TYPE}/schema.sql
+if [ "${EZ_VERSION}" != "ezplatform3" ]; then
+
+    # @todo do not automatically load the eztags schema, but let the test executor tell us which extra sql files to load
+    if [ -f vendor/netgen/tagsbundle/Netgen/TagsBundle/Resources/sql/${DB_TYPE}/schema.sql ]; then
+        ${EZ_DB_COMMAND} < vendor/netgen/tagsbundle/Netgen/TagsBundle/Resources/sql/${DB_TYPE}/schema.sql
     else
-        if [ -f vendor/netgen/tagsbundle/Resources/sql/${DB_TYPE}/schema.sql ]; then
-            ${EZ_DB_COMMAND} < vendor/netgen/tagsbundle/Resources/sql/${DB_TYPE}/schema.sql
+        if [ -f vendor/netgen/tagsbundle/bundle/Resources/sql/${DB_TYPE}/schema.sql ]; then
+            ${EZ_DB_COMMAND} < vendor/netgen/tagsbundle/bundle/Resources/sql/${DB_TYPE}/schema.sql
         else
-            :
+            if [ -f vendor/netgen/tagsbundle/Resources/sql/${DB_TYPE}/schema.sql ]; then
+                ${EZ_DB_COMMAND} < vendor/netgen/tagsbundle/Resources/sql/${DB_TYPE}/schema.sql
+            else
+                :
+            fi
         fi
     fi
+
 fi
 
 echo Done

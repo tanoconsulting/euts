@@ -129,6 +129,7 @@ fi
 # - create dir ./public
 # - hack behatbundle's file stages.yaml to disable EzSystems\Behat\Subscriber\PublishInTheFuture
 # - hack behat/ezplatform_orig.yml, comment out line ezplatform.behat.enable_enterprise_services: true - it seems that we can not override that param in our own behat/ezplatform.yml ?
+# - hack InstallPlatformCommand.php, change $console = escapeshellarg('bin/console'); (or create bin/console symlink ?)
 
 # Fix the eZ console autoload config if needed (ezplatform 2 and ezplatform 3)
 if [ -f "${APP_DIR}/bin/console" ]; then
