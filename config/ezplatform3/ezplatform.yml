@@ -20,6 +20,7 @@ parameters:
 
     ezplatform.behat.enable_enterprise_services: false
     ezpublish.kernel.root_dir: "%kernel.project_dir%/../../../vendor/ezsystems/ezplatform-kernel"
+    ezrichtext.resources: '%kernel.project_dir%/../../../vendor/ezsystems/ezplatform-richtext/src/lib/eZ/RichText/Resources'
 
 doctrine:
     dbal:
