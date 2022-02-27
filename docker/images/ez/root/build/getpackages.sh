@@ -7,6 +7,7 @@
 # @todo move redis, memcached to dedicated, optional containers ? This allows running a user-specified version...
 # @todo install elasticache (or is it done by the eZ bundles?)
 # @todo allow optional install of custom packages
+# @todo in case this file is used outside of docker: check that os is debian/ubuntu before trying to install php
 
 PHP_VERSION=$1
 # `lsb-release` is not yet onboard...
@@ -45,4 +46,4 @@ else
         zip
 fi
 
-/getphp.sh
+/getphp.sh "${PHP_VERSION}"

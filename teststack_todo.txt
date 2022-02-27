@@ -1,12 +1,16 @@
 v3
 
+- make sure everything works on GHA
+
 - add GHA example next to Travis one
+
+- test using Bullseye as base distribution
 
 - allow easy install of LegacyBridge to test legacy extensions with eZPL 1 and 2 (eg. ezdbintegrity)
   - finish:
     - OK - test: do legacy extensions of bundles get enabled/symlinked ? (specify a dependency on such a bundle)
     - OK - same for legacy exts as depepdency (not a bundle)
-    - test: legacy exts inside top-level bundle (ezworkflowengineb.  <- needs GHA)
+    - test: legacy exts inside top-level bundle (ezworkflowengineb. <- needs GHA)
     - test: legacy ext as top-level bundle (ezdbi <- needs GHA)
     - test all of the above with a CP install too
   - OK do set up legacy-routing when setting up LBridge

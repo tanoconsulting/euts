@@ -42,6 +42,8 @@ fi
 
 ${BIN_DIR}/setup/php.sh
 
+# @todo download composer if it is missing
+
 ${BIN_DIR}/setup/php-config.sh
 
 ${BIN_DIR}/setup/composer-dependencies.sh
