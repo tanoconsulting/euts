@@ -64,7 +64,8 @@ else
         php${PHP_VERSION}-mbstring \
         php${PHP_VERSION}-mysql \
         php${PHP_VERSION}-pgsql \
-        php${PHP_VERSION}-xdebug
+        php${PHP_VERSION}-xdebug \
+        php${PHP_VERSION}-xml \
 
     update-alternatives --set php /usr/bin/php${PHP_VERSION}
 fi
