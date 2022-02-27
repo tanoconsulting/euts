@@ -50,12 +50,25 @@ ${BIN_DIR}/setup/composer-dependencies.sh
 
 if [ "${TRAVIS_PHP_VERSION}" = "5.6" ]; then
     # @todo should we not rely on the os version instead?
-    sudo systemctl start mysql
+    if [ "${DB_TYPE}" = mysql ]; then
+        sudo systemctl start mysql
+    fi
 fi
 
+# On GHA runners, the DB is stopped by default
 if [ -n "${GITHUB_ACTION}" ]; then
     # @todo we should also check the os version
-    sudo systemctl start mysql.service
+    case "${DB_TYPE}" in
+        mysql)
+            sudo systemctl start postgresql.service
+            ;;
+        postgresql)
+            sudo systemctl start mysql.service
+            ;;
+        *)
+            printf "\n\e[31mERROR:\e[0m unknown db type '${DB_TYPE}'\n\n" >&2
+            exit 1
+    esac
 fi
 
 # Create the database from sql files present in either the legacy stack or kernel (has to be run after composer install)
