@@ -41,7 +41,7 @@ if [ "${PHP_VERSION}" = default ]; then
         ${EXTRA_PACKAGES}
 else
     # On GHA runners ubuntu version, php 7.4 and 8.0, possibly more seem to be preinstalled.We remove them if found.
-    # NB: this takes quite some time to execute. Should we make this optional ? Or even, try to swap the default php
+    # NB: this takes quite some time to execute. Should we make this optional ? Or even, try to just swap the default php
     # version in use
     for PHP_CURRENT in $(dpkg -l | grep -E 'php.+-common' | awk '{print $2}'); do
         if [ "${PHP_CURRENT}" != "php${PHP_VERSION}-common" ]; then
