@@ -9,13 +9,13 @@ if [ "${PHPVER}" != "${PHP_VERSION}" ]; then
 
     if [ -f ./docker/images/ez/root/build/getphp.sh ]; then
         chmod 755 ./docker/images/ez/root/build/getphp.sh
-        ./docker/images/ez/root/build/getphp.sh
+        sudo ./docker/images/ez/root/build/getphp.sh
     else
         if [ -f /home/test/teststack/docker/images/ez/root/build/getphp.sh ]; then
             chmod 755 /home/test/teststack/docker/images/ez/root/build/getphp.sh
-            /home/test/teststack/docker/images/ez/root/build/getphp.sh
+            sudo /home/test/teststack/docker/images/ez/root/build/getphp.sh
         else
-            echo "Error: php version ${PHPVER} does not match required ${PHP_VERSION} and can not find script to set up php" >&2
+            printf "\n\e[31mERROR:\e[0m php version ${PHPVER} does not match required ${PHP_VERSION} and can not find script to set up php\n\n" >&2
             exit 1
         fi
     fi
