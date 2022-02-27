@@ -4,7 +4,7 @@
 # Has to be useable from Docker as well as from Travis.
 # Has to be run from the project (bundle) top dir.
 #
-# Uses env vars: TRAVIS_PHP_VERSION
+# Uses env vars: TRAVIS_PHP_VERSION, GITHUB_ACTION
 
 # @todo check if all required env vars have a value
 # @todo support a -v option
@@ -40,12 +40,20 @@ fi
 #    composer selfupdate
 #fi
 
+${BIN_DIR}/setup/php.sh
+
 ${BIN_DIR}/setup/php-config.sh
 
 ${BIN_DIR}/setup/composer-dependencies.sh
 
 if [ "${TRAVIS_PHP_VERSION}" = "5.6" ]; then
+    # @todo should we not rely on the os version instead?
     sudo systemctl start mysql
+fi
+
+if [ -n "${GITHUB_ACTION}" ]; then
+    # @todo we should also check the os version
+    sudo systemctl start mysql.service
 fi
 
 # Create the database from sql files present in either the legacy stack or kernel (has to be run after composer install)

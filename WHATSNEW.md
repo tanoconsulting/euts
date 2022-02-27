@@ -1,5 +1,7 @@
-Version 0.3.2
-=============
+Version 0.4 (wip)
+=================
+
+* support easy usage via GitHub Actions besides travis
 
 * make it easier to reuse outside of Docker the script used to set up php
 

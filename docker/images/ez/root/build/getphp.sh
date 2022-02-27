@@ -6,6 +6,9 @@
 # @todo optionally install fpm
 # @todo make it optional to disable xdebug ?
 # @todo install phpredis
+# @todo this file can now be used outside of docker. Check that os is debian/ubuntu before trying to install php
+#
+# Uses env vars: PHP_VERSION, DEBIAN_VERSION
 
 set -e
 
