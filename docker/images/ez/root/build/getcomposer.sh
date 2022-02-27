@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Installs Composer (latest version, to avoid relying on old ones bundled with the OS)
-# @todo allow users to lock down to Composer v1 if needed
+# @todo allow users to lock down to Composer v1 or 2.2/2.3 if needed
 
 EXPECTED_SIGNATURE="$(wget -q -O - https://composer.github.io/installer.sig)"
 php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
