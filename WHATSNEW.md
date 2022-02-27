@@ -1,3 +1,8 @@
+Version 0.3.2
+=============
+
+* make it easier to reuse outside of Docker the script used to set up php
+
 Version 0.3.1
 =============
 

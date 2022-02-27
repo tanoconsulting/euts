@@ -45,8 +45,4 @@ else
         zip
 fi
 
-if [ "${PHP_VERSION}" = default ]; then
-    ./getphp_default.sh
-else
-    ./getphp_sury.sh "${PHP_VERSION}"
-fi
+/getphp.sh

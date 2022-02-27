@@ -1,0 +1,89 @@
+v3
+
+- add GHA example next to Travis one
+
+- allow easy install of LegacyBridge to test legacy extensions with eZPL 1 and 2 (eg. ezdbintegrity)
+  - finish:
+    - OK - test: do legacy extensions of bundles get enabled/symlinked ? (specify a dependency on such a bundle)
+    - OK - same for legacy exts as depepdency (not a bundle)
+    - test: legacy exts inside top-level bundle (ezworkflowengineb.  <- needs GHA)
+    - test: legacy ext as top-level bundle (ezdbi <- needs GHA)
+    - test all of the above with a CP install too
+  - OK do set up legacy-routing when setting up LBridge
+
+- port from phpxmlrpc the enabling/disabling of code coverage
+
+- remove 'silence php warnings' from default php config; push it to ezmb ? (via: allow custom php configs...)
+
+- make teststack create a full config file by default instead of an empty one ? at least have an action to create it / print it
+- docs: finish 3 sets of example .euts.env files: minimal, with LB, complex (ezmb)
+  also: bundle w. legacy ext; pure-legacy ext
+
+- document: phpunit bootstrap.php (???)
+
+- allow project config to specify default phpunit tests directory
+- allow project to specify a different test execution command from phpunit (or rename runtests) ?
+
+vN?
+
+- how to specify custom legacy configs for test setups ? (see legacy-bridge way of doing minimal config)
+- do we need to run commands to install ezpl/legacy assets on setup ?
+
+- test execution on github Actions
+  also: document that in readme
+
+- make 'll' work for 'test' user
+
+- change the names of used env vars for docker to be the same as the ones used by ezplatform3 ?
+
+- reintroduce hash of composer packages for autodetection of need to rerun composer
+- in some conditions, teststack keeps waiting for ez container to finish booting, but that one is dead (bug in wait_for_bootstrap)
+
+- make sure that both memcached and redis are started in the test container; also, that php exts for those are installed
+- check if we are missing a redis extension for php, as well as any php ext. required by Ibexa (see https://doc.ibexa.co/en/latest/getting_started/requirements/)
+
+- test execution of tests based on other test frameworks: ...
+
+- test usage together with https://github.com/g1a/composer-test-scenarios
+
+- make one test run on postgres (both on travis and on docker)
+  - the creation of the schema is not trivial for ezplatform 1 and 2 => internalize the schema creation sql here,
+    with some php-based magic used to determine which updates to run
+    - also: do we need to run any update sql when creating the mysql schema?
+
+- make it easy to have many different test envs installed and possibly running in parallel:
+  - need to add custom network subnets ?
+  - add a cli command for that
+  - document it
+
+- allow installation of custom php exts (via an env var and/or examining composer.json)
+- install php-fpm
+- stop installing apache by default in the test container ?
+- do set up ez legacy mail transport in a way that can be easily tested (are we doing it for ez5 ?)
+
+- check best method for installation (git vs curl+sh)
+- reduce the number of env vars needed for eZ:
+  - set APP_ENV and SYMFONY_ENV if unset ?
+- teststack.sh: add a check for min docker, docker-compose version (note: seems like we can use --env-file only since docker-compose 1.24)
+- also: give to the user a friendlier error message if she's not in the docker group
+- teststack.sh: add commands to clean up dead container networks and volumes, etc...
+- review ez docker build:
+  - use a shell script for all steps, to make it easy to fully provision on boot instead of build
+- allow to use custom siteaccess names ?
+- allow to install different mysql clients (at least for debian versions which have them)
+- make installation of java in ez container optional
+- add more services? missing: elasticsearch
+- for debian-native php versions, allow to compile by hand latest compatible xdebug version instead of using built-in one
+  (esp. xdebug 3 for php >= 7.2)
+- allow usage of pcov instead of xdebug for code coverage
+- allow usage with ezpublish-platform, aka 5.x (as alternative to ezpublish-community)
+- teststack.sh: use green for the date in output messages
+- check out integrations with snyck or dependabot
+- check out docker code from ezplatform for ideas
+- check out setup-php as an alternative?
+- check out composer-test-scenarios too
+- check out usage of https://github.com/just-containers/s6-overlay to manage services in Docker instead of entrypoint.sh
+- check if there's anything worth copying from https://hub.docker.com/r/behance/docker-php/
+  - eg. usage of GOSS for testing the builds of the teststack
+- move config file to .yml (or extras section in composer.json ?) and use php in a dedicated container to run the teststack script ?
+- rename teststack.sh actions to follow a sf-like pattern? eg. stack:build, test:run, etc... ?
