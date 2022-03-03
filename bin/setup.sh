@@ -49,7 +49,7 @@ ${BIN_DIR}/setup/php-config.sh
 ${BIN_DIR}/setup/composer-dependencies.sh
 
 if [ "${TRAVIS_PHP_VERSION}" = "5.6" ]; then
-    # @todo should we not rely on the os version instead?
+    # @todo should we not rely on the os version instead? or, even better, check for the service status?
     if [ "${DB_TYPE}" = mysql ]; then
         sudo systemctl start mysql
     fi
@@ -60,10 +60,10 @@ if [ -n "${GITHUB_ACTION}" ]; then
     # @todo we should also check the os version
     case "${DB_TYPE}" in
         mysql)
-            sudo systemctl start postgresql.service
+            sudo systemctl start mysql.service
             ;;
         postgresql)
-            sudo systemctl start mysql.service
+            sudo systemctl start postgresql.service
             ;;
         *)
             printf "\n\e[31mERROR:\e[0m unknown db type '${DB_TYPE}'\n\n" >&2

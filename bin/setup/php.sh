@@ -5,7 +5,7 @@
 PHPVER=$(php -r 'echo implode(".",array_slice(explode(".",PHP_VERSION),0,2));' 2>/dev/null)
 
 if [ "${PHP_VERSION}" = default ]; then
-    # @todo we could make a better effort to if the current php version is the default one from the OS
+    # @todo we could make a better effort to check if the current php version is the default one from the OS
     if [ "${PHPVER}" != '' ]; then
         PHP_VERSION="${PHPVER}"
     fi

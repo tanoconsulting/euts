@@ -40,18 +40,23 @@ if [ "${PHP_VERSION}" = default ]; then
         php${PHPSUFFIX}-xdebug \
         ${EXTRA_PACKAGES}
 else
-    # On GHA runners ubuntu version, php 7.4 and 8.0, possibly more seem to be preinstalled.We remove them if found.
-    # NB: this takes quite some time to execute. Should we make this optional ? Or even, try to just swap the default php
-    # version in use
-    for PHP_CURRENT in $(dpkg -l | grep -E 'php.+-common' | awk '{print $2}'); do
-        if [ "${PHP_CURRENT}" != "php${PHP_VERSION}-common" ]; then
-            apt-get purge -y "${PHP_CURRENT}"
-        fi
-    done
 
-    DEBIAN_FRONTEND=noninteractive apt-get install -y language-pack-en-base software-properties-common
-    LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php
-    apt-get update
+    if update-alternatives --list php | fgrep -q -v "php${PHP_VERSION}"; then
+
+        # The correct php version is not installed. Set up custom repos to get it
+
+        # On GHA runners ubuntu version, many php versions are preinstalled. We remove them if found.
+        # NB: this takes quite some time to execute. We should allow it optionally
+        #for PHP_CURRENT in $(dpkg -l | grep -E 'php.+-common' | awk '{print $2}'); do
+        #    if [ "${PHP_CURRENT}" != "php${PHP_VERSION}-common" ]; then
+        #        apt-get purge -y "${PHP_CURRENT}"
+        #    fi
+        #done
+
+        DEBIAN_FRONTEND=noninteractive apt-get install -y language-pack-en-base software-properties-common
+        LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php
+        apt-get update
+    fi
 
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
         php${PHP_VERSION} \
@@ -69,7 +74,5 @@ else
 
     update-alternatives --set php /usr/bin/php${PHP_VERSION}
 fi
-
-#PHPVER=$(php -r 'echo implode(".",array_slice(explode(".",PHP_VERSION),0,2));' 2>/dev/null)
 
 php -v
