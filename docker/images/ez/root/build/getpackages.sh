@@ -46,4 +46,5 @@ else
         zip
 fi
 
-/getphp.sh "${PHP_VERSION}"
+# @todo what if we are not in the correct dir?
+./getphp.sh "${PHP_VERSION}"

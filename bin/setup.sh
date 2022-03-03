@@ -40,7 +40,9 @@ fi
 #    composer selfupdate
 #fi
 
-${BIN_DIR}/setup/php.sh
+if [ -n "${PHP_VERSION}" ]; then
+    ${BIN_DIR}/setup/php.sh
+fi
 
 # @todo download composer if it is missing
 
