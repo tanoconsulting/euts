@@ -2,7 +2,7 @@
 
 // Used to set parameters based on env vars, regardless of the SF and eZ versions in use
 
-/// @var ContainerBuilder $container
+/** @var \Symfony\Component\DependencyInjection\ContainerBuilder $container */
 $container->setParameter('database_driver', 'pdo_' .str_replace(array('postgresql'), array('pgsql'), getenv('DB_TYPE')));
 // we rely on Docker containers configuration for having hostnames that match db types
 if (getenv('DB_HOST') !== false) {

@@ -85,3 +85,5 @@ ${BIN_DIR}/setup/ez-config.sh
 
 # TODO for eZPlatform, do we need to set up SOLR as well ?
 #if [ "$EZ_VERSION" != "ezpublish" ]; then ./vendor/ezsystems/ezplatform-solr-search-engine && bin/.travis/init_solr.sh; fi
+
+echo "Setup done"
