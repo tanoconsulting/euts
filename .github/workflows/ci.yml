@@ -23,17 +23,17 @@ jobs:
                 # @see https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners for available os versions
                 # @todo add some tests running on 'windows-latest'
                 include:
-                    - config_file: 'doc/config_exaples/bundle_with_extra_dependencies/.euts.cp.env'
+                    - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.cp.env'
                       operating-system: 'ubuntu-18.04'
-                    - config_file: 'doc/config_exaples/bundle_with_extra_dependencies/.euts.1.13.env'
+                    - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.1.13.env'
                       operating-system: 'ubuntu-18.04'
-                    - config_file: 'doc/config_exaples/bundle_with_extra_dependencies/.euts.1.17.env'
+                    - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.1.17.env'
                       operating-system: 'ubuntu-18.04'
-                    - config_file: 'doc/config_exaples/bundle_with_extra_dependencies/.euts.2.3.env'
+                    - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.3.env'
                       operating-system: 'ubuntu-18.04'
-                    - config_file: 'doc/config_exaples/bundle_with_extra_dependencies/.euts.2.5.env'
+                    - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.5.env'
                       operating-system: 'ubuntu-20.04'
-                    - config_file: 'doc/config_exaples/bundle_with_extra_dependencies/.euts.2.3.env'
+                    - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.3.env'
                       operating-system: 'ubuntu-20.04'
         steps:
             -

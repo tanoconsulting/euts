@@ -61,7 +61,7 @@ Quick Start
 
    In the config file, you need to set values at the very least for EZ_PACKAGES and EZ_BUNDLES - those are the Composer
    packages that are required to run your tests and the Symfony bundles that will be loaded in the eZP kernel.
-   Some example configuration files can be found in the _doc/config_exaples_ folder.
+   Some example configuration files can be found in the _doc/config_examples_ folder.
    The full list of available config variables and their purpose is found in [.euts.env.example](./.euts.env.example).
 
 2. make sure that your project's `composer.json` is compatible with the Test Stack:
