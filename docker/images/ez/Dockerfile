@@ -32,7 +32,7 @@ RUN chmod 755 /root/build/*.sh
 # Install the required packages
 # -----------------------------------------------------------------------------
 # depending on Debian version, the package list will be different
-RUN mkdir -p /usr/share/man/man1; \
+RUN mkdir -p /usr/share/man/man1; mkdir -p /usr/share/man/man7; \
     cd /root/build/ && ./getpackages.sh "${php_version}"
 
 # Install Composer (a more recent version than the stock one from Debian)

@@ -12,6 +12,9 @@
 PHP_VERSION=$1
 # `lsb-release` is not yet onboard...
 DEBIAN_VERSION=$(cat /etc/os-release | grep 'VERSION_CODENAME=' | sed 's/VERSION_CODENAME=//')
+if [ -z "${DEBIAN_VERSION}" ]; then
+    DEBIAN_VERSION=$(cat /etc/os-release | grep 'VERSION=' | sed 's/VERSION=//' | sed 's/"[0-9] *(//' | sed 's/)"//')
+fi
 
 if [ "${DEBIAN_VERSION}" = jessie -o -z "${DEBIAN_VERSION}" ]; then
     apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -29,7 +32,7 @@ if [ "${DEBIAN_VERSION}" = jessie -o -z "${DEBIAN_VERSION}" ]; then
         wget \
         zip
 else
-    # buster, stretch
+    # stretch, buster, bullseye?
     apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
         apache2 \
         default-jre-headless \

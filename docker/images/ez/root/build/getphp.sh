@@ -12,8 +12,9 @@ set -e
 
 # install php
 PHP_VERSION="$1"
-# We prefer /etc/os-release to `lsb_release -s -c`
-DEBIAN_VERSION=$(cat /etc/os-release | grep 'VERSION_CODENAME=' | sed 's/VERSION_CODENAME=//')
+DEBIAN_VERSION=$(lsb_release -s -c)
+
+echo "$DEBIAN_VERSION - $PHP_VERSION"
 
 if [ "${PHP_VERSION}" = default ]; then
     if [ "${DEBIAN_VERSION}" = jessie -o "${DEBIAN_VERSION}" = precise -o "${DEBIAN_VERSION}" = trusty ]; then
