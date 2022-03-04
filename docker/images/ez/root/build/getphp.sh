@@ -14,8 +14,6 @@ set -e
 PHP_VERSION="$1"
 DEBIAN_VERSION=$(lsb_release -s -c)
 
-echo "$DEBIAN_VERSION - $PHP_VERSION"
-
 if [ "${PHP_VERSION}" = default ]; then
     if [ "${DEBIAN_VERSION}" = jessie -o "${DEBIAN_VERSION}" = precise -o "${DEBIAN_VERSION}" = trusty ]; then
         PHPSUFFIX=5

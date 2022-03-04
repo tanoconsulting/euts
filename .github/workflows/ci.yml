@@ -27,7 +27,7 @@ jobs:
                       operating-system: 'ubuntu-18.04'
                     - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.1.13.env'
                       operating-system: 'ubuntu-18.04'
-                    - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.1.17.env'
+                    - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.1.7.env'
                       operating-system: 'ubuntu-18.04'
                     - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.3.env'
                       operating-system: 'ubuntu-18.04'
@@ -38,12 +38,24 @@ jobs:
         steps:
             -
                 uses: actions/checkout@v2
-
             -
                 run: |
                     # just in case...
                     chmod 755 ./teststack
             -
                 # build the test stack docker image
-                # @todo run more commands
-                run: './teststack -e ${{ matrix.config_file }} setup'
+                run: './teststack -e ${{ matrix.config_file }} -n build'
+            -
+                run: './teststack logs'
+            -
+                run: './teststack ps'
+            -
+                run: './teststack services'
+            -
+                run: './teststack images'
+            -
+                run: './teststack top'
+            -
+                run: './teststack setup'
+
+            # @todo run more commands...

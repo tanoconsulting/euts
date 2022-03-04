@@ -1,12 +1,18 @@
 v3
 
-- make sure everything works on GHA
+- make sure everything works using the teststack on GHA
 
 - add GHA example next to Travis one
 
 - test using Bullseye as base distribution
 
-- allow easy install of LegacyBridge to test legacy extensions with eZPL 1 and 2 (eg. ezdbintegrity)
+- make sure GH tests work
+  + need to add GH auth token somehow
+  + use simpler sets of packages: ez only?
+
+v3.1
+
+- allow easy installation of LegacyBridge to test legacy extensions with eZPL 1 and 2 (eg. ezdbintegrity)
   - finish:
     - OK - test: do legacy extensions of bundles get enabled/symlinked ? (specify a dependency on such a bundle)
     - OK - same for legacy exts as depepdency (not a bundle)
