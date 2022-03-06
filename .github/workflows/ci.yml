@@ -41,10 +41,17 @@ jobs:
             -
                 run: |
                     # just in case...
-                    chmod 755 ./teststack
+                    chmod 755 ./teststack ./bin/*.sh ./bin/setup/*.sh
+
+            # set up the test stack locally, ie. without docker images
+            -   run: 'set -a && . ${{ matrix.config_file }} && set +a && ./bin/setup.sh'
+
+            # reset the env which we built
+            - run: 'mv vendor vendor_nodocker'
+
+            # build the test stack docker images
             -
-                # build the test stack docker image
-                run: './teststack -e ${{ matrix.config_file }} -n build'
+                run: './teststack -n -e ${{ matrix.config_file }} build'
             -
                 run: './teststack logs'
             -

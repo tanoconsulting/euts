@@ -77,8 +77,9 @@ trap clean_up TERM
 #echo "[$(date)] Starting the Web server..."
 #service apache2 start
 
-if [ "${TESTSTACK_SETUP_APP_ON_BOOT}" != 'skip' ]; then
-
+if [ "${TESTSTACK_SETUP_APP_ON_BOOT}" = 'skip' ]; then
+    echo "[$(date)] Skipping setting up the Application..."
+else
     /root/boot/symlinkvendors.sh
 
     # @todo we should force an app setup as well if current php version or env vars (bundles and other build-config vars
