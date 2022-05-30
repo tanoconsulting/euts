@@ -14,9 +14,9 @@ jobs:
             DB_EZ_PASSWORD: ezp
             DB_EZ_DATABASE: behattestdb
             PHP_VERSION: ${{ matrix.php }}
-            EZ_COMPOSER_LOCK: ${{ matrix.ez_composer_lock }}
-            EZ_BUNDLES: ${{ matrix.ez_bundles }}
-            EZ_PACKAGES: ${{ matrix.ez_packages }}
+            #EZ_COMPOSER_LOCK: ${{ matrix.ez_composer_lock }}
+            #EZ_BUNDLES: ${{ matrix.ez_bundles }}
+            #EZ_PACKAGES: ${{ matrix.ez_packages }}
         strategy:
             fail-fast: false
             matrix:
@@ -25,16 +25,22 @@ jobs:
                 include:
                     - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.cp.env'
                       operating-system: 'ubuntu-18.04'
+                      php: 5.6
                     - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.1.13.env'
                       operating-system: 'ubuntu-18.04'
+                      php: 7.0
                     - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.1.7.env'
                       operating-system: 'ubuntu-18.04'
+                      php: 7.1
                     - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.3.env'
                       operating-system: 'ubuntu-18.04'
+                      php: 7.2
                     - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.5.env'
                       operating-system: 'ubuntu-20.04'
-                    - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.3.env'
+                      php: 7.3
+                    - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.3.2.env'
                       operating-system: 'ubuntu-20.04'
+                      php: 7.4
         steps:
             -
                 uses: actions/checkout@v2
@@ -44,7 +50,7 @@ jobs:
                     chmod 755 ./teststack ./bin/*.sh ./bin/setup/*.sh
 
             # set up the test stack locally, ie. without docker images
-            -   run: 'set -a && . ${{ matrix.config_file }} && set +a && ./bin/setup.sh'
+            - run: 'set -a && . ${{ matrix.config_file }} && set +a && ./bin/setup.sh'
 
             # reset the env which we built
             - run: 'mv vendor vendor_nodocker'
