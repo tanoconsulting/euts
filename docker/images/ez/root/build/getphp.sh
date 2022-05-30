@@ -7,6 +7,7 @@
 # @todo make it optional to disable xdebug ?
 # @todo install phpredis
 # @todo this file can now be used outside of docker. Check that os is debian/ubuntu before trying to install php
+# @todo test the matrix of ubuntu versions (xenial, bionic, focal, jammy) vs. all php versions incl. 'default'
 
 set -e
 
@@ -25,6 +26,9 @@ if [ "${PHP_VERSION}" = default ]; then
     else
         EXTRA_PACKAGES="php-mbstring php-xsl"
     fi
+    if [ "${DEBIAN_VERSION}" != jammy ]; then
+        EXTRA_PACKAGES="${EXTRA_PACKAGES} php${PHPSUFFIX}-json"
+    fi
     # @todo check for mbstring presence in php5 (jessie) packages
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
         php${PHPSUFFIX} \
@@ -32,7 +36,6 @@ if [ "${PHP_VERSION}" = default ]; then
         php${PHPSUFFIX}-curl \
         php${PHPSUFFIX}-gd \
         php${PHPSUFFIX}-intl \
-        php${PHPSUFFIX}-json \
         php${PHPSUFFIX}-memcached \
         php${PHPSUFFIX}-mysql \
         php${PHPSUFFIX}-pgsql \
@@ -57,19 +60,24 @@ else
         apt-get update
     fi
 
+    EXTRA_PACKAGES=
+    if [ "${PHP_VERSION}" != '8.0' -a "${PHP_VERSION}" != '8.1' ]; then
+        EXTRA_PACKAGES="php${PHP_VERSION}-json"
+    fi
+
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
         php${PHP_VERSION} \
         php${PHP_VERSION}-cli \
         php${PHP_VERSION}-curl \
         php${PHP_VERSION}-gd \
         php${PHP_VERSION}-intl \
-        php${PHP_VERSION}-json \
         php${PHP_VERSION}-memcached \
         php${PHP_VERSION}-mbstring \
         php${PHP_VERSION}-mysql \
         php${PHP_VERSION}-pgsql \
         php${PHP_VERSION}-xdebug \
         php${PHP_VERSION}-xml \
+        ${EXTRA_PACKAGES}
 
     update-alternatives --set php /usr/bin/php${PHP_VERSION}
 fi

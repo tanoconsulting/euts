@@ -48,12 +48,14 @@ jobs:
                       operating-system: 'ubuntu-22.04'
                       config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.5.env'
         steps:
-            -
-                uses: actions/checkout@v2
-            -
-                run: |
-                    # just in case...
-                    chmod 755 ./teststack ./bin/*.sh ./bin/setup/*.sh
+            - uses: actions/checkout@v2
+
+            - run: |
+                # just in case...
+                chmod 755 ./teststack ./bin/*.sh ./bin/setup/*.sh
+
+            # this is required to allow installation of package dependencies using "dev-master"
+            - run: 'cp tests/config/composer.json .'
 
             # set up the test stack locally, ie. without docker images
             # NB: the php version in use here is not the one from the .env config file, but the one set in the matrix above
@@ -63,19 +65,18 @@ jobs:
             - run: 'mv vendor vendor_nodocker'
 
             # build the test stack docker images
-            -
-                run: './teststack -n -e ${{ matrix.config_file }} build'
-            -
-                run: './teststack logs'
-            -
-                run: './teststack ps'
-            -
-                run: './teststack services'
-            -
-                run: './teststack images'
-            -
-                run: './teststack top'
-            -
-                run: './teststack setup'
+            - run: './teststack -n -e ${{ matrix.config_file }} build'
+
+            - run: './teststack logs'
+
+            - run: './teststack ps'
+
+            - run: './teststack services'
+
+            - run: './teststack images'
+
+            - run: './teststack top'
+
+            - run: './teststack setup'
 
             # @todo run more commands...
