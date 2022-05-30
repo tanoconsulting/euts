@@ -31,7 +31,9 @@ else
 
     if [ -n "${COMPOSE_PROJECT_NAME}" ]; then
         export COMPOSER="composer_${COMPOSE_PROJECT_NAME}.json"
-        cp composer.json ${COMPOSER}
+        if [ -f composer.json ]; then
+            cp composer.json ${COMPOSER}
+        fi
     fi
     # we split require from update to (hopefully) save some ram
     composer require --dev --no-update ${EZ_PACKAGES}
