@@ -53,7 +53,7 @@ jobs:
             - run: |
                 # just in case...
                 chmod 755 ./teststack ./bin/*.sh ./bin/setup/*.sh
-                env
+                echo $PATH
 
             # this is required to allow installation of package dependencies using "dev-master"
             - run: 'cp tests/config/composer.json .'
