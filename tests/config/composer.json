@@ -1,4 +1,14 @@
 {
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "require":{
+        "roave/security-advisories": "dev-disablechecks as dev-master"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/kaliop-uk/SecurityAdvisoriesNoConflicts",
+            "no-api": true
+        }
+    ]
 }

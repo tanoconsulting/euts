@@ -212,10 +212,12 @@ fi
 
 # Fix the phpunit configuration if needed
 # @todo is this needed any more ? it is not in kaliop ezmigrationbundle's phpunit.xml.dist...
-if [ "${EZ_VERSION}" = "ezplatform" -o "${EZ_VERSION}" = "ezplatform2" ]; then
-    sed -i 's/"vendor\/ezsystems\/ezpublish-community\/ezpublish"/"vendor\/ezsystems\/ezplatform\/app"/' phpunit.xml.dist
-elif [ "${EZ_VERSION}" = "ezplatform3" ]; then
-    sed -i 's/"vendor\/ezsystems\/ezpublish-community\/ezpublish"/"vendor\/ezsystems\/ezplatform\/src"/' phpunit.xml.dist
+if [ -f phpunit.xml.dist ]; then
+    if [ "${EZ_VERSION}" = "ezplatform" -o "${EZ_VERSION}" = "ezplatform2" ]; then
+        sed -i 's/"vendor\/ezsystems\/ezpublish-community\/ezpublish"/"vendor\/ezsystems\/ezplatform\/app"/' phpunit.xml.dist
+    elif [ "${EZ_VERSION}" = "ezplatform3" ]; then
+        sed -i 's/"vendor\/ezsystems\/ezpublish-community\/ezpublish"/"vendor\/ezsystems\/ezplatform\/src"/' phpunit.xml.dist
+    fi
 fi
 
 # @todo why is there a problem with vendor/ezsystems/ezplatform/config/services_behat.yaml ?

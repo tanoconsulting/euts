@@ -18,15 +18,16 @@ else
         CV=$(composer --version | grep -F '2.3.' 2>/dev/null)
         if [ -n "$CV" ];  then
             # q: would it be better to remove it via apt?
-            rm $(which composer)
+            sudo rm $(which composer)
             INSTALL_COMPOSER=true
         fi
     fi
 fi
 
 if [ $INSTALL_COMPOSER = true ]; then
-    chmod 755 /home/test/teststack/docker/images/ez/root/build/getcomposer.sh
-    sudo /home/test/teststack/docker/images/ez/root/build/getcomposer.sh
+    cd "$(dirname -- $(dirname -- $(dirname -- ${BASH_SOURCE[0]})))"
+    chmod 755 ./docker/images/ez/root/build/getcomposer.sh
+    sudo ./docker/images/ez/root/build/getcomposer.sh
 fi
 
 echo Done
