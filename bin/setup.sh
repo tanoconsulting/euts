@@ -40,7 +40,9 @@ fi
 #    composer selfupdate
 #fi
 
-${BIN_DIR}/setup/php.sh
+if [ -n "${PHP_VERSION}" ]; then
+    ${BIN_DIR}/setup/php.sh
+fi
 
 # @todo download composer if it is missing
 
@@ -62,3 +64,5 @@ ${BIN_DIR}/setup/ez-config.sh
 
 # TODO for eZPlatform, do we need to set up SOLR as well ?
 #if [ "$EZ_VERSION" != "ezpublish" ]; then ./vendor/ezsystems/ezplatform-solr-search-engine && bin/.travis/init_solr.sh; fi
+
+echo "Setup done"

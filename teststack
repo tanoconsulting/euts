@@ -84,6 +84,7 @@ create_compose_command() {
 
 build() {
 
+    # q: do we really need to do this here?
     if [ ${CLEANUP_UNUSED_IMAGES} = 'true' ]; then
         cleanup_dead_docker_images
     fi

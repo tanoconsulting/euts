@@ -11,7 +11,11 @@ if [ "${PHP_VERSION}" = default ]; then
     fi
 fi
 
-if [ "${PHPVER}" != "${PHP_VERSION}" ]; then
+if [ "${PHPVER}" = "${PHP_VERSION}" ]; then
+    echo "Found php version ${PHPVER}, skipping php installation"
+else
+    echo "Installing php version ${PHP_VERSION}"
+
     cd "$(dirname -- $(dirname -- $(dirname -- ${BASH_SOURCE[0]})))"
 
     if [ -f ./docker/images/ez/root/build/getphp.sh ]; then

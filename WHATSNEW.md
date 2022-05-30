@@ -1,9 +1,11 @@
 Version 0.4 (wip)
 =================
 
-* support easy usage via GitHub Actions besides travis
+* support usage via GitHub Actions besides Travis
 
 * make it easier to reuse outside of Docker the script used to set up php
+
+* fix: the ezplatform 2 config generated for running tests had started failing with newer ezplatform versions
 
 Version 0.3.1
 =============

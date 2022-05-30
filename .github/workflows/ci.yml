@@ -1,0 +1,68 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+    test:
+        runs-on: ${{ matrix.operating-system }}
+        env:
+            SYMFONY_ENV: behat
+            DB_HOST: localhost
+            DB_TYPE: mysql
+            DB_ROOT_PASSWORD: root
+            DB_EZ_USER: ezp
+            DB_EZ_PASSWORD: ezp
+            DB_EZ_DATABASE: behattestdb
+            PHP_VERSION: ${{ matrix.php }}
+            EZ_COMPOSER_LOCK: ${{ matrix.ez_composer_lock }}
+            EZ_BUNDLES: ${{ matrix.ez_bundles }}
+            EZ_PACKAGES: ${{ matrix.ez_packages }}
+        strategy:
+            fail-fast: false
+            matrix:
+                # @see https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners for available os versions
+                # @todo add some tests running on 'windows-latest'
+                include:
+                    - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.cp.env'
+                      operating-system: 'ubuntu-18.04'
+                    - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.1.13.env'
+                      operating-system: 'ubuntu-18.04'
+                    - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.1.7.env'
+                      operating-system: 'ubuntu-18.04'
+                    - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.3.env'
+                      operating-system: 'ubuntu-18.04'
+                    - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.5.env'
+                      operating-system: 'ubuntu-20.04'
+                    - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.3.env'
+                      operating-system: 'ubuntu-20.04'
+        steps:
+            -
+                uses: actions/checkout@v2
+            -
+                run: |
+                    # just in case...
+                    chmod 755 ./teststack ./bin/*.sh ./bin/setup/*.sh
+
+            # set up the test stack locally, ie. without docker images
+            -   run: 'set -a && . ${{ matrix.config_file }} && set +a && ./bin/setup.sh'
+
+            # reset the env which we built
+            - run: 'mv vendor vendor_nodocker'
+
+            # build the test stack docker images
+            -
+                run: './teststack -n -e ${{ matrix.config_file }} build'
+            -
+                run: './teststack logs'
+            -
+                run: './teststack ps'
+            -
+                run: './teststack services'
+            -
+                run: './teststack images'
+            -
+                run: './teststack top'
+            -
+                run: './teststack setup'
+
+            # @todo run more commands...
