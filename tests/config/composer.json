@@ -12,6 +12,6 @@
         }
     ],
     "config": {
-        cache-dir: "/tmp/composer_cache"
+        "cache-dir": "/tmp/composer_cache"
     }
 }
