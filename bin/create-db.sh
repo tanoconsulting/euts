@@ -44,15 +44,6 @@ case "${DB_TYPE}" in
         exit 1
 esac
 
-# MySQL 5.7 defaults to strict mode, which is not good with ezpublish community kernel 2014.11.8
-# @todo besides testing for Travis, check as well for MYSQL_VERSION
-if [ "${EZ_VERSION}" = "ezpublish-community" -a "${DB_TYPE}" = "mysql" -a "${TRAVIS}" = "true" ]; then
-    # We want to only remove STRICT_TRANS_TABLES, really
-    #mysql -u${DB_USER} ${DB_PWD} -e "SHOW VARIABLES LIKE 'sql_mode';"
-    echo -e "\n[server]\nsql-mode='ONLY_FULL_GROUP_BY,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'\n" | sudo tee -a /etc/mysql/my.cnf
-    sudo service mysql restart
-fi
-
 case "${DB_TYPE}" in
     mysql)
         if [ -z "${DB_CHARSET}" ]; then

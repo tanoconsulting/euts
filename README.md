@@ -11,7 +11,7 @@ Features:
 
 * allows to run your bundle's tests on any version of eZPublish-Community, eZPlatform 1 and eZPlatform 2
 * allows to run your bundle's tests on multiple versions of eZPlatform/eZPublish from a single source directory
-* allows to specify extra composer packages to be installed and symfony bundles or legacy extensions to be activated
+* allows specifying extra composer packages to be installed and symfony bundles or legacy extensions to be activated
 * allows to run your bundle's tests on many versions of PHP (Docker execution only)
 * allows to run your bundle's tests on many versions of MySQL (Docker execution only)
 * provides a single command-line tool for managing the test stack and running tests, including maintenance operations
@@ -61,7 +61,7 @@ Quick Start
 
    In the config file, you need to set values at the very least for EZ_PACKAGES and EZ_BUNDLES - those are the Composer
    packages that are required to run your tests and the Symfony bundles that will be loaded in the eZP kernel.
-   Some example configuration files can be found in the _doc/config_exaples_ folder.
+   Some example configuration files can be found in the _doc/config_examples_ folder.
    The full list of available config variables and their purpose is found in [.euts.env.example](./.euts.env.example).
 
 2. make sure that your project's `composer.json` is compatible with the Test Stack:
@@ -271,6 +271,6 @@ Q: Are there other projects that you know of that have similar goals as this pac
 A: certainly there are. Ones that I know of are f.e. https://github.com/Plopix/symfony-bundle-app-wrapper and
    https://github.com/g1a/composer-test-scenarios
 
-Q: How are you testing this Test Stack itself?
+Q: Are you testing this Test Stack itself?
 
-A: Inception!!!
+A: Inception!!! In fact, yes, we strive to test it using Github Actions
