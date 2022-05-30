@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-# Set up fully the test environment (except for installing required sw packages): php, mysql, eZ, etc...
-# Has to be useable from Docker as well as from Travis.
+# Set up fully the test environment (except for installing required sw packages): mysql, php, composer, eZ, etc...
+# Has to be useable from Docker as well as from Travis and GH-hosted runners.
 # Has to be run from the project (bundle) top dir.
 #
-# Uses env vars: TRAVIS_PHP_VERSION, GITHUB_ACTION
+# Uses env vars: TRAVIS_PHP_VERSION, PHP_VERSION, GITHUB_ACTION
 
 # @todo check if all required env vars have a value
 # @todo support a -v option
@@ -33,6 +33,11 @@ if [ "${TRAVIS_PHP_VERSION}" = "5.6" ]; then
     #df -h
     #ps auxwww
     #systemctl list-units --type=service
+fi
+
+# BC. We should abandon either PHP_VERSION or TESTSTACK_PHP_VERSION going forward
+if [ -z "${PHP_VERSION}" -a -n "${TESTSTACK_PHP_VERSION}" ]; then
+    PHP_VERSION="${TESTSTACK_PHP_VERSION}"
 fi
 
 if [ -n "${PHP_VERSION}" ]; then

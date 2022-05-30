@@ -13,7 +13,7 @@ jobs:
             DB_EZ_USER: ezp
             DB_EZ_PASSWORD: ezp
             DB_EZ_DATABASE: behattestdb
-            #PHP_VERSION: ${{ matrix.php }}
+            PHP_VERSION: ${{ matrix.php }}
             #EZ_COMPOSER_LOCK: ${{ matrix.ez_composer_lock }}
             #EZ_BUNDLES: ${{ matrix.ez_bundles }}
             #EZ_PACKAGES: ${{ matrix.ez_packages }}
@@ -23,35 +23,41 @@ jobs:
                 # @see https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners for available os versions
                 # @todo add some tests running on 'windows-latest'
                 include:
-                    - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.cp.env'
+                    - php: "5.6"
                       operating-system: 'ubuntu-18.04'
-                      php: "5.6"
-                    - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.1.13.env'
+                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.cp.env'
+                    - php: "7.0"
                       operating-system: 'ubuntu-18.04'
-                      php: "7.0"
-                    - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.1.7.env'
+                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.1.13.env'
+                    - php: "7.1"
                       operating-system: 'ubuntu-18.04'
-                      php: "7.1"
-                    - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.3.env'
+                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.1.7.env'
+                    - php: "7.2"
                       operating-system: 'ubuntu-18.04'
-                      php: "7.2"
-                    - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.5.env'
+                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.3.env'
+                    - php: "7.3"
                       operating-system: 'ubuntu-20.04'
-                      php: "7.3"
-                    - config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.5.env'
+                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.5.env'
+                    - php: "7.4"
                       operating-system: 'ubuntu-20.04'
-                      php: "7.4"
+                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.5.env'
+                    - php: "8.0"
+                      operating-system: 'ubuntu-22.04'
+                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.5.env'
+                    - php: "8.1"
+                      operating-system: 'ubuntu-22.04'
+                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.5.env'
         steps:
             -
                 uses: actions/checkout@v2
             -
-                # @ todo we should unify TESTSTACK_PHP_VERSION in the config files and
                 run: |
                     # just in case...
                     chmod 755 ./teststack ./bin/*.sh ./bin/setup/*.sh
 
             # set up the test stack locally, ie. without docker images
-            - run: 'set -a && . ${{ matrix.config_file }} && set +a && PHP_VERSION=$TESTSTACK_PHP_VERSION ./bin/setup.sh'
+            # NB: the php version in use here is not the one from the .env config file, but the one set in the matrix above
+            - run: 'set -a && . ${{ matrix.config_file }} && set +a && ./bin/setup.sh'
 
             # reset the env which we built
             - run: 'mv vendor vendor_nodocker'

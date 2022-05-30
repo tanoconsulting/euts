@@ -24,6 +24,7 @@ services:
             - https_proxy
             - COMPOSE_PROJECT_NAME
             - TESTSTACK_SETUP_APP_ON_BOOT
+            - TESTSTACK_PHP_VERSION
             ## Database configuration
             - DB_TYPE=${DB_TYPE:-mysql}
             - DB_HOST
