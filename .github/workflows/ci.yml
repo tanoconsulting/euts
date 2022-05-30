@@ -53,9 +53,9 @@ jobs:
             - run: |
                 # just in case...
                 chmod 755 ./teststack ./bin/*.sh ./bin/setup/*.sh
-
-            # this is required to allow installation of package dependencies using "dev-master"
-            - run: 'cp tests/config/composer.json .'
+                # this is required to allow installation of package dependencies using "dev-master", etc.
+                mkdir /tmp/composer_cache
+                cp tests/config/composer.json .
 
             # set up the test stack locally, ie. without docker images
             # NB: the php version in use here is not the one from the .env config file, but the one set in the matrix above
