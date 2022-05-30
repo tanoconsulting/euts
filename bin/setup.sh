@@ -35,18 +35,18 @@ if [ "${TRAVIS_PHP_VERSION}" = "5.6" ]; then
     #systemctl list-units --type=service
 fi
 
+if [ -n "${PHP_VERSION}" ]; then
+    ${BIN_DIR}/setup/php.sh
+fi
+
+${BIN_DIR}/setup/php-config.sh
+
 # This is done by Travis automatically...
 #if [ "${TRAVIS}" != "true" ]; then
 #    composer selfupdate
 #fi
 
-if [ -n "${PHP_VERSION}" ]; then
-    ${BIN_DIR}/setup/php.sh
-fi
-
-# @todo download composer if it is missing
-
-${BIN_DIR}/setup/php-config.sh
+${BIN_DIR}/setup/composer.sh
 
 ${BIN_DIR}/setup/composer-dependencies.sh
 

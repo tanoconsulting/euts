@@ -1,7 +1,16 @@
 #!/bin/sh
 
 # Installs Composer (latest version, to avoid relying on old ones bundled with the OS)
-# @todo allow users to lock down to Composer v1 or 2.2/2.3 if needed
+
+COMPOSER_VERSION="$1"
+if [ -n "${COMPOSER_VERSION}" ]; then
+    COMPOSER_VERSION="--${COMPOSER_VERSION}"
+else
+    PHPVER=$(php -r 'echo implode(".",array_slice(explode(".",PHP_VERSION),0,2));' 2>/dev/null)
+    if [ "$PHPVER" = '5.6' -o "$PHPVER" = '7.0' -o "$PHPVER" = '7.1' ]; then
+        COMPOSER_VERSION='--2.2'
+    fi
+fi
 
 EXPECTED_SIGNATURE="$(wget -q -O - https://composer.github.io/installer.sig)"
 php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
@@ -14,7 +23,7 @@ then
     exit 1
 fi
 
-php composer-setup.php --install-dir=/usr/local/bin
+php composer-setup.php $COMPOSER_VERSION --install-dir=/usr/local/bin
 RESULT=$?
 rm composer-setup.php
 exit $RESULT
