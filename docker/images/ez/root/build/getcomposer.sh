@@ -2,6 +2,8 @@
 
 # Installs Composer (latest version, to avoid relying on old ones bundled with the OS)
 
+# @todo support a different target install dir
+
 COMPOSER_VERSION="$1"
 if [ -n "${COMPOSER_VERSION}" ]; then
     COMPOSER_VERSION="--${COMPOSER_VERSION}"

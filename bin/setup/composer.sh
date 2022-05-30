@@ -26,6 +26,7 @@ fi
 
 if [ $INSTALL_COMPOSER = true ]; then
     cd "$(dirname -- $(dirname -- $(dirname -- ${BASH_SOURCE[0]})))"
+    # @todo does this work in docker-stack envs? See php.sh for a different take...
     chmod 755 ./docker/images/ez/root/build/getcomposer.sh
     sudo ./docker/images/ez/root/build/getcomposer.sh
 fi

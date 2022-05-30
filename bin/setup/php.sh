@@ -18,6 +18,7 @@ else
 
     cd "$(dirname -- $(dirname -- $(dirname -- ${BASH_SOURCE[0]})))"
 
+    # @todo can we be smarter than this ?
     if [ -f ./docker/images/ez/root/build/getphp.sh ]; then
         chmod 755 ./docker/images/ez/root/build/getphp.sh
         sudo ./docker/images/ez/root/build/getphp.sh "${PHP_VERSION}"
