@@ -65,7 +65,7 @@ jobs:
             - run: 'mv vendor vendor_nodocker'
 
             # build the test stack docker images
-            - run: './teststack -n -e ${{ matrix.config_file }} build'
+            - run: './teststack -n -e ${{ matrix.config_file }} -w 900 build'
 
             - run: './teststack logs'
 
