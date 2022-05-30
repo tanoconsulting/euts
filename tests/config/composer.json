@@ -10,5 +10,8 @@
             "url": "https://github.com/kaliop-uk/SecurityAdvisoriesNoConflicts",
             "no-api": true
         }
-    ]
+    ],
+    "config": {
+        cache-dir: "/tmp/composer_cache"
+    }
 }

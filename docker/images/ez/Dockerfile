@@ -39,7 +39,6 @@ RUN mkdir -p /usr/share/man/man1; mkdir -p /usr/share/man/man7; \
 # -----------------------------------------------------------------------------
 RUN apt-get remove -y composer || echo An error on the line above is ok; \
     /root/build/getcomposer.sh && \
-    mv /usr/local/bin/composer.phar /usr/local/bin/composer && \
     chmod 755 /usr/local/bin/composer
 
 # Create the local user account
