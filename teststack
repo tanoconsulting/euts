@@ -346,7 +346,7 @@ wait_for_bootstrap() {
             # @todo fix this check for the case of container not running...
             #       Use instead a check such as `bash -c 'ps auxwww | fgrep "tail -f /dev/null" | fgrep -v grep'` ?
 # @todo it also fails on GHA!
-            OUT=$(${DOCKER_TESTSTACK_QUIET} exec ${BS_CONTAINER} cat ${BOOTSTRAP_OK_FILE} 2>&1)
+            OUT=$(${DOCKER_TESTSTACK_QUIET} exec -T ${BS_CONTAINER} cat ${BOOTSTRAP_OK_FILE} 2>&1)
             RETCODE=$?
             if [ ${RETCODE} -eq 0 ]; then
                 printf "\e[32mdone\e[0m\n"
@@ -493,10 +493,9 @@ case "${COMMAND}" in
 
     exec)
         # scary line ? found it at https://stackoverflow.com/questions/12343227/escaping-bash-function-arguments-for-use-by-su-c
-        # q: do we need -ti ?
+        # @todo do we need -ti ? It actually breaks usage of pipelines in the shell invoking this... Add a cli option for that?
         shift
-        #docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c '"$0" "$@"' -- exec "$@"
-        docker exec "${WEB_CONTAINER}" su "${WEB_USER}" -c '"$0" "$@"' -- exec "$@"
+        docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c '"$0" "$@"' -- exec "$@"
     ;;
 
     images)
