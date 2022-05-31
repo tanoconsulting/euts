@@ -8,3 +8,5 @@
 !/docker/data/postgresql/.gitkeep
 !/docker/logs/mysql/.gitkeep
 !/docker/logs/postgresql/.gitkeep
+
+/vendor

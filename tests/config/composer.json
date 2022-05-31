@@ -18,5 +18,8 @@
     ],
     "config": {
         "cache-dir": "/tmp/composer_cache"
+    },
+    "extra": {
+        "ezpublish-legacy-dir": "vendor/ezsystems/ezpublish-legacy"
     }
 }
