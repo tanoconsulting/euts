@@ -336,23 +336,24 @@ wait_for_bootstrap() {
 
     echo "[$(date)] Waiting for containers bootstrap to finish: ${BOOTSTRAP_CONTAINERS}..."
 
-     i=0
-     while [ $i -le "${BOOTSTRAP_TIMEOUT}" ]; do
+     START_TIME=$SECONDS
+     ELAPSED=0
+     while [ $ELAPSED -le "${BOOTSTRAP_TIMEOUT}" ]; do
         sleep 1
         BOOTSTRAP_OK=''
         for BS_CONTAINER in ${BOOTSTRAP_CONTAINERS}; do
             printf "Waiting for ${BS_CONTAINER} ... "
             # @todo fix this check for the case of container not running...
-# @todo it also fails on GHA! Use a check for ps auxwww | grep 'tail -f /dev/null' instead ?
-            # @todo speed this up... maybe go back to generating and checking files mounted on the host?
-            ${DOCKER_TESTSTACK_QUIET} exec ${BS_CONTAINER} cat ${BOOTSTRAP_OK_FILE} >/dev/null 2>/dev/null
+            #       Use instead a check such as `bash -c 'ps auxwww | fgrep "tail -f /dev/null" | fgrep -v grep'` ?
+# @todo it also fails on GHA!
+            OUT=$(${DOCKER_TESTSTACK_QUIET} exec ${BS_CONTAINER} cat ${BOOTSTRAP_OK_FILE} 2>&1)
             RETCODE=$?
             if [ ${RETCODE} -eq 0 ]; then
                 printf "\e[32mdone\e[0m\n"
                 BOOTSTRAP_OK="${BOOTSTRAP_OK} ${BS_CONTAINER}"
             else
 # TODO ...
-                echo;
+                echo $OUT;
             fi
         done
         if [ -n "${BOOTSTRAP_OK}" ]; then
@@ -364,6 +365,7 @@ wait_for_bootstrap() {
             fi
         fi
         i=$(( i + 1 ))
+        ELAPSED=$(( SECONDS - START_TIME ))
     done
     if [ $i -gt 0 ]; then echo; fi
 
@@ -493,7 +495,8 @@ case "${COMMAND}" in
         # scary line ? found it at https://stackoverflow.com/questions/12343227/escaping-bash-function-arguments-for-use-by-su-c
         # q: do we need -ti ?
         shift
-        docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c '"$0" "$@"' -- exec "$@"
+        #docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c '"$0" "$@"' -- exec "$@"
+        docker exec "${WEB_CONTAINER}" su "${WEB_USER}" -c '"$0" "$@"' -- exec "$@"
     ;;
 
     images)
