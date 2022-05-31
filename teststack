@@ -71,7 +71,7 @@ Advanced Options:
     -n                do not set up the app - when running 'build', 'start'
     -s                force the app to be set up - when running 'build', 'start'
     -u                update (pull) the container base images (this might force a rebuild) - when running 'build'
-    -w SECONDS        wait timeout for completion of app and container set up - when running 'build' and 'start'. Defaults to ${BOOTSTRAP_TIMEOUT}
+    -w SECONDS        wait timeout for completion of app and container set up - when running 'build', 'start' and 'setup'. Defaults to ${BOOTSTRAP_TIMEOUT}
     -z                avoid using docker cache - when running 'build -r'
 "
 }
@@ -334,7 +334,7 @@ wait_for_bootstrap() {
         ;;
     esac
 
-    echo "[$(date)] Waiting for containers bootstrap to finish..."
+    echo "[$(date)] Waiting for containers bootstrap to finish: ${BOOTSTRAP_CONTAINERS}..."
 
      i=0
      while [ $i -le "${BOOTSTRAP_TIMEOUT}" ]; do
@@ -343,6 +343,7 @@ wait_for_bootstrap() {
         for BS_CONTAINER in ${BOOTSTRAP_CONTAINERS}; do
             printf "Waiting for ${BS_CONTAINER} ... "
             # @todo fix this check for the case of container not running...
+# @todo it also fails on GHA! Use a check for ps auxwww | grep 'tail -f /dev/null' instead ?
             # @todo speed this up... maybe go back to generating and checking files mounted on the host?
             ${DOCKER_TESTSTACK_QUIET} exec ${BS_CONTAINER} cat ${BOOTSTRAP_OK_FILE} >/dev/null 2>/dev/null
             RETCODE=$?
@@ -350,6 +351,7 @@ wait_for_bootstrap() {
                 printf "\e[32mdone\e[0m\n"
                 BOOTSTRAP_OK="${BOOTSTRAP_OK} ${BS_CONTAINER}"
             else
+# TODO ...
                 echo;
             fi
         done

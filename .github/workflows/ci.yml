@@ -71,12 +71,12 @@ jobs:
             # build the test stack docker images
             # @todo using the composer.lock file and vendors from the previous run makes install quicker, but then we
             # should make sure php versions (and extensions) are in sync.
-            - run: './teststack -e ${{ matrix.config_file }} -n -w 900 build'
+            - run: './teststack -e ${{ matrix.config_file }} -n -w 300 build'
 
             # troubleshooting failures
             -
                 if: ${{ failure() }}
-                run: './teststack -e ${{ matrix.config_file }} logs ez'
+                run: './teststack -e ${{ matrix.config_file }} logs ez; ./teststack -e ${{ matrix.config_file }} top'
 
             - run: './teststack -e ${{ matrix.config_file }} logs'
 
@@ -90,7 +90,9 @@ jobs:
 
             - run: './teststack -e ${{ matrix.config_file }} exec pwd'
 
-            - run: './teststack -e ${{ matrix.config_file }} setup'
+            - run: './teststack -e ${{ matrix.config_file }} stop'
+
+            - run: './teststack -e ${{ matrix.config_file }} -w 900 setup'
 
             # @todo run more commands...
             #- run: './teststack -e ${{ matrix.config_file }} resetdb'
