@@ -74,9 +74,9 @@ jobs:
             - run: './teststack -e ${{ matrix.config_file }} -n -w 300 build'
 
             # troubleshooting failures
-            -
-                if: ${{ failure() }}
-                run: './teststack -e ${{ matrix.config_file }} logs ez; ./teststack -e ${{ matrix.config_file }} top'
+            #-
+            #    if: ${{ failure() }}
+            #    run: './teststack -e ${{ matrix.config_file }} logs ez; ./teststack -e ${{ matrix.config_file }} top'
 
             - run: './teststack -e ${{ matrix.config_file }} logs'
 

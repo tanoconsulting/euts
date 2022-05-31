@@ -338,6 +338,7 @@ wait_for_bootstrap() {
 
      START_TIME=$SECONDS
      ELAPSED=0
+     i=0
      while [ $ELAPSED -le "${BOOTSTRAP_TIMEOUT}" ]; do
         sleep 1
         BOOTSTRAP_OK=''
@@ -345,15 +346,15 @@ wait_for_bootstrap() {
             printf "Waiting for ${BS_CONTAINER} ... "
             # @todo fix this check for the case of container not running...
             #       Use instead a check such as `bash -c 'ps auxwww | fgrep "tail -f /dev/null" | fgrep -v grep'` ?
-# @todo it also fails on GHA!
             OUT=$(${DOCKER_TESTSTACK_QUIET} exec -T ${BS_CONTAINER} cat ${BOOTSTRAP_OK_FILE} 2>&1)
             RETCODE=$?
             if [ ${RETCODE} -eq 0 ]; then
                 printf "\e[32mdone\e[0m\n"
                 BOOTSTRAP_OK="${BOOTSTRAP_OK} ${BS_CONTAINER}"
             else
-# TODO ...
-                echo $OUT;
+                echo
+                # to debug:
+                #echo $OUT;
             fi
         done
         if [ -n "${BOOTSTRAP_OK}" ]; then
