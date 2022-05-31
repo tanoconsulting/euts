@@ -1,6 +1,7 @@
+ARG os_vendor=debian
 ARG debian_version=buster
 
-FROM debian:${debian_version}-slim
+FROM ${os_vendor}:${debian_version}
 LABEL php_version.version=${php_version}
 LABEL com.tanoconsulting.euts.project_name=${project_name}
 
@@ -31,11 +32,11 @@ RUN chmod 755 /root/build/*.sh
 
 # Install the required packages
 # -----------------------------------------------------------------------------
-# depending on Debian version, the package list will be different
+# depending on os version, the package list will be different
 RUN mkdir -p /usr/share/man/man1; mkdir -p /usr/share/man/man7; \
     cd /root/build/ && ./getpackages.sh "${php_version}"
 
-# Install Composer (a more recent version than the stock one from Debian)
+# Install Composer (a more recent version than the stock one)
 # -----------------------------------------------------------------------------
 RUN apt-get remove -y composer || echo An error on the line above is ok; \
     /root/build/getcomposer.sh && \

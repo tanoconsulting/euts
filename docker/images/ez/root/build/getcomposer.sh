@@ -1,8 +1,8 @@
 #!/bin/sh
 
-# Installs Composer (latest version, to avoid relying on old ones bundled with the OS)
+# Installs Composer (latest version, to avoid relying on old ones bundled with the OS) as /usr/local/bin/composer
 
-# @todo support a different target install dir
+# @todo support a different target install dir / filename
 
 COMPOSER_VERSION="$1"
 if [ -n "${COMPOSER_VERSION}" ]; then

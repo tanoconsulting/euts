@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# @todo allow usage of env var COMPOSER_VERSION to decide the version of composer to use and if we want to selfupdate
+# @todo allow usage of env var COMPOSER_VERSION to decide the version of composer to use and/or if we want to selfupdate
 
 echo "Setting up Composer..."
 

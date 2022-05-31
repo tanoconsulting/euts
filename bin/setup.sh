@@ -46,7 +46,7 @@ fi
 
 ${BIN_DIR}/setup/php-config.sh
 
-# This is done by Travis automatically...
+# This is done by Travis automatically... Check if on GHA we also always get the latest version
 #if [ "${TRAVIS}" != "true" ]; then
 #    composer selfupdate
 #fi

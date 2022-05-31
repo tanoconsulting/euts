@@ -42,10 +42,10 @@ if [ "${PHP_VERSION}" = default ]; then
         php${PHPSUFFIX}-xdebug \
         ${EXTRA_PACKAGES}
 else
-
-    if update-alternatives --list php | fgrep -q -v "php${PHP_VERSION}"; then
-
-        # The correct php version is not installed. Set up custom repos to get it
+    if update-alternatives --list php 2>/dev/null | fgrep -q "php${PHP_VERSION}"; then
+        :
+    else
+        # The correct php version is not available. Set up custom repos to get it
 
         # On GHA runners ubuntu version, many php versions are preinstalled. We remove them if found.
         # NB: this takes quite some time to execute. We should allow it optionally
@@ -55,8 +55,12 @@ else
         #    fi
         #done
 
-        DEBIAN_FRONTEND=noninteractive apt-get install -y language-pack-en-base software-properties-common
-        LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php
+        if cat /etc/os-release | fgrep -q Ubuntu; then
+            DEBIAN_FRONTEND=noninteractive apt-get install -y language-pack-en-base software-properties-common
+        else
+            DEBIAN_FRONTEND=noninteractive apt-get install -y gpg software-properties-common
+        fi
+        LC_ALL=C.UTF-8 add-apt-repository ppa:ondrej/php
         apt-get update
     fi
 

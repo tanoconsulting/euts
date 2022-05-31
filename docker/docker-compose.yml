@@ -7,8 +7,9 @@ services:
         build:
             context: images/ez
             args:
-                debian_mirror: ${TESTSTACK_DEBIAN_MIRROR:-none}
+                os_vendor: ${TESTSTACK_OS_VENDOR:-debian}
                 debian_version: ${TESTSTACK_DEBIAN_VERSION:-buster}
+                debian_mirror: ${TESTSTACK_DEBIAN_MIRROR:-none}
                 do_update_os: ${TESTSTACK_UPDATE_OS_ON_BUILD:-true}
                 php_version: ${TESTSTACK_PHP_VERSION:-default}
                 project_name: ${COMPOSE_PROJECT_NAME:-euts}

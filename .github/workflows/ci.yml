@@ -26,16 +26,16 @@ jobs:
                       config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.cp.env'
                     - php: "7.0"
                       operating-system: 'ubuntu-18.04'
-                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.1.13.env'
+                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.1.7.env'
                     - php: "7.1"
                       operating-system: 'ubuntu-18.04'
-                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.1.7.env'
+                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.1.13.env'
                     - php: "7.2"
                       operating-system: 'ubuntu-20.04'
                       config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.3.env'
                     - php: "7.3"
                       operating-system: 'ubuntu-20.04'
-                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.5.env'
+                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.4.env'
                     - php: "7.4"
                       operating-system: 'ubuntu-20.04'
                       config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.5.env'
@@ -66,18 +66,26 @@ jobs:
             # build the test stack docker images
             # @todo using the composer.lock file and vendors from the previous run makes install quicker, but then we
             # should make sure php versions (and extensions) are in sync.
-            - run: './teststack -n -e ${{ matrix.config_file }} -w 900 build'
+            - run: './teststack -e ${{ matrix.config_file }} -n -w 900 build || '
 
-            - run: './teststack logs'
+            - run: './teststack -e ${{ matrix.config_file }} logs'
 
-            - run: './teststack ps'
+            - run: './teststack -e ${{ matrix.config_file }} ps'
 
-            - run: './teststack services'
+            - run: './teststack -e ${{ matrix.config_file }} services'
 
-            - run: './teststack images'
+            - run: './teststack -e ${{ matrix.config_file }} images'
 
-            - run: './teststack top'
+            - run: './teststack -e ${{ matrix.config_file }} top'
 
-            - run: './teststack setup'
+            - run: './teststack -e ${{ matrix.config_file }} setup'
 
             # @todo run more commands...
+
+            # troubleshooting failures
+            #-
+            #    if: ${{ failure() }}
+            #    run: |
+            #        env
+            #        php -i
+            #        docker logs
