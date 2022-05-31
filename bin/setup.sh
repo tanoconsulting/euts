@@ -37,7 +37,7 @@ fi
 
 # BC. We should abandon either PHP_VERSION or TESTSTACK_PHP_VERSION going forward
 if [ -z "${PHP_VERSION}" -a -n "${TESTSTACK_PHP_VERSION}" ]; then
-    PHP_VERSION="${TESTSTACK_PHP_VERSION}"
+    export PHP_VERSION="${TESTSTACK_PHP_VERSION}"
 fi
 
 if [ -n "${PHP_VERSION}" ]; then
