@@ -24,7 +24,12 @@ fi
 if [ -n "${EZ_COMPOSER_LOCK}" ]; then
     echo "Installing packages via Composer using existing lock file ${EZ_COMPOSER_LOCK}..."
 
-    cp ${EZ_COMPOSER_LOCK} composer.lock
+    if [ -n "${COMPOSE_PROJECT_NAME}" ]; then
+        export COMPOSER="composer_${COMPOSE_PROJECT_NAME}.json"
+        cp "${EZ_COMPOSER_LOCK}" "composer_${COMPOSE_PROJECT_NAME}.lock"
+    else
+        cp "${EZ_COMPOSER_LOCK}" composer.lock
+    fi
     composer install
 else
     echo "Installing packages via Composer: the ones in composer.json plus ${EZ_PACKAGES}..."
@@ -32,7 +37,7 @@ else
     if [ -n "${COMPOSE_PROJECT_NAME}" ]; then
         export COMPOSER="composer_${COMPOSE_PROJECT_NAME}.json"
         if [ -f composer.json ]; then
-            cp composer.json ${COMPOSER}
+            cp composer.json "${COMPOSER}"
         fi
     fi
     # we split require from update to (hopefully) save some ram

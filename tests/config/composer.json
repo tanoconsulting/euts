@@ -17,6 +17,11 @@
         }
     ],
     "config": {
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "ezsystems/ezpublish-legacy-installer": true,
+            "symfony/thanks": true
+        },
         "cache-dir": "/tmp/composer_cache"
     },
     "extra": {

@@ -6,7 +6,6 @@
 BOOTSTRAP_OK_FILE=/var/run/bootstrap_ok
 DEFAULT_CONTAINER_USER_UID=1000
 DEFAULT_CONTAINER_USER_GID=1000
-WEB_SERVICE=ez
 WEB_USER=test
 # vars
 BOOTSTRAP_TIMEOUT=600
@@ -41,7 +40,7 @@ Commands:
                         - logs            removes log files from the databases, webservers
     console \$cmd      run a Symfony console command in the test container
     dbconsole         connect to the eZ database for an interactive session
-    enter             enter the test container
+    enter             run a shell in the test container
     exec \$cmd         execute a single shell command in the test container
     images [\$svc]     list container images
     kill [\$svc]       kill containers
@@ -105,17 +104,21 @@ build() {
         # 1 get list of images
         # 2 for each, run 'docker image history $img', remove <missing>
         # 3 take last image id, run `docker image ls | grep f6dcff9b59af`, take the first 2 cols (or use `docker image inspect --format='{{index .RepoTags 0}}`)
-        if [ -n "${TESTSTACK_DEBIAN_VERSION}"]; then
-            DIMG="debian:${TESTSTACK_DEBIAN_VERSION}"
+        if [ -n "${TESTSTACK_OS_VENDOR}" ]; then
+            DIMG="${TESTSTACK_OS_VENDOR}:${TESTSTACK_DEBIAN_VERSION}"
         else
-            DIMG="debian:buster"
+            if [ -n "${TESTSTACK_DEBIAN_VERSION}" ]; then
+                DIMG="debian:${TESTSTACK_DEBIAN_VERSION}"
+            else
+                DIMG="debian:buster"
+            fi
         fi
-        if [ -n "${MYSQL_VERSION}"]; then
+        if [ -n "${MYSQL_VERSION}" ]; then
             MIMG="mysql:${MYSQL_VERSION}"
         else
             MIMG="mysql:5.6"
         fi
-        if [ -n "${POSTGRESQL_VERSION}"]; then
+        if [ -n "${POSTGRESQL_VERSION}" ]; then
             PIMG="postgres:${POSTGRESQL_VERSION}"
         else
             PIMG="postgres:9.5"
@@ -364,6 +367,7 @@ wait_for_bootstrap() {
 
     if [ -n "${BOOTSTRAP_CONTAINERS// /}" ]; then
         printf "\n\e[31mBootstrap process did not finish within ${BOOTSTRAP_TIMEOUT} seconds\e[0m\n\n" >&2
+        # @todo we could show the docker logs
         return 1
     fi
 
@@ -442,7 +446,7 @@ fi
 load_config
 
 # @todo allow installation of the Test Stack elsewhere than as direct subfolder of the project
-TESTSTACK_DIR=$(basename -- $(dirname -- ${BASH_SOURCE[0]}))
+#TESTSTACK_DIR=$(basename -- $(dirname -- ${BASH_SOURCE[0]}))
 
 cd $(dirname -- ${BASH_SOURCE[0]})/docker
 
@@ -465,12 +469,12 @@ case "${COMMAND}" in
     ;;
 
     console | ezconsole | sfconsole)
-        # @todo allow this to be run from within the test container
+        # @todo allow this to be run from within the test container too
         docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c '../teststack/bin/sfconsole.sh "$@"' -- "$@"
     ;;
 
     dbconsole | dbcli | dbclient)
-        # @todo allow this to be run from within the test container
+        # @todo allow this to be run from within the test container too
         docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c '../teststack/bin/dbconsole.sh "$@"' -- "$@"
     ;;
 
@@ -511,7 +515,7 @@ case "${COMMAND}" in
     ;;
 
     resetdb)
-        # @todo allow this to be run from within the test container
+        # @todo allow this to be run from within the test container too
         # q: do we need -ti ?
         docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c "../teststack/bin/create-db.sh"
     ;;
@@ -523,6 +527,11 @@ case "${COMMAND}" in
     ;;
 
     setup)
+        if [ "${SETUP_APP_ON_BOOT}" != '' ]; then
+            # avoid user confusion
+            printf "\n\e[31mERROR:\e[0m -s and -n flags should not be used with the setup command\n\n" >&2
+            exit 1
+        fi
         setup_app
     ;;
 

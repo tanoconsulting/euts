@@ -9,6 +9,10 @@
 
 # @todo also set up APP_ENV, SYMFONY_ENV (defaulting to 'behat')
 
+if [ -n "${COMPOSE_PROJECT_NAME}" ]; then
+    export COMPOSER="composer_${COMPOSE_PROJECT_NAME}.json"
+fi
+
 # Figure out EZ_VERSION if required
 if [ -z "${EZ_VERSION}" ]; then
     EZ_VERSION=$(composer show | grep ezsystems/ezpublish-kernel || true)
