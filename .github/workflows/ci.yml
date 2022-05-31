@@ -56,7 +56,7 @@ jobs:
                 mkdir /tmp/composer_cache
                 cp tests/config/composer.json .
                 # patch the configuration file we will use: we won't have the mig bundle available
-                sed -i '/Kaliop\eZMigrationBundle\EzMigrationBundle  /' ${{ matrix.config_file }}
+                sed -i 's/Kaliop\eZMigrationBundle\EzMigrationBundle  //' ${{ matrix.config_file }}
 
             # set up the test stack locally, ie. without docker containers
             # NB: the php version in use here is not the one from the .env config file, but the one set in the matrix above
