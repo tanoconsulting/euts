@@ -8,15 +8,13 @@ jobs:
         env:
             SYMFONY_ENV: behat
             DB_HOST: localhost
+            # @todo run one test on pgsql
             DB_TYPE: mysql
             DB_ROOT_PASSWORD: root
             DB_EZ_USER: ezp
             DB_EZ_PASSWORD: ezp
             DB_EZ_DATABASE: behattestdb
             PHP_VERSION: ${{ matrix.php }}
-            #EZ_COMPOSER_LOCK: ${{ matrix.ez_composer_lock }}
-            #EZ_BUNDLES: ${{ matrix.ez_bundles }}
-            #EZ_PACKAGES: ${{ matrix.ez_packages }}
         strategy:
             fail-fast: false
             matrix:
@@ -53,7 +51,8 @@ jobs:
             - run: |
                 # just in case...
                 chmod 755 ./teststack ./bin/*.sh ./bin/setup/*.sh
-                # this is required to allow installation of package dependencies using "dev-master", etc.
+                # this is required to allow installation of package dependencies using "dev-master", fix behattestdb for
+                # ez cp version, etc...
                 mkdir /tmp/composer_cache
                 cp tests/config/composer.json .
 
@@ -65,6 +64,8 @@ jobs:
             - run: 'mv vendor vendor_nodocker'
 
             # build the test stack docker images
+            # @todo using the composer.lock file and vendors from the previous run makes install quicker, but then we
+            # should make sure php versions (and extensions) are in sync.
             - run: './teststack -n -e ${{ matrix.config_file }} -w 900 build'
 
             - run: './teststack logs'
