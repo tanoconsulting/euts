@@ -73,6 +73,11 @@ jobs:
             # should make sure php versions (and extensions) are in sync.
             - run: './teststack -e ${{ matrix.config_file }} -n -w 900 build'
 
+            # troubleshooting failures
+            -
+                if: ${{ failure() }}
+                run: './teststack -e ${{ matrix.config_file }} logs ez'
+
             - run: './teststack -e ${{ matrix.config_file }} logs'
 
             - run: './teststack -e ${{ matrix.config_file }} ps'
