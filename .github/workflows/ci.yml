@@ -51,14 +51,19 @@ jobs:
             - run: |
                 # just in case...
                 chmod 755 ./teststack ./bin/*.sh ./bin/setup/*.sh
-                # this is required to allow installation of package dependencies using "dev-master", fix behattestdb for
-                # ez cp version, etc...
+                # a minimal composer.json is required to allow installation of package dependencies using "dev-master",
+                # fix behattestdb for ez cp version, etc...
                 mkdir /tmp/composer_cache
                 cp tests/config/composer.json .
+                # patch the configuration file we will use: we won't have the mig bundle available
+                sed -i '/Kaliop\eZMigrationBundle\EzMigrationBundle  /' ${{ matrix.config_file }}
 
-            # set up the test stack locally, ie. without docker images
+            # set up the test stack locally, ie. without docker containers
             # NB: the php version in use here is not the one from the .env config file, but the one set in the matrix above
-            - run: 'set -a && . ${{ matrix.config_file }} && set +a && ./bin/setup.sh'
+            - run: |
+                set -a && . ${{ matrix.config_file }} && set +a
+                ./bin/setup.sh
+                ./bin/sfconsole.sh list
 
             # reset the env which we built
             - run: 'mv vendor vendor_nodocker'
@@ -66,7 +71,7 @@ jobs:
             # build the test stack docker images
             # @todo using the composer.lock file and vendors from the previous run makes install quicker, but then we
             # should make sure php versions (and extensions) are in sync.
-            - run: './teststack -e ${{ matrix.config_file }} -n -w 900 build || '
+            - run: './teststack -e ${{ matrix.config_file }} -n -w 900 build'
 
             - run: './teststack -e ${{ matrix.config_file }} logs'
 
@@ -78,9 +83,20 @@ jobs:
 
             - run: './teststack -e ${{ matrix.config_file }} top'
 
+            - run: './teststack -e ${{ matrix.config_file }} exec pwd'
+
             - run: './teststack -e ${{ matrix.config_file }} setup'
 
             # @todo run more commands...
+            #- run: './teststack -e ${{ matrix.config_file }} resetdb'
+
+            - run: './teststack -e ${{ matrix.config_file }} console list'
+
+            - run: './teststack -e ${{ matrix.config_file }} cleanup ez-logs'
+
+            - run: './teststack -e ${{ matrix.config_file }} stop'
+
+            - run: './teststack -e ${{ matrix.config_file }} cleanup logs'
 
             # troubleshooting failures
             #-
