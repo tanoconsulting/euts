@@ -157,10 +157,14 @@ build() {
         cleanup_dead_docker_images
     fi
 
-    if [ "${SETUP_APP_ON_BOOT}" = skip ]; then
+    if [ $RETCODE -eq 0 -a "${SETUP_APP_ON_BOOT}" != skip ]; then
+        RETCODE=$(docker exec "${WEB_CONTAINER}" cat /home/test/setup_ok)
+    fi
+
+    if [ $RETCODE -eq 0 ]; then
         echo "[$(date)] Build finished"
     else
-        echo "[$(date)] Build finished. Exit code: $(docker exec "${WEB_CONTAINER}" cat /home/test/setup_ok)"
+        echo "[$(date)] Build finished. Exit code: ${RETCODE}"
     fi
 
     exit ${RETCODE}
@@ -310,7 +314,10 @@ setup_app() {
     docker exec "${WEB_CONTAINER}" su "${WEB_USER}" -c "cd /home/test/bundle && ../teststack/bin/setup.sh; echo \$? > /home/test/setup_ok"
 
     # @bug WEB_CONTAINER is not defined in subshell ?
-    echo "[$(date)] Setup finished. Exit code: $(docker exec "${WEB_CONTAINER}" cat /home/test/setup_ok)"
+    RETCODE=$(docker exec "${WEB_CONTAINER}" cat /home/test/setup_ok)
+    echo "[$(date)] Setup finished. Exit code: ${RETCODE}"
+
+    return $RETCODE
 }
 
 # Wait until containers have fully booted
@@ -547,6 +554,7 @@ case "${COMMAND}" in
             exit 1
         fi
         setup_app
+        exit $?
     ;;
 
     services)
