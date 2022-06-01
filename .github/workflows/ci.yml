@@ -60,17 +60,15 @@ jobs:
 
             # set up the test stack locally, ie. without docker containers
             # NB: the php version in use here is not the one from the .env config file, but the one set in the matrix above
-#            - run: |
-#                set -a && . ${{ matrix.config_file }} && set +a
-#                ./bin/setup.sh
-#                ./bin/sfconsole.sh list
-#
-#            # reset the env which we built
-#            - run: 'mv vendor vendor_nodocker'
+            - run: |
+                set -a && . ${{ matrix.config_file }} && set +a
+                ./bin/setup.sh
+                ./bin/sfconsole.sh list
 
-            # build the test stack docker images
-            # @todo using the composer.lock file and vendors from the previous run makes install quicker, but then we
-            # should make sure php versions (and extensions) are in sync.
+            # reset the env which we built
+            - run: 'mv vendor vendor_nodocker'
+
+            # build the test stack docker images - without app setup
             - run: './teststack -e ${{ matrix.config_file }} -n -w 300 build'
 
             # troubleshooting failures
@@ -88,7 +86,9 @@ jobs:
 
             - run: './teststack -e ${{ matrix.config_file }} top'
 
-            - run: './teststack -e ${{ matrix.config_file }} exec pwd'
+            # @todo using the composer.lock file and vendors from the previous run makes install quicker, but then we
+            # should make sure php versions (and extensions) are in sync.
+            - run: './teststack -e ${{ matrix.config_file }} exec cp /home/test/teststack/tests/config/composer.json /home/test/bundle'
 
             - run: './teststack -e ${{ matrix.config_file }} stop'
 
