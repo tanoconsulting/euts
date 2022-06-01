@@ -32,10 +32,6 @@ case "${DB_TYPE}" in
         fi
         ROOT_DB_COMMAND="mysql ${DB_HOST_FLAG} -u${ROOT_DB_USER} ${ROOT_DB_PWD}"
         EZ_DB_COMMAND="mysql ${DB_HOST_FLAG} -u${DB_EZ_USER} -p${DB_EZ_PASSWORD} ${DB_EZ_DATABASE}"
-
-                echo "$ROOT_DB_COMMAND"
-                echo "$EZ_DB_COMMAND"
-                echo "TRAVIS? $TRAVIS"
         ;;
     postgresql)
         ROOT_DB_USER=postgres

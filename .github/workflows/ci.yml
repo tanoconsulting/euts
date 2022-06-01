@@ -8,7 +8,7 @@ jobs:
         env:
             SYMFONY_ENV: behat
             DB_HOST: localhost
-            # @todo run at least one test on pgsql
+            # @todo run at least one test on pgsql. Also: make docker tests run on mysql versions 5.6, 5.7, 8.0
             DB_TYPE: mysql
             DB_ROOT_PASSWORD: root
             DB_EZ_USER: ezp
@@ -49,7 +49,8 @@ jobs:
         steps:
             - uses: actions/checkout@v2
 
-            - run: |
+            - name: setup
+              run: |
                 # just in case...
                 chmod 755 ./teststack ./bin/*.sh ./bin/setup/*.sh
                 # a minimal composer.json is required to allow installation of package dependencies using "dev-master",
@@ -63,23 +64,30 @@ jobs:
 
             # set up the test stack locally, ie. without docker containers
             # NB: the php version in use here is not the one from the .env config file, but the one set in the matrix above
-            - run: |
+            - name: GHA test
+              run: |
                 set -a && . ${{ matrix.config_file }} && set +a
                 ./bin/setup.sh
                 ./bin/sfconsole.sh list
 
             # reset the env which we built
-            # @todo using the composer.lock file and vendors from the previous run makes install quicker, but then we
-            #       should make sure php versions (and extensions) are in sync.
-            - run: 'mv vendor vendor_nodocker'
-
-            # @todo stop services such as db, webserver, to leave ore ram available for the docker tests
+            - name: cleanup env
+              run: |
+                # @todo stop other services such as webserver, to leave ore ram available for the docker tests
+                sudo systemctl stop mysql.service
+                # @todo using the composer.lock file and vendors from the previous run makes install quicker, but then we
+                #       should make sure php versions (and extensions) are in sync.
+                mv vendor vendor_nodocker
 
             # 2nd test: set up the container stack and check that the sf console works in it
 
+            # @todo look at commit 7a0688f47047d70357cee0b77951dcd927157512 for a take on doubling workers and letting each only run one test...
+
             # build the test stack docker images - without app setup
-            - run: |
+            - name: 'docker stack: containers build'
+              run: |
                 export DB_HOST=mysql
+                export GITHUB_ACTION=
                 ./teststack -e ${{ matrix.config_file }} -n -w 300 build
 
             # troubleshooting failures
@@ -87,9 +95,11 @@ jobs:
             #    if: ${{ failure() }}
             #    run: 'DB_HOST=mysql ./teststack -e ${{ matrix.config_file }} logs ez; ./teststack -e ${{ matrix.config_file }} top'
 
-            - run: |
-                export TESTSTACK_CONFIG_FILE=${{ matrix.config_file }}
+            - name: 'docker stack: test'
+              run: |
                 export DB_HOST=mysql
+                export GITHUB_ACTION=
+                export TESTSTACK_CONFIG_FILE=${{ matrix.config_file }}
                 ./teststack logs
                 ./teststack ps
                 ./teststack services
