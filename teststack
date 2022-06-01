@@ -418,6 +418,7 @@ do
         ;;
         t)
             TTY='-t'
+        ;;
         u)
             PULL_IMAGES=true
         ;;
