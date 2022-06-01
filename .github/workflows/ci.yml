@@ -97,7 +97,7 @@ jobs:
             # @todo run more commands...
             #- run: './teststack -e ${{ matrix.config_file }} resetdb'
 
-            - run: './teststack -e ${{ matrix.config_file }} console list'
+            - run: './teststack -e ${{ matrix.config_file }} exec ../teststack/bin/sfconsole.sh list'
 
             - run: './teststack -e ${{ matrix.config_file }} cleanup ez-logs'
 

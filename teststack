@@ -531,13 +531,13 @@ case "${COMMAND}" in
     resetdb)
         # @todo allow this to be run from within the test container too
         # q: do we need -ti ?
-        docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c "../teststack/bin/create-db.sh"
+        docker exec "${WEB_CONTAINER}" su "${WEB_USER}" -c "../teststack/bin/create-db.sh"
     ;;
 
     runtests)
         shift
         # q: do we need -ti ?
-        docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c '"$0" "$@"' -- ../teststack/bin/runtests.sh ${RESET} ${VERBOSITY} "$@"
+        docker exec "${WEB_CONTAINER}" su "${WEB_USER}" -c '"$0" "$@"' -- ../teststack/bin/runtests.sh ${RESET} ${VERBOSITY} "$@"
     ;;
 
     setup)
