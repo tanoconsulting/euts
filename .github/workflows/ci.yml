@@ -7,14 +7,13 @@ jobs:
         runs-on: ${{ matrix.operating-system }}
         env:
             SYMFONY_ENV: behat
-            DB_HOST: localhost
             # nb: the db type is used as flag to decide between local and docker tests
-            DB_TYPE: ${{ matrix.php }}
+            DB_HOST:  ${{ matrix.db }}
+            DB_TYPE: mysql
             DB_ROOT_PASSWORD: root
             DB_EZ_USER: ezp
             DB_EZ_PASSWORD: ezp
             DB_EZ_DATABASE: behattestdb
-            # @todo
             #PHP_VERSION: ${{ matrix.php }}
         strategy:
             fail-fast: false
@@ -22,72 +21,73 @@ jobs:
                 # @see https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners for available os versions
                 # @todo add some tests running on 'windows-latest'
                 # @todo run at least one test on pgsql
+                # NB: the php value listed here is only for information - it is not used for driving anything
                 include:
                     - php: "5.6"
                       db: localhost
                       operating-system: 'ubuntu-18.04'
-                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.cp.env'
+                      config_file: '.euts.cp.env'
                     - php: "7.0"
                       db: localhost
                       operating-system: 'ubuntu-18.04'
-                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.1.7.env'
+                      config_file: '.euts.1.7.env'
                     - php: "7.1"
                       db: localhost
                       operating-system: 'ubuntu-18.04'
-                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.1.13.env'
+                      config_file: '.euts.1.13.env'
                     - php: "7.2"
                       db: localhost
                       operating-system: 'ubuntu-20.04'
-                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.3.env'
+                      config_file: '.euts.2.3.env'
                     - php: "7.3"
                       db: localhost
                       operating-system: 'ubuntu-20.04'
-                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.4.env'
+                      config_file: '.euts.2.4.env'
                     - php: "7.4"
                       db: localhost
                       operating-system: 'ubuntu-22.04'
-                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.5.env'
+                      config_file: '.euts.2.5.env'
                     #- php: "8.0"
                     #  db: localhost
                     #  operating-system: 'ubuntu-22.04'
-                    #  config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.3.2.env'
+                    #  config_file: '.euts.3.2.env'
                     #- php: "8.1"
                     #  db: localhost
                     #  operating-system: 'ubuntu-22.04'
-                    #  config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.3.2.env'
+                    #  config_file: '.euts.3.2.env'
 
                     - php: "5.6"
                       db: mysql
                       operating-system: 'ubuntu-18.04'
-                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.cp.env'
+                      config_file: '.euts.cp.env'
                     - php: "7.0"
                       db: mysql
                       operating-system: 'ubuntu-18.04'
-                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.1.7.env'
+                      config_file: '.euts.1.7.env'
                     - php: "7.1"
                       db: mysql
                       operating-system: 'ubuntu-18.04'
-                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.1.13.env'
+                      config_file: '.euts.1.13.env'
                     - php: "7.2"
                       db: mysql
                       operating-system: 'ubuntu-20.04'
-                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.3.env'
+                      config_file: '.euts.2.3.env'
                     - php: "7.3"
                       db: mysql
                       operating-system: 'ubuntu-20.04'
-                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.4.env'
+                      config_file: '.euts.2.4.env'
                     - php: "7.4"
                       db: mysql
                       operating-system: 'ubuntu-22.04'
-                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.5.env'
+                      config_file: '.euts.2.5.env'
                     #- php: "8.0"
                     #  db: mysql
                     #  operating-system: 'ubuntu-22.04'
-                    #  config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.3.2.env'
+                    #  config_file: '.euts.3.2.env'
                     #- php: "8.1"
                     #  db: mysql
                     #  operating-system: 'ubuntu-22.04'
-                    #  config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.3.2.env'
+                    #  config_file: '.euts.3.2.env'
         steps:
             - uses: actions/checkout@v2
 
@@ -116,7 +116,7 @@ jobs:
 
             # build the test stack docker images - without app setup
             - if: ${{ matrix.db != 'localhost' }}
-              run: './teststack -e ${{ matrix.config_file }} -n -w 300 build'
+              run: './teststack -e doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config_file }} -n -w 300 build'
 
             # troubleshooting failures
             #-
@@ -125,7 +125,7 @@ jobs:
 
             - if: ${{ matrix.db != 'localhost' }}
               run: |
-                export TESTSTACK_CONFIG_FILE=${{ matrix.config_file }}
+                export TESTSTACK_CONFIG_FILE=doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config_file }}
                 ./teststack logs
                 ./teststack ps
                 ./teststack services
