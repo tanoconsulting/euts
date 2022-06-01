@@ -52,6 +52,14 @@ trap clean_up TERM
 
 /entrypoint.sh $@ &
 
+# wait until mysql is ready to accept connections over the network before saying bootstrap is finished
+which mysqladmin 2>/dev/null
+if [ $? -eq 0 ]; then
+    while ! mysqladmin ping -h 127.0.0.1 --silent; do
+        sleep 1
+    done
+fi
+
 echo "[$(date)] Bootstrap finished" | tee /var/run/bootstrap_ok
 
 tail -f /dev/null &

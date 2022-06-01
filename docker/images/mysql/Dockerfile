@@ -1,6 +1,7 @@
 ARG mysql_version=5.6
+ARG db_vendor=mysql
 
-FROM mysql:${mysql_version}
+FROM ${db_vendor}:${mysql_version}
 LABEL mysql.version=${mysql_version}
 LABEL com.tanoconsulting.euts.project_name=${project_name}
 
