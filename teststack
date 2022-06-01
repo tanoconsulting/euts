@@ -7,20 +7,22 @@ BOOTSTRAP_OK_FILE=/var/run/bootstrap_ok
 DEFAULT_CONTAINER_USER_UID=1000
 DEFAULT_CONTAINER_USER_GID=1000
 WEB_USER=test
+DEFAULT_CONFIG_FILE=.euts.env
 # vars
 BOOTSTRAP_TIMEOUT=600
 CLEANUP_UNUSED_IMAGES=false
 CONFIG_FILE=
-DEFAULT_CONFIG_FILE=.euts.env
 DOCKER_COMPOSE=docker-compose
 DOCKER_NO_CACHE=
+INTERACTIVE=
 PARALLEL_BUILD=
 PULL_IMAGES=false
-SILENT=false
 REBUILD=false
 RECREATE=false
 RESET=
 SETUP_APP_ON_BOOT=
+SILENT=false
+TTY=
 VERBOSITY=
 WEB_CONTAINER=
 
@@ -68,8 +70,10 @@ Advanced Options:
     -c                clean up docker images which have become useless - when running 'build'
     -d                discard existing containers and force them to rebuild from scratch (this forces a full app set up as well) - when running 'build'
     -f                freshen: force app set up via resetting containers to clean-build status besides updating them if needed - when running 'build'
+    -i                interactive - when running 'exec'
     -n                do not set up the app - when running 'build', 'start'
     -s                force the app to be set up - when running 'build', 'start'
+    -t                 Allocate a pseudo-TTY - when running 'exec'
     -u                update (pull) the container base images (this might force a rebuild) - when running 'build'
     -w SECONDS        wait timeout for completion of app and container set up - when running 'build', 'start' and 'setup'. Defaults to ${BOOTSTRAP_TIMEOUT}
     -z                avoid using docker cache - when running 'build -r'
@@ -208,10 +212,10 @@ cleanup() {
             done
         ;;
         ez-cache)
-            docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c "../teststack/bin/cleanup.sh ez-cache"
+            docker exec  "${WEB_CONTAINER}" su "${WEB_USER}" -c "../teststack/bin/cleanup.sh ez-cache"
         ;;
         ez-logs)
-            docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c "../teststack/bin/cleanup.sh ez-logs"
+            docker exec "${WEB_CONTAINER}" su "${WEB_USER}" -c "../teststack/bin/cleanup.sh ez-logs"
         ;;
         logs)
             find ./logs/ -type f ! -name .gitkeep -delete
@@ -344,8 +348,8 @@ wait_for_bootstrap() {
         BOOTSTRAP_OK=''
         for BS_CONTAINER in ${BOOTSTRAP_CONTAINERS}; do
             printf "Waiting for ${BS_CONTAINER} ... "
-            # @todo fix this check for the case of container not running...
-            #       Use instead a check such as `bash -c 'ps auxwww | fgrep "tail -f /dev/null" | fgrep -v grep'` ?
+            # @todo fix this check for the case of container not running / tty issues / etc...
+            #       Eg. use instead a check such as `bash -c 'ps auxwww | fgrep "tail -f /dev/null" | fgrep -v grep'` ?
             OUT=$(${DOCKER_TESTSTACK_QUIET} exec -T ${BS_CONTAINER} cat ${BOOTSTRAP_OK_FILE} 2>&1)
             RETCODE=$?
             if [ ${RETCODE} -eq 0 ]; then
@@ -381,7 +385,7 @@ wait_for_bootstrap() {
 
 # @todo move to a function
 # @todo allow parsing of cli options after args -- see fe. https://medium.com/@Drew_Stokes/bash-argument-parsing-54f3b81a6a8f
-while getopts ":cde:fhnrsuvw:yz" opt
+while getopts ":cde:fhinrstuvw:yz" opt
 do
     case $opt in
         c)
@@ -400,6 +404,9 @@ do
             help
             exit 0
         ;;
+        i)
+            INTERACTIVE='-i'
+        ;;
         n)
             SETUP_APP_ON_BOOT=skip
         ;;
@@ -409,6 +416,8 @@ do
         s)
             SETUP_APP_ON_BOOT=force
         ;;
+        t)
+            TTY='-t'
         u)
             PULL_IMAGES=true
         ;;
@@ -494,9 +503,8 @@ case "${COMMAND}" in
 
     exec)
         # scary line ? found it at https://stackoverflow.com/questions/12343227/escaping-bash-function-arguments-for-use-by-su-c
-        # @todo do we need -ti ? It actually breaks usage of pipelines in the shell invoking this... Add a cli option for that?
         shift
-        docker exec -ti "${WEB_CONTAINER}" su "${WEB_USER}" -c '"$0" "$@"' -- exec "$@"
+        docker exec $INTERACTIVE $TTY "${WEB_CONTAINER}" su "${WEB_USER}" -c '"$0" "$@"' -- exec "$@"
     ;;
 
     images)
