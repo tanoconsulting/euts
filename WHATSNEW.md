@@ -1,11 +1,33 @@
 Version 0.4 (wip)
 =================
 
-* support usage via GitHub Actions besides Travis
+* new: support usage via GitHub Actions besides Travis
+
+* new: allow using Ubuntu instead of Debian as base OS for the docker containers
+
+* new: allow using MariaDB instead of Mysql as DB for the docker containers
+
+* fix: usage of `teststack -w $value`. Also, improve timeout measurement
+
+* fix: make sure composer gets downgraded to version 2.2 when using php versions 5.6-7.1
+
+* fix: make sure `teststack build` and `teststack setup` exit with non-0 code on failure to set up eZ
+
+* change: `teststack exec` will not allocate a tty nor run in interactive mode by default. New cli options `-i` and `-t`
+  are available for that command, which behave exactly the same way they do with `docker exec`.
+  Also: `teststack runtests` and `teststack resetdb` do not allocate a terminal anymore
+
+* change: revert to use of non-slim debian images as docker base images, to allow support of Ubuntu as container OS
+
+* improve: fail when using `-s` or `-n` options for `teststack setup`
+
+* improve: reinstall php on container restart if TESTSTACK_PHP_VERSION hash changed
+
+* improve: when using docker, make sure mysql is available before declaring bootstrap finished
+
+* add to the docs an example configuration using eZPlatform 2.4
 
 * make it easier to reuse outside of Docker the script used to set up php
-
-* fix: the ezplatform 2 config generated for running tests had started failing with newer ezplatform versions
 
 Version 0.3.1
 =============

@@ -2,12 +2,14 @@ The eZPlatform Ultimate Test Stack
 ==================================
 
 Makes it easy to run _integration_ or _functional_ tests for eZPlatform/eZPublish bundles, both locally (via Docker) and
-on popular CI services such as Travis or GitHub Actions.
+on popular CI services (supported: Travis and GitHub Actions), by setting up automatically the CMS and database, with
+all required dependencies.
 
 The target users are developers of bundles for eZPlatform/eZPublish, who want to make sure their code works with
 a specific version of the CMS, or on a combination of versions.
 
 Features:
+
 
 * allows to run your bundle's tests on any version of eZPublish-Community, eZPlatform 1 and eZPlatform 2
 * allows to run your bundle's tests on multiple versions of eZPlatform/eZPublish from a single source directory
@@ -22,7 +24,13 @@ It works by:
 2. downloading and setting up the desired version of eZP and creating the database with the stock schema definition.
 At this point, the testsuite of the bundle in question can be executed.
 
-Step 1 can be omitted when the tests are run on a server which already has php/mysql installed, such as a CI environment.
+Step 1 can be omitted when the tests are run on a server which already has php/mysql installed, such as a CI environment
+(only Ubuntu/Debian are supported in that case).
+
+Not (yet) supported:
+- running tests on PostgreSQL instead of Mysql: this is a work in progress
+- running tests which require eZ to be set up with Redis or Memcached: this is a work in progress; see the FAQ later for details
+- running browser-based tests: this has not yet been tested
 
 Requirements
 ------------
@@ -41,7 +49,7 @@ Installation
 
 To install in the `teststack` directory:
 
-    git clone --depth 1 --branch 0.3.1 https://github.com/tanoconsulting/euts.git teststack
+    git clone --depth 1 --branch 0.4.0 https://github.com/tanoconsulting/euts.git teststack
 
 Note that you can use any other name for the folder where this tool will be installed - but so far it has only been
 tested running from within the top-level project folder.
@@ -74,6 +82,31 @@ Quick Start
          "extra": {
              "ezpublish-legacy-dir": "vendor/ezsystems/ezpublish-legacy"
          },
+   * if you are running tests with eZPublish 5 / CP, and you are getting errors with composer install about
+     roave/security-advisories, add this to composer.json:
+
+         "repositories": [
+             {
+                 "type": "vcs",
+                 "url": "https://github.com/kaliop-uk/SecurityAdvisoriesNoConflicts",
+                 "no-api": true
+             }
+         ],
+
+     and add to the `require-dev` section the following:
+
+          "roave/security-advisories": "dev-disablechecks as dev-master"
+
+   * if you are running tests with eZPublish CP, and you are getting errors with composer install about
+     behat bundle and ez kernel version, add this to composer.json:
+
+         "repositories": [
+             {
+                 "type": "vcs",
+                 "url": "https://github.com/gggeek/BehatBundle",
+                 "no-api": true
+             }
+         ],
 
 3. build the tests stack
 
@@ -139,21 +172,6 @@ Troubleshooting
   once you are in the container, an easy way to run the Symfony console, regardless of the eZ version installed, is:
 
       ../teststack/bin/sfconsole.sh
-
-* If you get an error 'Your requirements could not be resolved to an installable set of packages.' due to the package
-  `roave/security-advisories dev-master`, you can work around it by the following changes in your composer.json file:
-
-  1. add to the `repositories` section the following code:
-
-          {
-              "type": "vcs",
-              "url": "https://github.com/kaliop-uk/SecurityAdvisoriesNoConflicts",
-              "no-api": true
-          }
-
-  2.  add to the `require-dev` section the following:
-
-          "roave/security-advisories": "dev-disablechecks as dev-master"
 
 * If you get an error 'Could not authenticate against github.com', you can set in the .euts.env file something like:
 
@@ -273,4 +291,4 @@ A: certainly there are. Ones that I know of are f.e. https://github.com/Plopix/s
 
 Q: Are you testing this Test Stack itself?
 
-A: Inception!!! In fact, yes, we strive to test it using Github Actions
+A: inception!!! ;-) In fact, yes, we strive to test it, using Github Actions
