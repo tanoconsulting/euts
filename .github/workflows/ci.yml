@@ -104,7 +104,7 @@ jobs:
             # Test: set up the app and check that the sf console works - locally
 
             # set up the test stack locally, ie. without docker containers
-            - if: ${{ matrix.db == localhost }}
+            - if: ${{ matrix.db == 'localhost' }}
               run: |
                 set -a && . ${{ matrix.config_file }} && set +a
                 ./bin/setup.sh
@@ -115,7 +115,7 @@ jobs:
             # @todo stop services such as db, webserver, to leave ore ram available for the docker tests
 
             # build the test stack docker images - without app setup
-            - if: ${{ matrix.db != localhost }}
+            - if: ${{ matrix.db != 'localhost' }}
               run: './teststack -e ${{ matrix.config_file }} -n -w 300 build'
 
             # troubleshooting failures
@@ -123,7 +123,7 @@ jobs:
             #    if: ${{ matrix.db != localhost && failure() }}
             #    run: './teststack -e ${{ matrix.config_file }} logs ez; ./teststack -e ${{ matrix.config_file }} top'
 
-            - if: ${{ matrix.db != localhost }}
+            - if: ${{ matrix.db != 'localhost' }}
               run: |
                 export TESTSTACK_CONFIG_FILE=${{ matrix.config_file }}
                 ./teststack logs
