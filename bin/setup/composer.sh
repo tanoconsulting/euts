@@ -29,6 +29,9 @@ if [ $INSTALL_COMPOSER = true ]; then
     # @todo does this work in docker-stack envs? See php.sh for a different take...
     chmod 755 ./docker/images/ez/root/build/getcomposer.sh
     sudo ./docker/images/ez/root/build/getcomposer.sh
+    if [ -d "$HOME/.cache/composer" ]; then
+        sudo chown -R $(id -u) $HOME/.cache/composer
+    fi
 fi
 
 echo Done

@@ -1,5 +1,10 @@
-Version 0.4 (wip)
-=================
+Version 0.4.1 (unreleased)
+==========================
+
+* fix installing composer w. php 7.0, 7.1 on GitHub
+
+Version 0.4
+===========
 
 * new: support usage via GitHub Actions besides Travis
 
