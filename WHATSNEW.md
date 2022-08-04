@@ -1,5 +1,9 @@
-Version 0.4.1 (unreleased)
-==========================
+Version xxx (unreleased)
+========================
+
+
+Version 0.4.1
+=============
 
 * fix installing composer w. php 7.0, 7.1 on GitHub
 
