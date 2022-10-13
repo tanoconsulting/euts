@@ -82,6 +82,7 @@ Quick Start
          "extra": {
              "ezpublish-legacy-dir": "vendor/ezsystems/ezpublish-legacy"
          },
+
    * if you are running tests with eZPublish 5 / CP, and you are getting errors with composer install about
      roave/security-advisories, add this to composer.json:
 

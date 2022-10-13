@@ -24,13 +24,22 @@ fi
 if [ -n "${EZ_COMPOSER_LOCK}" ]; then
     echo "Installing packages via Composer using existing lock file ${EZ_COMPOSER_LOCK}..."
 
+    if [ ! -f "${EZ_COMPOSER_LOCK}" ]; then
+        printf "\n\e[31mERROR:\e[0m lock file can not be found\n\n"
+        exit 1
+    fi
+
     if [ -n "${COMPOSE_PROJECT_NAME}" ]; then
         export COMPOSER="composer_${COMPOSE_PROJECT_NAME}.json"
         cp "${EZ_COMPOSER_LOCK}" "composer_${COMPOSE_PROJECT_NAME}.lock"
     else
         cp "${EZ_COMPOSER_LOCK}" composer.lock
     fi
-    composer install
+
+    # @todo it seems that Composer will still look into the contents of composer.json, for eg. allow-plugins.
+    #       We should probably back it up and remove it if found...
+
+    composer install --no-interaction
 else
     echo "Installing packages via Composer: the ones in composer.json plus ${EZ_PACKAGES}..."
 
@@ -41,8 +50,8 @@ else
         fi
     fi
     # we split require from update to (hopefully) save some ram
-    composer require --dev --no-update ${EZ_PACKAGES}
-    composer update
+    composer require --no-interaction --dev --no-update ${EZ_PACKAGES}
+    composer update --no-interaction
 fi
 
 echo Done
