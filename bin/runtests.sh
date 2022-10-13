@@ -16,7 +16,7 @@ do
         c)
             # @todo parse $OPTARG, decide format to use for coverage based on file/dir name (not easy to do)
             COVERAGE="--coverage-clover=${OPTARG}"
-            PHPOPTS="-d zend_extension=xdebug.so"
+            PHPOPTS="-d zend_extension=xdebug.so -d xdebug.mode=coverage"
         ;;
         r)
             RESET=true
