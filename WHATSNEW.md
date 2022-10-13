@@ -1,5 +1,10 @@
-Version 0.4.1 (unreleased)
-==========================
+Version 0.4.2
+=============
+
+* fix generation of code coverage with recent xdebug versions
+
+Version 0.4.1
+=============
 
 * fix installing composer w. php 7.0, 7.1 on GitHub
 

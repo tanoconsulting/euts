@@ -47,7 +47,7 @@ if [ -n "$*" ]; then
     do
         case "$ARG" in
         --coverage-*)
-            PHPOPTS="-d zend_extension=xdebug.so"
+            PHPOPTS="-d zend_extension=xdebug.so -d xdebug.mode=coverage"
             ;;
         -*) ;;
         *)
