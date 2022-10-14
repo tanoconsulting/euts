@@ -33,8 +33,8 @@ if ((${#composer_auth[@]})); then
     export COMPOSER_AUTH="{$(IFS=$','; echo "${composer_auth[*]}")}"
 fi
 
-
-# For the moment, to install eZPlatform, a set of DEV packages has to be allowed (eg roave/security-advisories); really ugly sed expression to alter composer.json follows
+# For the moment, to install eZPlatform, a set of DEV packages has to be allowed (eg roave/security-advisories); really
+# ugly sed expression to alter composer.json follows
 # A different work around for this has been found in setting up an alias for them in the std composer.json require-dev section
 #- 'if [ "$EZ_VERSION" != "ezpublish" ]; then sed -i ''s/"license": "GPL-2.0",/"license": "GPL-2.0", "minimum-stability": "dev", "prefer-stable": true,/'' composer.json; fi'
 
@@ -65,8 +65,25 @@ else
         export COMPOSER="composer_${COMPOSE_PROJECT_NAME}.json"
         if [ -f composer.json ]; then
             cp composer.json "${COMPOSER}"
+        else
+            if [ ! -f "${COMPOSER}" ]; then
+                printf "\n\e[31mERROR:\e[0m ${COMPOSER} file can not be found\n\n" >&2
+                exit 1
+            fi
+        fi
+        if [ -f "composer_${COMPOSE_PROJECT_NAME}.lock" ]; then
+            rm "composer_${COMPOSE_PROJECT_NAME}.lock"
+        fi
+    else
+        if [ ! -f composer.json ]; then
+            printf "\n\e[31mERROR:\e[0m composer.json file can not be found\n\n" >&2
+            exit 1
+        fi
+        if [ -f "composer.lock" ]; then
+            rm "composer.lock"
         fi
     fi
+
     # we split require from update to (hopefully) save some ram
     composer require --no-interaction --dev --no-update ${EZ_PACKAGES}
     composer update --no-interaction
