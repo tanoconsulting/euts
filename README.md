@@ -283,7 +283,17 @@ A: sure. Start a second shell, go to the project's folder and run `./teststack/t
 
 Q: Do you know of any bundles do make use of this one for testing, so that I can explore how they do it?
 
-A: sure. At least the following ones: https://github.com/kaliop/ezobjectwrapper, https://github.com/kaliop-uk/ezmigrationbundle
+Q: When I run the tests on GitHub using Actions, I get an error `Could not authenticate against github.com `
+
+A: in that case, change the action's yml config to pass automatically GitHub's credentials to Composer:
+
+        -
+            run: './teststack/bin/setup.sh'
+            env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+A: sure. At least the following ones: https://github.com/kaliop/ezobjectwrapper, https://github.com/kaliop-uk/ezmigrationbundle,
+   https://github.com/kaliop-uk/ezworkfloenginebundle, https://github.com/kaliop-uk/ezloreimpsumbundle,
 
 Q: Are there other projects that you know of that have similar goals as this package?
 
@@ -293,3 +303,5 @@ A: certainly there are. Ones that I know of are f.e. https://github.com/Plopix/s
 Q: Are you testing this Test Stack itself?
 
 A: inception!!! ;-) In fact, yes, we strive to test it, using Github Actions
+
+[![Build Status](https://github.com/tanoconsulting/euts/actions/workflows/ci.yml/badge.svg)](https://github.com/tanoconsulting/euts/actions/workflows/ci.yml)
