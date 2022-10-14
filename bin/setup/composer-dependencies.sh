@@ -12,7 +12,7 @@ set -e
 
 # Avoid spending time on composer if install will later fail
 if [ ! -d "vendor" -a -L "vendor" ]; then
-    printf "\n\e[31mERROR:\e[0m vendor folder is not a symlink\n\n"
+    printf "\n\e[31mERROR:\e[0m vendor folder is not a symlink\n\n" >&2
     exit 1
 fi
 
@@ -26,7 +26,10 @@ if [ -n "$GITHUB_TOKEN" ]; then
     composer_auth+=( '"github-oauth": {"github.com": "'"$GITHUB_TOKEN"'"}' )
 fi
 if ((${#composer_auth[@]})); then
-    # @todo check if COMPOSER_AUTH had been set already, to avoid overwriting it!
+    if [ -n "$COMPOSER_AUTH" ]; then
+        printf "\n\e[31mERROR:\e[0m COMPOSER_AUTH env var is set as well as PACKAGIST_TOKEN or GITHUB_TOKEN\n\n" >&2
+        exit 1
+    fi
     export COMPOSER_AUTH="{$(IFS=$','; echo "${composer_auth[*]}")}"
 fi
 
@@ -40,7 +43,7 @@ if [ -n "${EZ_COMPOSER_LOCK}" ]; then
     echo "Installing packages via Composer using existing lock file ${EZ_COMPOSER_LOCK}..."
 
     if [ ! -f "${EZ_COMPOSER_LOCK}" ]; then
-        printf "\n\e[31mERROR:\e[0m lock file can not be found\n\n"
+        printf "\n\e[31mERROR:\e[0m lock file can not be found\n\n" >&2
         exit 1
     fi
 

@@ -1,7 +1,7 @@
-Version 0.4.3 (unreleased)
-==========================
+Version 0.5.0
+=============
 
-* allow to pass in github authentication for composer via env var GITHUB_TOKEN
+* allow to pass in authentication for composer via env vars GITHUB_TOKEN, $PACKAGIST_TOKEN
 
 * moved `master` branch to `main`
 
