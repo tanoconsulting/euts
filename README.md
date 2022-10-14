@@ -109,6 +109,8 @@ Quick Start
              }
          ],
 
+     and require version >= 5.4.2
+
 3. build the tests stack
 
        ./teststack/teststack build
