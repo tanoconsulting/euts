@@ -1,6 +1,8 @@
+See also: https://github.com/tanoconsulting/euts/issues
+
 v0.5
 
-- make sure everything works using the teststack on GHA: test using ezmb, ezobjectwrapper, ...?
+- make sure everything works using the teststack on GHA: test using ezmb (OK), ezobjectwrapper, ...?
 
 - add GHA example next to Travis one (look at ezmb's ci.yml)
 

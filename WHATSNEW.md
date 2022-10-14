@@ -1,3 +1,10 @@
+Version 0.4.3
+=============
+
+* allow to pass in github authentication for composer via env var GITHUB_TOKEN
+
+* moved `master` branch to `main`
+
 Version 0.4.2
 =============
 

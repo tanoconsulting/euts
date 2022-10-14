@@ -16,6 +16,21 @@ if [ ! -d "vendor" -a -L "vendor" ]; then
     exit 1
 fi
 
+# Set composer auth if we are passed env vars. This helps fe. in avoiding rate limitation limits on GitHub.
+# Code thanks to shivammathur/setup-php
+composer_auth=()
+if [ -n "$PACKAGIST_TOKEN" ]; then
+    composer_auth+=( '"http-basic": {"repo.packagist.com": { "username": "token", "password": "'"$PACKAGIST_TOKEN"'"}}' )
+fi
+if [ -n "$GITHUB_TOKEN" ]; then
+    composer_auth+=( '"github-oauth": {"github.com": "'"$GITHUB_TOKEN"'"}' )
+fi
+if ((${#composer_auth[@]})); then
+    # @todo check if COMPOSER_AUTH had been set already, to avoid overwriting it!
+    export COMPOSER_AUTH "{$(IFS=$','; echo "${composer_auth[*]}")}"
+fi
+
+
 # For the moment, to install eZPlatform, a set of DEV packages has to be allowed (eg roave/security-advisories); really ugly sed expression to alter composer.json follows
 # A different work around for this has been found in setting up an alias for them in the std composer.json require-dev section
 #- 'if [ "$EZ_VERSION" != "ezpublish" ]; then sed -i ''s/"license": "GPL-2.0",/"license": "GPL-2.0", "minimum-stability": "dev", "prefer-stable": true,/'' composer.json; fi'
