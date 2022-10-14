@@ -54,10 +54,16 @@ case "${DB_TYPE}" in
                 DB_CHARSET=utf8mb4
             fi
         fi
+        PHPVER=$(php -r 'echo implode(".",array_slice(explode(".",PHP_VERSION),0,2));' 2>/dev/null)
         ${ROOT_DB_COMMAND} -e "DROP DATABASE IF EXISTS ${DB_EZ_DATABASE};"
         # @todo drop user only if it exists (easy on mysql 5.7 and later, not so much on 5.6...)
         ${ROOT_DB_COMMAND} -e "DROP USER '${DB_EZ_USER}'@'%';" 2>/dev/null || :
-        ${ROOT_DB_COMMAND} -e "CREATE USER '${DB_EZ_USER}'@'%' IDENTIFIED BY '${DB_EZ_PASSWORD}';" 2>/dev/null
+        if [ "$PHPVER" = '5.6' ]; then
+            # In case we are on Mysql 8.0 or later, and php is at 5.6
+            ${ROOT_DB_COMMAND} -e "CREATE USER '${DB_EZ_USER}'@'%' IDENTIFIED WITH mysql_native_password BY '${DB_EZ_PASSWORD}';" ###2>/dev/null
+        else
+            ${ROOT_DB_COMMAND} -e "CREATE USER '${DB_EZ_USER}'@'%' IDENTIFIED BY '${DB_EZ_PASSWORD}';" ###2>/dev/null
+        fi
         ${ROOT_DB_COMMAND} -e "CREATE DATABASE ${DB_EZ_DATABASE} CHARACTER SET ${DB_CHARSET}; GRANT ALL PRIVILEGES ON ${DB_EZ_DATABASE}.* TO '${DB_EZ_USER}'@'%'"
         ;;
     postgresql)

@@ -1,7 +1,14 @@
+Version 0.5.1
+=============
+
+* fix building the MySQL container for recent versions of MySql 5.7/8.0
+
+* fix creating the test database user account so that it can be accessed from php 5.6 when using MySql 8.0 and later
+
 Version 0.5.0
 =============
 
-* allow to pass in authentication for composer via env vars GITHUB_TOKEN, $PACKAGIST_TOKEN
+* allow to pass in authentication for composer via env vars GITHUB_TOKEN, PACKAGIST_TOKEN
 
 * moved `master` branch to `main`
 

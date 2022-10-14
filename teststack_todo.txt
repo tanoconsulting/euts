@@ -1,6 +1,6 @@
 See also: https://github.com/tanoconsulting/euts/issues
 
-v0.5
+v0.6
 
 - make sure everything works using the teststack on GHA: test using ezmb (OK), ezobjectwrapper, ...?
 
@@ -22,7 +22,7 @@ v0.5
 
 - add .travis.yml for self-testing on Travis (either without docker use, or using ubuntu as base for containers)
 
-v0.6
+v0.7
 
 - add some browser-based tests to the GHA ones
 
