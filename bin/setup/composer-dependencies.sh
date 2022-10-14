@@ -27,7 +27,7 @@ if [ -n "$GITHUB_TOKEN" ]; then
 fi
 if ((${#composer_auth[@]})); then
     # @todo check if COMPOSER_AUTH had been set already, to avoid overwriting it!
-    export COMPOSER_AUTH "{$(IFS=$','; echo "${composer_auth[*]}")}"
+    export COMPOSER_AUTH="{$(IFS=$','; echo "${composer_auth[*]}")}"
 fi
 
 
