@@ -69,6 +69,8 @@ jobs:
                 set -a && . ${{ matrix.config_file }} && set +a
                 ./bin/setup.sh
                 ./bin/sfconsole.sh list
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             # reset the env which we built
             - name: cleanup env

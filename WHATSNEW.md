@@ -1,5 +1,5 @@
-Version 0.4.3
-=============
+Version 0.4.3 (unreleased)
+==========================
 
 * allow to pass in github authentication for composer via env var GITHUB_TOKEN
 
