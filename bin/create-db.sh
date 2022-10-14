@@ -57,7 +57,7 @@ case "${DB_TYPE}" in
         ${ROOT_DB_COMMAND} -e "DROP DATABASE IF EXISTS ${DB_EZ_DATABASE};"
         # @todo drop user only if it exists (easy on mysql 5.7 and later, not so much on 5.6...)
         ${ROOT_DB_COMMAND} -e "DROP USER '${DB_EZ_USER}'@'%';" 2>/dev/null || :
-        ${ROOT_DB_COMMAND} -e "CREATE USER '${DB_EZ_USER}'@'%' BY '${DB_EZ_PASSWORD}';" 2>/dev/null
+        ${ROOT_DB_COMMAND} -e "CREATE USER '${DB_EZ_USER}'@'%' IDENTIFIED BY '${DB_EZ_PASSWORD}';" 2>/dev/null
         ${ROOT_DB_COMMAND} -e "CREATE DATABASE ${DB_EZ_DATABASE} CHARACTER SET ${DB_CHARSET}; GRANT ALL PRIVILEGES ON ${DB_EZ_DATABASE}.* TO '${DB_EZ_USER}'@'%'"
         ;;
     postgresql)
