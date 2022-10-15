@@ -1,9 +1,10 @@
 See also: https://github.com/tanoconsulting/euts/issues
 
-v0.6
+v0.x - fixes, docs
 
-- make sure everything works using the teststack on GHA:
-  - problems with mysql 8.0 auth vs php (ubu 20, 22 runners)
+- add examples using a simpler sets of packages: ez only
+
+v0.6 - more test coverage, cleanups
 
 - improve mysql dockerfile: bring back timezone, cleanup steps working for all base OSes
 
@@ -11,19 +12,18 @@ v0.6
 
 - move composer.json from tests to doc/ (once we removed from it cache-dir)
 
-- test using ubuntu as base image for docker builds instead of debian: all php/ubuntu versions
+- test using ubuntu as base image for docker builds instead of debian: all php/ubuntu versions (see which docker
+  images are pre-loaded on gha ubuntu 20, 22 workers)
 
 - test using Bullseye as base distribution
 
 - test using mariadb as base db image
 
-- add examples using a simpler sets of packages: ez only
-
 - improve finding ./docker vs /home/test/teststack/docker in php.sh, composer.sh
 
 - add .travis.yml for self-testing on Travis (either without docker use, or using ubuntu as base for containers)
 
-v0.7
+v0.7 - features
 
 - add some browser-based tests to the GHA ones
 
@@ -40,7 +40,7 @@ v0.7
 
 - port from phpxmlrpc the enabling/disabling of code coverage
 
-- remove 'silence php warnings' from default php config; push it to ezmb ? (via: allow custom php configs...)
+- remove 'silence php warnings' from default php config; push it to consumer bundles ? (via: allow custom php configs...)
 
 - make teststack create a full config file by default instead of an empty one ? at least have an action to create it / print it
 
@@ -101,7 +101,7 @@ vN?
 - allow to install different mysql clients (at least for debian versions which have them)
 - make installation of java in ez container optional
 - add more services? missing: elasticsearch
-- for debian-native php versions, allow to compile by hand latest compatible xdebug version instead of using built-in one
+- for debian-native php versions, allow to compile by hand the latest compatible xdebug version instead of using built-in one
   (esp. xdebug 3 for php >= 7.2)
 - allow usage of pcov instead of xdebug for code coverage
 - allow usage with ezpublish-platform, aka 5.x (as alternative to ezpublish-community)

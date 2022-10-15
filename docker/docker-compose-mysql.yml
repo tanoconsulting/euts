@@ -19,16 +19,21 @@ services:
         environment:
             - CONTAINER_USER_UID=${CONTAINER_USER_UID:-1000}
             - CONTAINER_USER_GID=${CONTAINER_USER_GID:-1000}
+            - DB_TYPE=mysql
+            # This is a courtesy - inside the container we should be able to retrieve the installed db version easily...
+            - MYSQL_VERSION
             - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-root_test}
             - MYSQL_USER=${DB_EZ_USER:-ezp}
             - MYSQL_PASSWORD=${DB_EZ_PASSWORD:-ezp}
             - MYSQL_DATABASE=${DB_EZ_DATABASE:-behattestdb}
+            - EZ_PACKAGES
             # As opposed to TRAVIS=true ;-)
             - DOCKER=true
         volumes:
             #- ./config/mysql/mysql_${TESTSTACK_DB_SIZE}.cnf:/etc/mysql/conf.d/mysql.cnf
             - ${TESTSTACK_DATA_DIR:-./data}/mysql/:/var/lib/mysql
             - ${TESTSTACK_LOGS_DIR:-./logs}/mysql/:/var/log/mysql
+            - ../:/home/test/teststack
         #tmpfs:
         #    # used for mysql temp tables. Useful with ez5 db schema / queries (it creates lots of temp tables on disk)
         #    - /tmpfs:mode=777

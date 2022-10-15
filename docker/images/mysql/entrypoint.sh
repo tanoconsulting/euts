@@ -46,6 +46,11 @@ if [ -d /tmpfs ]; then
     chmod 0777 /tmpfs
 fi
 
+# if required, fix db server config (run db-config.sh)
+if [ -f /home/test/teststack/bin/setup/db-config.sh ]; then
+    /home/test/teststack/bin/setup/db-config.sh
+fi
+
 echo "[$(date)] Handing over control to /entrypoint.sh..."
 
 trap clean_up TERM

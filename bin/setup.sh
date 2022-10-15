@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Set up fully the test environment (except for installing required sw packages): mysql, php, composer, eZ, etc...
-# Has to be useable from Docker as well as from Travis and GH-hosted runners.
+# Has to be useable from the Docker test container as well as from Travis and GH-hosted runners.
 # Has to be run from the project (bundle) top dir.
 #
 # Uses env vars: TRAVIS_PHP_VERSION, PHP_VERSION, GITHUB_ACTION
@@ -12,6 +12,9 @@
 set -e
 
 BIN_DIR=$(dirname -- ${BASH_SOURCE[0]})
+
+# @todo on Travis/GHA, if someone has loaded a .env file, the variables TESTSTACK_DEBIAN_VERSION/TESTSTACK_OS_VENDOR
+#       might be set and not match what is on the VM. We could check and halt in that case, or give a warning
 
 # For php 5.6, Composer needs humongous amounts of ram - which we don't have on Travis. Enable swap as workaround
 if [ "${TRAVIS_PHP_VERSION}" = "5.6" ]; then
@@ -35,9 +38,17 @@ if [ "${TRAVIS_PHP_VERSION}" = "5.6" ]; then
     #systemctl list-units --type=service
 fi
 
-# BC. We should abandon either PHP_VERSION or TESTSTACK_PHP_VERSION going forward
-if [ -z "${PHP_VERSION}" -a -n "${TESTSTACK_PHP_VERSION}" ]; then
-    export PHP_VERSION="${TESTSTACK_PHP_VERSION}"
+# @todo TESTSTACK_PHP_VERSION should not be set on Travis/GHA. Give a warning / halt if it is? Vice-versa, it should
+#       be set (and PHP_VERSION not set) in containers.
+if [ -n "${TESTSTACK_PHP_VERSION}" ]; then
+    if [ -z "${PHP_VERSION}" ]; then
+        export PHP_VERSION="${TESTSTACK_PHP_VERSION}"
+    else
+        if [ "${TESTSTACK_PHP_VERSION}" != "${PHP_VERSION}" ]; then
+            printf "\n\e[31mERROR:\e[0m env var TESTSTACK_PHP_VERSION is set and different from PHP_VERSION\n\n" >&2
+            exit 1
+        fi
+    fi
 fi
 
 if [ -n "${PHP_VERSION}" ]; then
@@ -55,7 +66,11 @@ ${BIN_DIR}/setup/composer.sh
 
 ${BIN_DIR}/setup/composer-dependencies.sh
 
-${BIN_DIR}/setup/db-config.sh
+# When this is run in the test container, the db server is in another container. No need to try to configure it remotely.
+# Otoh, when running on Travis or GHA, the db server runs within the same VM
+if [ -n "${TRAVIS_PHP_VERSION}" -o -n "${GITHUB_ACTION}" ]; then
+    ${BIN_DIR}/setup/db-config.sh
+fi
 
 # Create the database from sql files present in either the legacy stack or kernel (has to be run after composer install)
 ${BIN_DIR}/create-db.sh

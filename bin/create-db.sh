@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-# Set up a pristine eZ database and accompanying user (mysql only)
+# Set up a pristine eZ database and accompanying user (mysql only).
+# Requires composer dependencies to have been set up already.
 # NB: drops both the db and the user if they are pre-existing!
 #
 # Uses env vars: EZ_VERSION, TRAVIS, DB_EZ_DATABASE, DB_EZ_PASSWORD, DB_EZ_USER, DB_HOST, DB_ROOT_PASSWORD, DB_TYPE, DB_CHARSET
@@ -54,16 +55,10 @@ case "${DB_TYPE}" in
                 DB_CHARSET=utf8mb4
             fi
         fi
-        PHPVER=$(php -r 'echo implode(".",array_slice(explode(".",PHP_VERSION),0,2));' 2>/dev/null)
         ${ROOT_DB_COMMAND} -e "DROP DATABASE IF EXISTS ${DB_EZ_DATABASE};"
         # @todo drop user only if it exists (easy on mysql 5.7 and later, not so much on 5.6...)
         ${ROOT_DB_COMMAND} -e "DROP USER '${DB_EZ_USER}'@'%';" 2>/dev/null || :
-        # In case we are on Mysql 8.0 or later, and php is less than 7.4, we might have connection problems
-        if [ "$PHPVER" = '5.6' -o "$PHPVER" = '7.0' -o "$PHPVER" = '7.1' -o "$PHPVER" = '7.2' -o "$PHPVER" = '7.3' ]; then
-            ${ROOT_DB_COMMAND} -e "CREATE USER '${DB_EZ_USER}'@'%' IDENTIFIED WITH mysql_native_password BY '${DB_EZ_PASSWORD}';" ###2>/dev/null
-        else
-            ${ROOT_DB_COMMAND} -e "CREATE USER '${DB_EZ_USER}'@'%' IDENTIFIED BY '${DB_EZ_PASSWORD}';" ###2>/dev/null
-        fi
+        ${ROOT_DB_COMMAND} -e "CREATE USER '${DB_EZ_USER}'@'%' IDENTIFIED BY '${DB_EZ_PASSWORD}';" ###2>/dev/null
         ${ROOT_DB_COMMAND} -e "CREATE DATABASE ${DB_EZ_DATABASE} CHARACTER SET ${DB_CHARSET}; GRANT ALL PRIVILEGES ON ${DB_EZ_DATABASE}.* TO '${DB_EZ_USER}'@'%'"
         ;;
     postgresql)

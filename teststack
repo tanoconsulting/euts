@@ -73,7 +73,7 @@ Advanced Options:
     -i                interactive - when running 'exec'
     -n                do not set up the app - when running 'build', 'start'
     -s                force the app to be set up - when running 'build', 'start'
-    -t                 Allocate a pseudo-TTY - when running 'exec'
+    -t                allocate a pseudo-TTY - when running 'exec'
     -u                update (pull) the container base images (this might force a rebuild) - when running 'build'
     -w SECONDS        wait timeout for completion of app and container set up - when running 'build', 'start' and 'setup'. Defaults to ${BOOTSTRAP_TIMEOUT}
     -z                avoid using docker cache - when running 'build -r'
