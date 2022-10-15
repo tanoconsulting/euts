@@ -56,6 +56,8 @@ if [ "${DB_TYPE}" = "mysql" ]; then
         elif [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:3.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:~3.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:^3.'* ]]; then
                 EZ_VERSION=ezplatform3
         else
+            # @todo if EZ_COMPOSER_LOCK is set, EZ_PACKAGES is most likely empty. We should parse the contents of the
+            #       lock file in that case. Or, if this is a CI runner, use set-env-vars to calculate it
             printf "\n\e[31mERROR:\e[0m can not retrieve EZ_VERSION from EZ_PACKAGES env var: '${EZ_PACKAGES}'\n" >&2
             exit 1
         fi

@@ -8,6 +8,10 @@ Version 0.5.1
 
 * added a configuration example for running tests using GitHub Actions
 
+* BC break: when using EZ_COMPOSER_LOCK to specify the set of packages to install, it is now mandatory to specify
+  as well the eZP package in use as value for the EZ_PACKAGES env var. This requirement might be relaxed in
+  future releases
+
 Version 0.5.0
 =============
 
