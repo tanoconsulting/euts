@@ -49,11 +49,11 @@ if [ "${DB_TYPE}" = "mysql" ]; then
         # @todo q: what if eZP was in composer.json instead of EZ_PACKAGES env var? Is it more reliable to scan composer.lock?
         if [[ "${EZ_PACKAGES}" == *ezsystems/ezpublish-community* ]]; then
             EZ_VERSION=ezpublish-community
-        elif [[ "${EZ_PACKAGES}" == *'ezsystems/ezpublish-ezplatform:1.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezpublish-ezplatform:~1.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezpublish-ezplatform:^1.'* ]]; then
+        elif [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:1.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:~1.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:^1.'* ]]; then
             EZ_VERSION=ezplatform
-        elif [[ "${EZ_PACKAGES}" == *'ezsystems/ezpublish-ezplatform:2.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezpublish-ezplatform:~2.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezpublish-ezplatform:^2.'* ]]; then
+        elif [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:2.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:~2.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:^2.'* ]]; then
             EZ_VERSION=ezplatform2
-        elif [[ "${EZ_PACKAGES}" == *'ezsystems/ezpublish-ezplatform:3.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezpublish-ezplatform:~3.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezpublish-ezplatform:^3.'* ]]; then
+        elif [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:3.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:~3.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:^3.'* ]]; then
                 EZ_VERSION=ezplatform3
         else
             printf "\n\e[31mERROR:\e[0m can not retrieve EZ_VERSION from EZ_PACKAGES env var: '${EZ_PACKAGES}'\n" >&2
