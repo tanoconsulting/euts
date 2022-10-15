@@ -1,4 +1,5 @@
-# A Travis configuration file for a bundle which aims to be compatible with both eZPublish 5 and eZPlatform
+# A Travis configuration file for a bundle which aims to be compatible with both eZPublish 5 and eZPlatform.
+# We use kaliop/ezmigrationbundle as an example.
 
 language: php
 
@@ -20,7 +21,7 @@ matrix:
     # A wide test matrix - running tests at least once for each stable PHP version, and across as many different versions
     # as possible of eZPublish / eZPlatform.
     # Besides the bundle under test (Kaliop\eZMigrationBundle\EzMigrationBundle), the tests require, when available for
-    # the current eZ kernel, the presence of ezplatform-xmltext-fieldtype, ez-matrix-bundle, tagsbundle, zplatform-matrix-fieldtype.allow_failures:
+    # the current eZ kernel, the presence of ezplatform-xmltext-fieldtype, ez-matrix-bundle, tagsbundle, ezplatform-matrix-fieldtype.
     # Extra composer packages are required to be installed and extra Symfony Bundles are required to be activated
     # as dependencies, depending on the current eZ kernel, just to be able for the kernel to run.
     include:
@@ -57,7 +58,7 @@ before_install:
 
 install:
     # Retrieve the TestStack tool
-    - git clone --depth 1 --branch 0.1.0 git@github.com:tanoconsulting/euts.git teststack
+    - git clone --depth 1 git@github.com:tanoconsulting/euts.git teststack
     # Fix perms on shell scripts, just in case...
     - chmod 755 ./teststack/bin/*.sh  ./teststack/bin/setup/*.sh
     # Run the TestStack tool setup script. This runs Composer, sets up an appropriate php and eZ configuration and creates a db schema with default data.

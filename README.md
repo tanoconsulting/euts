@@ -6,10 +6,9 @@ on popular CI services (supported: Travis and GitHub Actions), by setting up aut
 all required dependencies.
 
 The target users are developers of bundles for eZPlatform/eZPublish, who want to make sure their code works with
-a specific version of the CMS, or on a combination of versions.
+a specific version of the CMS and database, or on a combination of versions.
 
 Features:
-
 
 * allows to run your bundle's tests on any version of eZPublish-Community, eZPlatform 1 and eZPlatform 2
 * allows to run your bundle's tests on multiple versions of eZPlatform/eZPublish from a single source directory
@@ -40,7 +39,7 @@ Requirements
 
 For running tests in Docker containers:
 * Docker version 1.13 or later
-* Docker Compose version ...
+* Docker Compose version 1.x (NB: Docker Compose v2 is not supported yet)
 
 For running tests without Docker: see the requirements for the version of eZPlatform that you intend to use
 
@@ -49,7 +48,7 @@ Installation
 
 To install in the `teststack` directory:
 
-    git clone --depth 1 --branch 0.4.0 https://github.com/tanoconsulting/euts.git teststack
+    git clone --depth 1 https://github.com/tanoconsulting/euts.git teststack
 
 Note that you can use any other name for the folder where this tool will be installed - but so far it has only been
 tested running from within the top-level project folder.
@@ -111,6 +110,9 @@ Quick Start
 
      and require version >= 5.4.2
 
+   * depending on the version of eZP in use, when using the `behat` Symfony environment to run tests, extra bundles will
+     need to be installed, such as `ezsystems/behatbundle`, `sensio/generator-bundle` or `overblog/graphiql-bundle`
+
 3. build the tests stack
 
        ./teststack/teststack build
@@ -147,7 +149,11 @@ Quick Start
 
 8. Set up your tests to be run on GitHub Actions
 
-    To be documented...
+   See an example configuration [.travis.yml](doc/config_examples/github_actions.yml) file
+
+   Note that, to perform tests on GitHub workers, it is not necessary to run the whole tests stack - for most scenarios
+   eZ can be set up and the test suite execute without building and starting Docker containers.
+   If on the other hand you prefer to run the tests using containers inside the workers, you are free to do that.
 
 Troubleshooting
 ---------------
@@ -214,7 +220,7 @@ How It Works
             - ... (other dependencies)
         - ... (your bundle code)
 
-### Directory layout within the eZ Container
+### Directory layout within the eZ (test) Container
 
     - /home/tests
         - teststack (mount of the 'teststack' host folder)

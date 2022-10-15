@@ -1,9 +1,11 @@
-Version 0.5.1
-=============
+Version 0.5.1 (unreleased)
+==========================
 
-* fix building the MySQL container for recent versions of MySql 5.7/8.0
+* fixed building the MySQL container for recent versions of MySql 5.7/8.0
 
-* fix creating the test database user account so that it can be accessed from php 5.6 when using MySql 8.0 and later
+* fixed creating the test database user account so that it can be accessed from php 5.6 when using MySql 8.0 and later
+
+* added a configuration example for running tests using GitHub Actions
 
 Version 0.5.0
 =============

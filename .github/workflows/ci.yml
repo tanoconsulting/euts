@@ -15,6 +15,7 @@ jobs:
             DB_EZ_PASSWORD: ezp
             DB_EZ_DATABASE: behattestdb
             # @todo skip setting this, always use the php version from the config file ?
+            # Note that PHP_VERSION has higher priority than TESTSTACK_PHP_VERSION from the config file
             PHP_VERSION: ${{ matrix.php }}
         strategy:
             fail-fast: false

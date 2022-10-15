@@ -29,6 +29,7 @@ if [ -z "${EZ_VERSION}" ]; then
     else
         EZ_VERSION=$(composer show | grep ezsystems/ezplatform-kernel || true)
         if [ -n "${EZ_VERSION}" ]; then
+            # @todo what about ezplatform 4?
             export EZ_VERSION=ezplatform3
         fi
     fi
