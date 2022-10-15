@@ -5,6 +5,8 @@ v0.6
 - make sure everything works using the teststack on GHA:
   - problems with mysql 8.0 auth vs php (ubu 20, 22 runners)
 
+- improve mysql dockerfile: bring back timezone, cleanup steps working for all base OSes
+
 - bring back composer cache to /home/$user/.composer when on gha - add some chown at container build and boot times?
 
 - move composer.json from tests to doc/ (once we removed from it cache-dir)

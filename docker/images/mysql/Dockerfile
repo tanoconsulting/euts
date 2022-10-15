@@ -11,8 +11,9 @@ ARG project_name=euts
 ARG timezone=none
 
 # Configure timezone
+# @todo make this work for apt, microdnf and yum
 # -----------------------------------------------------------------------------
-RUN if [ "${timezone}" != "none" ]; then echo "${timezone}" > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata; fi
+#RUN if [ "${timezone}" != "none" ]; then echo "${timezone}" > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata; fi
 
 # Base packages
 # -----------------------------------------------------------------------------

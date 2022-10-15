@@ -65,13 +65,18 @@ jobs:
                       operating-system: 'ubuntu-22.04'
         steps:
             -
+                # Check out the source code
                 uses: actions/checkout@v2
             -
+                # Retrieve the TestStack tool
+                # Note: you might want to lock the checkout to a specific branch or tag to avoid surprises...
                 run: |
                     git clone --depth 1 https://github.com/tanoconsulting/euts.git teststack
                     # just in case...
                     chmod 755 ./teststack/bin/*.sh  ./teststack/bin/setup/*.sh
             -
+                # Run the TestStack tool setup script. This runs Composer, sets up an appropriate php and eZ configuration
+                # and creates a db schema with default data.
                 run: './teststack/bin/setup.sh'
                 env:
                     # This is useful to avoid sporadic test failures due to reaching API limits

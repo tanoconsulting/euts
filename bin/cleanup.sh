@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Housekeeping - remove cache, logs.
+#
 # Uses env vars: EZ_VERSION
 
 set -e

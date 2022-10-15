@@ -2,6 +2,7 @@
 
 # Set up env vars (if not already set):
 # - KERNEL_CLASS, KERNEL_DIR (used by phpunit)
+# Requires composer dependencies to have been set up already, if EZ_VERSION is not set.
 #
 # Uses env vars: EZ_VERSION, `composer` command if EZ_VERSION not set
 #
@@ -14,7 +15,12 @@ if [ -n "${COMPOSE_PROJECT_NAME}" ]; then
 fi
 
 # Figure out EZ_VERSION if required
+# @todo can we manage to do it without running composer? See how we do it in db-config.sh...
 if [ -z "${EZ_VERSION}" ]; then
+    # @todo check if COMPOSER env var is set and not matching COMPOSE_PROJECT_NAME and abort if it is
+    if [ -n "${COMPOSE_PROJECT_NAME}" -a -z "${COMPOSER}" ]; then
+        export COMPOSER="composer_${COMPOSE_PROJECT_NAME}.json"
+    fi
     EZ_VERSION=$(composer show | grep ezsystems/ezpublish-kernel || true)
     if [ -n "${EZ_VERSION}" ]; then
         if [[ "${EZ_VERSION}" == *" v7."* ]]; then
@@ -33,6 +39,7 @@ if [ -z "${EZ_VERSION}" ]; then
             export EZ_VERSION=ezplatform3
         fi
     fi
+    # No need to abort here if  EZ_VERSION is null: we do it later
 fi
 
 # @todo Figure out EZ_BUNDLES from EZ_PACKAGES if the former is not set

@@ -23,6 +23,7 @@ services:
             - CONTAINER_USER_GID=${CONTAINER_USER_GID:-1000}
             - http_proxy
             - https_proxy
+            # Note that leaving this an empty default ha an effect on the name of the vendor folder and composer files which get set up
             - COMPOSE_PROJECT_NAME
             - TESTSTACK_SETUP_APP_ON_BOOT
             - TESTSTACK_PHP_VERSION

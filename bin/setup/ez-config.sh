@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-# Set up eZ configuration
+# Set up eZ configuration.
+# Requires composer dependencies to have been set up already.
 #
 # Uses env vars: EZ_VERSION, EZ_BUNDLES, EZ_LEGACY_EXTENSIONS, EZ_TEST_CONFIG_SYMFONY, EZ_TEST_CONFIGS_LEGACY
 

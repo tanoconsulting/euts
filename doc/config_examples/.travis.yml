@@ -58,10 +58,12 @@ before_install:
 
 install:
     # Retrieve the TestStack tool
+    # Note: you might want to lock the checkout to a specific branch or tag to avoid surprises...
     - git clone --depth 1 git@github.com:tanoconsulting/euts.git teststack
     # Fix perms on shell scripts, just in case...
     - chmod 755 ./teststack/bin/*.sh  ./teststack/bin/setup/*.sh
-    # Run the TestStack tool setup script. This runs Composer, sets up an appropriate php and eZ configuration and creates a db schema with default data.
+    # Run the TestStack tool setup script. This runs Composer, sets up an appropriate php and eZ configuration and creates
+    # a db schema with default data.
     # We wrap script execution in a `travis_wait` call as sometimes this takes a fair amount of time...
     - travis_wait 30 ./teststack/bin/setup.sh
 
