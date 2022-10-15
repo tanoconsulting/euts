@@ -1,9 +1,10 @@
-Version 0.5.1 (unreleased)
-==========================
+Version 0.5.1
+=============
 
-* fixed building the MySQL container for recent versions of MySql 5.7/8.0
+* fixed creating the test database user account so that it can be accessed from all php versions when using MySQL 8.0
+  (useful for GitHub Actions workers as Ubuntu 18 is deprecated now, and Ubuntu 20 defaults to MySQL 8.0.30)
 
-* fixed creating the test database user account so that it can be accessed from all php versions when using MySql 8.0
+* fixed building the MySQL container for recent versions of MySQL 5.7/8.0 (DockerHub now uses Oracle base images)
 
 * added a configuration example for running tests using GitHub Actions
 

@@ -4,6 +4,8 @@ v0.x - fixes, docs
 
 - add examples using a simpler sets of packages: ez only
 
+- find a better command than `git clone`, to insure users always get the latest tag instead of 'main' on install
+
 v0.6 - more test coverage, cleanups
 
 - improve mysql dockerfile: bring back timezone, cleanup steps working for all base OSes
