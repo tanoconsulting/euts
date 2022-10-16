@@ -11,6 +11,7 @@ services:
                 debian_version: ${TESTSTACK_DEBIAN_VERSION:-buster}
                 debian_mirror: ${TESTSTACK_DEBIAN_MIRROR:-none}
                 do_update_os: ${TESTSTACK_UPDATE_OS_ON_BUILD:-true}
+                # @todo use PHP_VERSION and default to TESTSTACK_PHP_VERSION if that one is unset
                 php_version: ${TESTSTACK_PHP_VERSION:-default}
                 project_name: ${COMPOSE_PROJECT_NAME:-euts}
                 timezone: ${TESTSTACK_TZ:-none}
@@ -26,6 +27,7 @@ services:
             # Note that leaving this an empty default ha an effect on the name of the vendor folder and composer files which get set up
             - COMPOSE_PROJECT_NAME
             - TESTSTACK_SETUP_APP_ON_BOOT
+            # @todo use PHP_VERSION and default to TESTSTACK_PHP_VERSION if that one is unset
             - TESTSTACK_PHP_VERSION
             ## Database configuration
             - DB_TYPE=${DB_TYPE:-mysql}

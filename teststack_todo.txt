@@ -1,14 +1,17 @@
 See also: https://github.com/tanoconsulting/euts/issues
 
-v0.x - fixes, docs
+v0.x - docs
 
 - add examples using a simpler sets of packages: ez only
 
 - find a better command than `git clone`, to insure users always get the latest tag instead of 'main' on install
 
-v0.6 - more test coverage, cleanups
+v0.y - more test coverage, cleanups
 
 - improve mysql dockerfile: bring back timezone, cleanup steps working for all base OSes
+
+- make it easier to understand which env vars apply only to the docker version of the stack and which ones apply as well
+  to the CI workers. Start with PHP_VERSION
 
 - bring back composer cache to /home/$user/.composer when on gha - add some chown at container build and boot times?
 
@@ -25,7 +28,7 @@ v0.6 - more test coverage, cleanups
 
 - add .travis.yml for self-testing on Travis (either without docker use, or using ubuntu as base for containers)
 
-v0.7 - features
+v0.z - features
 
 - add some browser-based tests to the GHA ones
 

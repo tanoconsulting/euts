@@ -4,7 +4,7 @@
 # Has to be useable from the Docker test container as well as from Travis and GH-hosted runners.
 # Has to be run from the project (bundle) top dir.
 #
-# Uses env vars: TRAVIS_PHP_VERSION, PHP_VERSION, GITHUB_ACTION
+# Uses env vars: TRAVIS, PHP_VERSION, GITHUB_ACTION
 
 # @todo check if all required env vars have a value
 # @todo support a -v option
@@ -13,11 +13,22 @@ set -e
 
 BIN_DIR=$(dirname -- ${BASH_SOURCE[0]})
 
-# @todo on Travis/GHA, if someone has loaded a .env file, the variables TESTSTACK_DEBIAN_VERSION/TESTSTACK_OS_VENDOR
-#       might be set and not match what is on the VM. We could check and halt in that case, or give a warning
+# @todo since we can set the php version both on on Travis/GHA and Containers, it makes sense to use PHP_VERSION
+#       everywhere and drop TESTSTACK_PHP_VERSION. Atm we keep making use of it for BC.
+#       Note: what about TRAVIS_PHP_VERSION then? We still use it in some setup scripts, even though it is not reliable anymore
+if [ -n "${TESTSTACK_PHP_VERSION}" ]; then
+    if [ -z "${PHP_VERSION}" ]; then
+        export PHP_VERSION="${TESTSTACK_PHP_VERSION}"
+    else
+        if [ "${TESTSTACK_PHP_VERSION}" != "${PHP_VERSION}" ]; then
+            printf "\n\e[31mERROR:\e[0m env var TESTSTACK_PHP_VERSION is set and different from PHP_VERSION\n\n" >&2
+            exit 1
+        fi
+    fi
+fi
 
 # For php 5.6, Composer needs humongous amounts of ram - which we don't have on Travis. Enable swap as workaround
-if [ "${TRAVIS_PHP_VERSION}" = "5.6" ]; then
+if [ "${PHP_VERSION}" = "5.6" -a -n "${TRAVIS}" ]; then
     echo "Setting up a swap file..."
 
     # @todo any other services we could stop ?
@@ -38,19 +49,6 @@ if [ "${TRAVIS_PHP_VERSION}" = "5.6" ]; then
     #systemctl list-units --type=service
 fi
 
-# @todo TESTSTACK_PHP_VERSION should not be set on Travis/GHA. Give a warning / halt if it is? Vice-versa, it should
-#       be set (and PHP_VERSION not set) in containers.
-if [ -n "${TESTSTACK_PHP_VERSION}" ]; then
-    if [ -z "${PHP_VERSION}" ]; then
-        export PHP_VERSION="${TESTSTACK_PHP_VERSION}"
-    else
-        if [ "${TESTSTACK_PHP_VERSION}" != "${PHP_VERSION}" ]; then
-            printf "\n\e[31mERROR:\e[0m env var TESTSTACK_PHP_VERSION is set and different from PHP_VERSION\n\n" >&2
-            exit 1
-        fi
-    fi
-fi
-
 if [ -n "${PHP_VERSION}" ]; then
     ${BIN_DIR}/setup/php.sh
 fi
@@ -68,7 +66,7 @@ ${BIN_DIR}/setup/composer-dependencies.sh
 
 # When this is run in the test container, the db server is in another container. No need to try to configure it remotely.
 # Otoh, when running on Travis or GHA, the db server runs within the same VM
-if [ -n "${TRAVIS_PHP_VERSION}" -o -n "${GITHUB_ACTION}" ]; then
+if [ -n "${TRAVIS}" -o -n "${GITHUB_ACTION}" ]; then
     ${BIN_DIR}/setup/db-config.sh
 fi
 

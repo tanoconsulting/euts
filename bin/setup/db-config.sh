@@ -3,14 +3,14 @@
 # Set up DB configuration files.
 # Runs both on CI workers and in the DB Docker container (in which case it runs, as root, before the db service is started)
 #
-# Uses env vars: DB_TYPE, EZ_VERSION (optional), MYSQL_VERSION (optional), GITHUB_ACTION, TRAVIS_PHP_VERSION, DOCKER
+# Uses env vars: DB_TYPE, EZ_VERSION (optional), MYSQL_VERSION (optional), GITHUB_ACTION, TRAVIS, TRAVIS_PHP_VERSION, DOCKER
 
 set -e
 
 echo "Setting up DB configuration..."
 
 # On some Travis base image, the DB is stopped by default
-# @todo should we not rely on the os version instead? or, even better, check for the service status?
+# @todo fix: we should rely on the os version instead, or, even better, check for the service status
 #       These two IFs probably presume that a specific os/mysql version is in use on Travis for php 5.6...
 if [ "${TRAVIS_PHP_VERSION}" = "5.6" ]; then
     if [ "${DB_TYPE}" = mysql ]; then
@@ -76,7 +76,7 @@ if [ "${DB_TYPE}" = "mysql" ]; then
     # @todo what about MySQL 8.0 ?
     if [[ "${EZ_VERSION}" == "ezpublish-community" ]] && [[ "${MYSQL_VERSION}" == 5.7* ]]; then
         # We want to only remove STRICT_TRANS_TABLES, really
-        if [ -n "${TRAVIS_PHP_VERSION}" -o -n "${GITHUB_ACTION}" ]; then
+        if [ -n "${TRAVIS}" -o -n "${GITHUB_ACTION}" ]; then
             #mysql -u${DB_USER} ${DB_PWD} -e "SHOW VARIABLES LIKE 'sql_mode';"
             echo -e "\n[server]\nsql-mode='ONLY_FULL_GROUP_BY,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'\n" | sudo tee -a "$CONFIG_FILE"
             sudo service mysql restart
@@ -91,7 +91,7 @@ if [ "${DB_TYPE}" = "mysql" ]; then
 
     # MySQL 8.0 defaults to an auth plugin which is not compatible with php < 7.4
     if [[ "${MYSQL_VERSION}" == 8.0* ]]; then
-        if [ -n "${TRAVIS_PHP_VERSION}" -o -n "${GITHUB_ACTION}" ]; then
+        if [ -n "${TRAVIS}" -o -n "${GITHUB_ACTION}" ]; then
             echo -e "\n[server]\ndefault_authentication_plugin=mysql_native_password\n" | sudo tee -a "$CONFIG_FILE"
             sudo service mysql restart
         elif [ "${DOCKER}" = true ]; then
