@@ -36,31 +36,17 @@ fi
 
 if [ "${DB_TYPE}" = "mysql" ]; then
 
-    # @todo on Travis/GHA, if someone has loaded a .env file, the variables MYSQL_VERSION/POSTGRESQL_VERSION might be set and
-    #       not match what is on the VM. We could check and halt in that case. Unless we are running the Docker test stack
-    #       in CI workers... It's turtles all the way!
-    if [ -z "${MYSQL_VERSION}" ]; then
+    # on Travis/GHA, if someone has loaded a .env file, the variables MYSQL_VERSION/POSTGRESQL_VERSION might be set and
+    # not match what is on the VM. We disregard it in that case
+    if [ -n "${TRAVIS}" -o -n "${GITHUB_ACTION}" -o -z "${MYSQL_VERSION}" ]; then
         # @todo check if this works on all mysql versions we support: debian, ubuntu, mariadb, mysql
         # ex: mysql  Ver 14.14 Distrib 5.6.51, for Linux (x86_64) using  EditLine wrapper
         # ex: mysql  Ver 8.0.30-0ubuntu0.20.04.2 for Linux on x86_64 ((Ubuntu))
         MYSQL_VERSION=$(mysql -V | sed -E 's/mysql +Ver +//' | sed -E 's/[0-9.]+ +Distrib +//' | sed -E 's/,? +for.+//' | sed -E 's/-.+//')
     fi
-    if [ -z "${EZ_VERSION}" ]; then
-        # @todo q: what if eZP was in composer.json instead of EZ_PACKAGES env var? Is it more reliable to scan composer.lock?
-        if [[ "${EZ_PACKAGES}" == *ezsystems/ezpublish-community* ]]; then
-            EZ_VERSION=ezpublish-community
-        elif [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:1.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:~1.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:^1.'* ]]; then
-            EZ_VERSION=ezplatform
-        elif [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:2.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:~2.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:^2.'* ]]; then
-            EZ_VERSION=ezplatform2
-        elif [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:3.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:~3.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:^3.'* ]]; then
-                EZ_VERSION=ezplatform3
-        else
-            # @todo if EZ_COMPOSER_LOCK is set, EZ_PACKAGES is most likely empty. We should parse the contents of the
-            #       lock file in that case. Or, if this is a CI runner, use set-env-vars to calculate it
-            printf "\n\e[31mERROR:\e[0m can not retrieve EZ_VERSION from EZ_PACKAGES env var: '${EZ_PACKAGES}'\n" >&2
-            exit 1
-        fi
+    if [ -z "${MYSQL_VERSION}" ]; then
+        printf "\n\e[31mERROR:\e[0m can not retrieve MYSQL_VERSION\n" >&2
+        exit 1
     fi
 
     if [ -f /etc/mysql/my.cnf ]; then
@@ -73,19 +59,24 @@ if [ "${DB_TYPE}" = "mysql" ]; then
     fi
 
     # MySQL 5.7 defaults to strict mode, which is not good with ezpublish community kernel 2014.11.8
-    # @todo what about MySQL 8.0 ?
-    if [[ "${EZ_VERSION}" == "ezpublish-community" ]] && [[ "${MYSQL_VERSION}" == 5.7* ]]; then
-        # We want to only remove STRICT_TRANS_TABLES, really
-        if [ -n "${TRAVIS}" -o -n "${GITHUB_ACTION}" ]; then
-            #mysql -u${DB_USER} ${DB_PWD} -e "SHOW VARIABLES LIKE 'sql_mode';"
-            echo -e "\n[server]\nsql-mode='ONLY_FULL_GROUP_BY,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'\n" | sudo tee -a "$CONFIG_FILE"
-            sudo service mysql restart
-        elif [ "${DOCKER}" = true ]; then
-           if grep -q 'sql-mode=' "$CONFIG_FILE"; then
-               sed -r -i -e "s|^#*sql-mode=.*$|sql-mode='ONLY_FULL_GROUP_BY,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'|g" "$CONFIG_FILE"
-           else
-               echo -e "\n[server]\nsql-mode='ONLY_FULL_GROUP_BY,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'\n" >> -a "$CONFIG_FILE"
-           fi
+    # @todo what about MySQL 8.0 ? And MariaDB ?
+    if [[ "${MYSQL_VERSION}" == 5.7* ]]; then
+        if [ -z "${EZ_VERSION}" ]; then
+            source "$(dirname -- "$(dirname -- "${BASH_SOURCE[0]}")")/set-env-vars.sh"
+        fi
+        if [ "${EZ_VERSION}" = "ezpublish-community" ]; then
+            # We want to only remove STRICT_TRANS_TABLES, really
+            if [ -n "${TRAVIS}" -o -n "${GITHUB_ACTION}" ]; then
+                #mysql -u${DB_USER} ${DB_PWD} -e "SHOW VARIABLES LIKE 'sql_mode';"
+                echo -e "\n[server]\nsql-mode='ONLY_FULL_GROUP_BY,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'\n" | sudo tee -a "$CONFIG_FILE"
+                sudo service mysql restart
+            elif [ "${DOCKER}" = true ]; then
+               if grep -q 'sql-mode=' "$CONFIG_FILE"; then
+                   sed -r -i -e "s|^#*sql-mode=.*$|sql-mode='ONLY_FULL_GROUP_BY,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'|g" "$CONFIG_FILE"
+               else
+                   echo -e "\n[server]\nsql-mode='ONLY_FULL_GROUP_BY,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'\n" >> -a "$CONFIG_FILE"
+               fi
+            fi
         fi
     fi
 

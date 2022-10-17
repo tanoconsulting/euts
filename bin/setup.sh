@@ -11,7 +11,7 @@
 
 set -e
 
-BIN_DIR=$(dirname -- ${BASH_SOURCE[0]})
+BIN_DIR="$(dirname -- "${BASH_SOURCE[0]}")"
 
 # @todo since we can set the php version both on on Travis/GHA and Containers, it makes sense to use PHP_VERSION
 #       everywhere and drop TESTSTACK_PHP_VERSION. Atm we keep making use of it for BC.

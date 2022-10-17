@@ -13,7 +13,7 @@ set -e
 
 echo "Creating the eZ database and user and loading it with default data..."
 
-source $(dirname -- ${BASH_SOURCE[0]})/set-env-vars.sh
+source "$(dirname -- "${BASH_SOURCE[0]}")/set-env-vars.sh"
 
 ROOT_DB_PWD=
 DB_HOST_FLAG=

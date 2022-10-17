@@ -10,36 +10,52 @@
 
 # @todo also set up APP_ENV, SYMFONY_ENV (defaulting to 'behat')
 
-if [ -n "${COMPOSE_PROJECT_NAME}" ]; then
-    export COMPOSER="composer_${COMPOSE_PROJECT_NAME}.json"
-fi
-
-# Figure out EZ_VERSION if required
-# @todo can we manage to do it without running composer? See how we do it in db-config.sh...
-if [ -z "${EZ_VERSION}" ]; then
+# @todo what if `which` is not installed?
+which composer >/dev/null 2>/dev/null
+if [ $? -eq 0 ]; then
     # @todo check if COMPOSER env var is set and not matching COMPOSE_PROJECT_NAME and abort if it is
-    if [ -n "${COMPOSE_PROJECT_NAME}" -a -z "${COMPOSER}" ]; then
+    if [ -n "${COMPOSE_PROJECT_NAME}" ]; then
         export COMPOSER="composer_${COMPOSE_PROJECT_NAME}.json"
     fi
-    EZ_VERSION=$(composer show | grep ezsystems/ezpublish-kernel || true)
-    if [ -n "${EZ_VERSION}" ]; then
-        if [[ "${EZ_VERSION}" == *" v7."* ]]; then
-            export EZ_VERSION=ezplatform2
-        else
-            if [[ "${EZ_VERSION}" == *" v6."* ]]; then
-                export EZ_VERSION=ezplatform
+
+    # Figure out EZ_VERSION if required
+    if [ -z "${EZ_VERSION}" ]; then
+        EZ_VERSION=$(composer show | grep ezsystems/ezpublish-kernel || true)
+        if [ -n "${EZ_VERSION}" ]; then
+            if [[ "${EZ_VERSION}" == *" v7."* ]]; then
+                export EZ_VERSION=ezplatform2
             else
-                export EZ_VERSION=ezpublish-community
+                if [[ "${EZ_VERSION}" == *" v6."* ]]; then
+                    export EZ_VERSION=ezplatform
+                else
+                    export EZ_VERSION=ezpublish-community
+                fi
+            fi
+        else
+            EZ_VERSION=$(composer show | grep ezsystems/ezplatform-kernel || true)
+            if [ -n "${EZ_VERSION}" ]; then
+                # @todo what about ezplatform 4?
+                export EZ_VERSION=ezplatform3
             fi
         fi
-    else
-        EZ_VERSION=$(composer show | grep ezsystems/ezplatform-kernel || true)
-        if [ -n "${EZ_VERSION}" ]; then
-            # @todo what about ezplatform 4?
-            export EZ_VERSION=ezplatform3
+        # No need to abort here if  EZ_VERSION is null: we do it later
+    fi
+else
+    # Figure out EZ_VERSION if required
+    if [ -z "${EZ_VERSION}" ]; then
+        # we are running most likely in a db Container, with no php/composer available. We rely on EZ_PACKAGES get the info
+        # @todo q: if EZ_COMPOSER_LOCK is set, EZ_PACKAGES is most likely empty. Is it more reliable to scan composer.lock?
+        #       Also, what if eZP was in composer.json instead of EZ_PACKAGES env var?
+        if [[ "${EZ_PACKAGES}" == *ezsystems/ezpublish-community* ]]; then
+            EZ_VERSION=ezpublish-community
+        elif [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:1.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:~1.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:^1.'* ]]; then
+            EZ_VERSION=ezplatform
+        elif [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:2.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:~2.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:^2.'* ]]; then
+            EZ_VERSION=ezplatform2
+        elif [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:3.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:~3.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:^3.'* ]]; then
+            EZ_VERSION=ezplatform3
         fi
     fi
-    # No need to abort here if  EZ_VERSION is null: we do it later
 fi
 
 # @todo Figure out EZ_BUNDLES from EZ_PACKAGES if the former is not set

@@ -6,7 +6,8 @@ echo "Setting up Composer..."
 
 INSTALL_COMPOSER=false
 
-which composer 2>/dev/null
+# @todo what if `which` is not installed?
+which composer >/dev/null 2>/dev/null
 if [ $? -ne 0 ]; then
     INSTALL_COMPOSER=true
 else
@@ -25,7 +26,7 @@ else
 fi
 
 if [ $INSTALL_COMPOSER = true ]; then
-    cd "$(dirname -- $(dirname -- $(dirname -- ${BASH_SOURCE[0]})))"
+    cd "$(dirname -- "$(dirname -- "$(dirname -- "${BASH_SOURCE[0]}")")")"
     # @todo does this work in docker-stack envs? See php.sh for a different take...
     chmod 755 ./docker/images/ez/root/build/getcomposer.sh
     sudo ./docker/images/ez/root/build/getcomposer.sh

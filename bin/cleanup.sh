@@ -6,7 +6,7 @@
 
 set -e
 
-source $(dirname -- ${BASH_SOURCE[0]})/set-env-vars.sh
+source "$(dirname -- "${BASH_SOURCE[0]}")/set-env-vars.sh"
 
 if [ "${EZ_VERSION}" = "ezplatform3" ]; then
     if [ -z "${VAR_DIR}" ]; then

@@ -13,11 +13,11 @@ set -e
 
 echo "Setting up eZ configuration..."
 
-source $(dirname $(dirname -- ${BASH_SOURCE[0]}))/set-env-vars.sh
+source "$(dirname "$(dirname -- "${BASH_SOURCE[0]}")")/set-env-vars.sh"
 
 INSTALL_LEGACY_BRIDGE=false
 
-STACK_DIR=$(dirname -- $(dirname -- $(dirname -- ${BASH_SOURCE[0]})))
+STACK_DIR="$(dirname -- "$(dirname -- "$(dirname -- "${BASH_SOURCE[0]}")")")"
 
 if [ "${EZ_VERSION}" = "ezplatform3" ]; then
     APP_DIR=vendor/ezsystems/ezplatform

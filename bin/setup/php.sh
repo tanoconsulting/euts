@@ -16,19 +16,17 @@ if [ "${PHPVER}" = "${PHP_VERSION}" ]; then
 else
     echo "Installing php version ${PHP_VERSION}"
 
-    cd "$(dirname -- $(dirname -- $(dirname -- ${BASH_SOURCE[0]})))"
+    cd "$(dirname -- "$(dirname -- "$(dirname -- "${BASH_SOURCE[0]}")")")"
 
     # @todo can we be smarter than this ?
     if [ -f ./docker/images/ez/root/build/getphp.sh ]; then
         chmod 755 ./docker/images/ez/root/build/getphp.sh
         sudo ./docker/images/ez/root/build/getphp.sh "${PHP_VERSION}"
+    elif [ -f /home/test/teststack/docker/images/ez/root/build/getphp.sh ]; then
+        chmod 755 /home/test/teststack/docker/images/ez/root/build/getphp.sh
+        sudo /home/test/teststack/docker/images/ez/root/build/getphp.sh "${PHP_VERSION}"
     else
-        if [ -f /home/test/teststack/docker/images/ez/root/build/getphp.sh ]; then
-            chmod 755 /home/test/teststack/docker/images/ez/root/build/getphp.sh
-            sudo /home/test/teststack/docker/images/ez/root/build/getphp.sh "${PHP_VERSION}"
-        else
-            printf "\n\e[31mERROR:\e[0m php version ${PHPVER} does not match required ${PHP_VERSION} and can not find script to set up php\n\n" >&2
-            exit 1
-        fi
+        printf "\n\e[31mERROR:\e[0m php version ${PHPVER} does not match required ${PHP_VERSION} and can not find script to set up php\n\n" >&2
+        exit 1
     fi
 fi

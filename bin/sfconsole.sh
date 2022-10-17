@@ -2,7 +2,7 @@
 
 # Requires composer dependencies to have been set up already. And of course, eZ to have been set up as well
 
-source $(dirname -- ${BASH_SOURCE[0]})/set-env-vars.sh
+source "$(dirname -- "${BASH_SOURCE[0]}")/set-env-vars.sh"
 
 if [ -z "${CONSOLE_CMD}" ]; then
     if [ "${EZ_VERSION}" = "ezplatform3" ]; then
