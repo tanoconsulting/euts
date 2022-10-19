@@ -55,7 +55,11 @@ echo "[$(date)] Handing over control to /entrypoint.sh..."
 
 trap clean_up TERM
 
-/entrypoint.sh $@ &
+if [ -f /usr/local/bin/docker-entrypoint.sh ]; then
+    /usr/local/bin/docker-entrypoint.sh $@ &
+else
+    /entrypoint.sh $@ &
+fi
 
 # wait until mysql is ready to accept connections over the network before saying bootstrap is finished
 which mysqladmin 2>/dev/null

@@ -4,6 +4,8 @@ Version 0.5.2 (unreleased)
 * relaxed the need to specify the version of eZ in use in env var EZ_PACKAGES when using EZ_COMPOSER_LOCK, for the case
   of tests running on GHA/Travis
 
+* improve compatibility with mariadb docker images
+
 Version 0.5.1
 =============
 
