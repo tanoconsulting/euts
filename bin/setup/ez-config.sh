@@ -122,15 +122,26 @@ if [ -f "${CONFIG_DIR}/packages/ezplatform_admin_ui.yaml" ]; then
     #sed -i "s#'%kernel.project_dir%/vendor/ezsystems/ezplatform-admin-ui/src/bundle/Resources/translations/#'%kernel.root_dir%/../../ezplatform-admin-ui/src/bundle/Resources/translations/#" ${CONFIG_DIR}/packages/ezplatform_admin_ui.yaml
 fi
 
-# @todo for ezpl3, fix as well:
-# - registration of services app/src of demo bundle stuff
-# - EzSystemsEzPlatformGraphQLExtension::PACKAGE_DIR_PATH or the derived ezplatform.graphql.schema.fields_definition_file, ezplatform.graphql.package.root_dir
-# - TranslationResourceFilesPass::getTranslationFiles (line 58) - or find out why the 3d param to translator.default service has not been replaced
-# - doctrine / dbal / url set in (???)
-# - create dir ./public
-# - hack behatbundle's file stages.yaml to disable EzSystems\Behat\Subscriber\PublishInTheFuture
-# - hack behat/ezplatform_orig.yml, comment out line ezplatform.behat.enable_enterprise_services: true - it seems that we can not override that param in our own behat/ezplatform.yml ?
-# - hack InstallPlatformCommand.php, change $console = escapeshellarg('bin/console'); (or create bin/console symlink ?)
+if [ "${EZ_VERSION}" = "ezplatform3" ]; then
+    # 1. registration of services from ezplatform/config/services_behat.yml -> use an sf env which is neither test nor behat or avoid including it
+    if [ -f "${CONFIG_DIR}/services_behat.yaml" ]; then
+        mv "${CONFIG_DIR}/services_behat.yaml" "${CONFIG_DIR}/services_behat.yaml.orig"
+    fi
+    # 2. EzSystemsEzPlatformGraphQLExtension::PACKAGE_DIR_PATH or the derived ezplatform.graphql.schema.fields_definition_file, ezplatform.graphql.package.root_dir
+    sed -i "s#const PACKAGE_DIR_PATH = '/vendor/ezsystems/ezplatform-graphql'#const PACKAGE_DIR_PATH = '/../../../vendor/ezsystems/ezplatform-graphql'#" vendor/ezsystems/ezplatform-graphql/src/DependencyInjection/EzSystemsEzPlatformGraphQLExtension.php
+    # 3. Symfony\Bridge\ProxyManager\LazyProxy\PhpDumper\LazyLoadingValueHolderGenerator to move from Zend\Code\Generator\ClassGenerator to Laminas
+    sed -i "s#use Zend\Code\Generator\ClassGenerator;#use Laminas\Code\Generator\ClassGenerator;#" vendor/symfony/proxy-manager-bridge/Lazyproxy/PhpDumper/LazyLoadingValueHolderGenerator.php
+    # 4. hack InstallPlatformCommand.php, change $console = escapeshellarg('bin/console');  and friends
+    sed -i "s#escapeshellarg('bin/console')#escapeshellarg('vendor/ezsystems/ezplatform/bin/console')#" vendor/ezsystems/ezplatform-kernel/eZ/Bundle/PlatformInstallerBundle/src/Command/InstallPlatformCommand.php
+    sed -i "s#escapeshellarg('bin/console')#escapeshellarg('vendor/ezsystems/ezplatform/bin/console')#" vendor/ezsystems/ezplatform-kernel/eZ/Bundle/EzPublishCoreBundle/Features/Context/ConsoleContext.php
+    sed -i "s#escapeshellarg('bin/console')#escapeshellarg('vendor/ezsystems/ezplatform/bin/console')#" vendor/ezsystems/behatbundle/src/bundle/Command/CreateExampleDataManagerCommand.php
+
+    # - TranslationResourceFilesPass::getTranslationFiles (line 58) - or find out why the 3d param to translator.default service has not been replaced
+    # - doctrine / dbal / url set in (???)
+    # - create dir ./public
+    # - hack behatbundle's file stages.yaml to disable EzSystems\Behat\Subscriber\PublishInTheFuture
+    # - hack behat/ezplatform_orig.yml, comment out line ezplatform.behat.enable_enterprise_services: true - it seems that we can not override that param in our own behat/ezplatform.yml ?
+fi
 
 # Fix the eZ console autoload config if needed (ezplatform 2 and ezplatform 3)
 if [ -f "${APP_DIR}/bin/console" ]; then
