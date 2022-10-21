@@ -130,7 +130,7 @@ if [ "${EZ_VERSION}" = "ezplatform3" ]; then
     # 2. EzSystemsEzPlatformGraphQLExtension::PACKAGE_DIR_PATH or the derived ezplatform.graphql.schema.fields_definition_file, ezplatform.graphql.package.root_dir
     sed -i "s#const PACKAGE_DIR_PATH = '/vendor/ezsystems/ezplatform-graphql'#const PACKAGE_DIR_PATH = '/../../../vendor/ezsystems/ezplatform-graphql'#" vendor/ezsystems/ezplatform-graphql/src/DependencyInjection/EzSystemsEzPlatformGraphQLExtension.php
     # 3. Symfony\Bridge\ProxyManager\LazyProxy\PhpDumper\LazyLoadingValueHolderGenerator to move from Zend\Code\Generator\ClassGenerator to Laminas
-    sed -i "s#use Zend\Code\Generator\ClassGenerator;#use Laminas\Code\Generator\ClassGenerator;#" vendor/symfony/proxy-manager-bridge/Lazyproxy/PhpDumper/LazyLoadingValueHolderGenerator.php
+    sed -i "s#use Zend\Code\Generator\ClassGenerator;#use Laminas\Code\Generator\ClassGenerator;#" vendor/symfony/proxy-manager-bridge/LazyProxy/PhpDumper/LazyLoadingValueHolderGenerator.php
     # 4. hack InstallPlatformCommand.php, change $console = escapeshellarg('bin/console');  and friends
     sed -i "s#escapeshellarg('bin/console')#escapeshellarg('vendor/ezsystems/ezplatform/bin/console')#" vendor/ezsystems/ezplatform-kernel/eZ/Bundle/PlatformInstallerBundle/src/Command/InstallPlatformCommand.php
     sed -i "s#escapeshellarg('bin/console')#escapeshellarg('vendor/ezsystems/ezplatform/bin/console')#" vendor/ezsystems/ezplatform-kernel/eZ/Bundle/EzPublishCoreBundle/Features/Context/ConsoleContext.php

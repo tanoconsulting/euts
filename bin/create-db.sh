@@ -105,7 +105,7 @@ elif [ "${EZ_VERSION}" = "ezplatform" -o "${EZ_VERSION}" = "ezplatform2" ]; then
 elif [ "${EZ_VERSION}" = "ezplatform3" ]; then
 
     php vendor/ezsystems/ezplatform/bin/console ezplatform:install clean --skip-indexing
-
+    php vendor/ezsystems/ezplatform/bin/console ezplatform:graphql:generate-schema
 fi
 
 if [ "${EZ_VERSION}" != "ezplatform3" ]; then
