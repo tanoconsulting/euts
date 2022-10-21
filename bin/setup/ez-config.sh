@@ -135,10 +135,13 @@ if [ "${EZ_VERSION}" = "ezplatform3" ]; then
     sed -i "s#escapeshellarg('bin/console')#escapeshellarg('vendor/ezsystems/ezplatform/bin/console')#" vendor/ezsystems/ezplatform-kernel/eZ/Bundle/PlatformInstallerBundle/src/Command/InstallPlatformCommand.php
     sed -i "s#escapeshellarg('bin/console')#escapeshellarg('vendor/ezsystems/ezplatform/bin/console')#" vendor/ezsystems/ezplatform-kernel/eZ/Bundle/EzPublishCoreBundle/Features/Context/ConsoleContext.php
     sed -i "s#escapeshellarg('bin/console')#escapeshellarg('vendor/ezsystems/ezplatform/bin/console')#" vendor/ezsystems/behatbundle/src/bundle/Command/CreateExampleDataManagerCommand.php
+    # 5. create dir ./public
+    if [ ! -d public/var ]; then
+        mkdir -p public/var
+    fi
 
     # - TranslationResourceFilesPass::getTranslationFiles (line 58) - or find out why the 3d param to translator.default service has not been replaced
     # - doctrine / dbal / url set in (???)
-    # - create dir ./public
     # - hack behatbundle's file stages.yaml to disable EzSystems\Behat\Subscriber\PublishInTheFuture
     # - hack behat/ezplatform_orig.yml, comment out line ezplatform.behat.enable_enterprise_services: true - it seems that we can not override that param in our own behat/ezplatform.yml ?
 fi
