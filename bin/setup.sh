@@ -70,11 +70,17 @@ if [ -n "${TRAVIS}" -o -n "${GITHUB_ACTION}" ]; then
     ${BIN_DIR}/setup/db-config.sh
 fi
 
-# Create the database from sql files present in either the legacy stack or kernel (has to be run after composer install)
-${BIN_DIR}/create-db.sh
-
-# Set up eZ configuration files
-${BIN_DIR}/setup/ez-config.sh
+source "$(dirname -- "${BASH_SOURCE[0]}")/set-env-vars.sh"
+if [ "${EZ_VERSION}" != "ezplatform3" ]; then
+    # Create the database from sql files present in either the legacy stack or kernel (has to be run after composer install)
+    ${BIN_DIR}/create-db.sh
+    # Set up eZ configuration files (if ez legacy is installed, this runs a legacy script, which might fail with no db schema available)
+    ${BIN_DIR}/setup/ez-config.sh
+else
+    # For eZPlatform 3, we have to swap the order of execution
+    ${BIN_DIR}/setup/ez-config.sh
+    ${BIN_DIR}/create-db.sh
+fi
 
 # TODO are these needed at all? Also: are they available / the same for every eZP version?
 #${BIN_DIR}/sfconsole.sh cache:clear --no-debug
