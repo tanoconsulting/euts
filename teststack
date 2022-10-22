@@ -315,10 +315,6 @@ load_config() {
     # @todo check UID, GID from conf vs. current. If different, ask for confirmation before running
     #if []; then
     #fi
-
-    # make sure the necessary folders exist which will be mounted by the DB containers
-    if [ ! -d "docker/data/${DB_TYPE}/${COMPOSE_PROJECT_NAME}" ]; then mkdir "docker/data/${DB_TYPE}/${COMPOSE_PROJECT_NAME}"; fi
-    if [ ! -d "docker/logs/${DB_TYPE}/${COMPOSE_PROJECT_NAME}" ]; then mkdir "docker/logs/${DB_TYPE}/${COMPOSE_PROJECT_NAME}"; fi
 }
 
 setup_app() {
@@ -488,10 +484,11 @@ fi
 
 load_config
 
-# @todo allow installation of the Test Stack elsewhere than as direct subfolder of the project
-#TESTSTACK_DIR=$(basename -- $(dirname -- ${BASH_SOURCE[0]}))
-
 cd $(dirname -- ${BASH_SOURCE[0]})/docker
+
+# make sure the necessary folders exist which will be mounted by the DB containers
+if [ ! -d "./data/${DB_TYPE}/${COMPOSE_PROJECT_NAME}" ]; then mkdir "./data/${DB_TYPE}/${COMPOSE_PROJECT_NAME}"; fi
+if [ ! -d "./logs/${DB_TYPE}/${COMPOSE_PROJECT_NAME}" ]; then mkdir "./logs/${DB_TYPE}/${COMPOSE_PROJECT_NAME}"; fi
 
 # Since the line below relies on knowing the contents of the yml file anyway, let's be more efficient...
 #WEB_CONTAINER=$(${DOCKER_TESTSTACK_QUIET} config | grep 'container_name: .*_ez$' | sed -e 's/ \+container_name: \+//g')
@@ -503,7 +500,7 @@ case "${COMMAND}" in
     ;;
 
     cleanup)
-        # @todo allow to pass many cleanup targets in one go
+        # @todo allow to pass in many cleanup targets in one go
         cleanup "${2}"
     ;;
 
