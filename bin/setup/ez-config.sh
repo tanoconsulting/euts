@@ -61,7 +61,7 @@ if [ -f "${STACK_DIR}/config/${EZ_VERSION}/ezpublish_behat.yml" ]; then
 fi
 # only for ezplatform3
 if [ -f "${STACK_DIR}/config/${EZ_VERSION}/ezplatform.yml" ]; then
-    grep -q 'ezplatform_orig.yml' "${CONFIG_DIR}/packages/behat/ezplatform.yaml" || mv "${CONFIG_DIR}/packages/behat/ezplatform.yaml" "${CONFIG_DIR}/packages/behat/ezplatform_orig.yaml"
+    grep -q 'ezplatform_orig.yaml' "${CONFIG_DIR}/packages/behat/ezplatform.yaml" || mv "${CONFIG_DIR}/packages/behat/ezplatform.yaml" "${CONFIG_DIR}/packages/behat/ezplatform_orig.yaml"
     cp "${STACK_DIR}/config/${EZ_VERSION}/ezplatform.yml" "${CONFIG_DIR}/packages/behat/ezplatform.yaml"
 fi
 
