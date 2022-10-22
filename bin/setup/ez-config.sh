@@ -133,7 +133,7 @@ if [ "${EZ_VERSION}" = "ezplatform3" ]; then
     # 3. Inconsistency between ocramius/proxy-manager and symfony/proxy-manager-bridge (composer version matching is too loose
     #    and there will probably be no minor versions released for old symfony/proxy-manager-bridge)
     #    Symfony\Bridge\ProxyManager\LazyProxy\PhpDumper\LazyLoadingValueHolderGenerator to move from Zend\Code\Generator\ClassGenerator to Laminas
-    if grep -q 'Laminas\Code\Generator\ClassGenerator' vendor/ocramius/proxy-manager/src/ProxyManager/ProxyGenerator/LazyLoadingValueHolderGenerator.php; then
+    if grep -q 'Laminas\\Code\\Generator\\ClassGenerator' vendor/ocramius/proxy-manager/src/ProxyManager/ProxyGenerator/LazyLoadingValueHolderGenerator.php; then
         sed -i 's#use Zend\\Code\\Generator\\ClassGenerator;#use Laminas\\Code\\Generator\\ClassGenerator;#' vendor/symfony/proxy-manager-bridge/LazyProxy/PhpDumper/LazyLoadingValueHolderGenerator.php
     fi
     # 4. Hack InstallPlatformCommand.php and friends, fix $console = escapeshellarg('bin/console');
