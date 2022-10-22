@@ -19,20 +19,16 @@ INSTALL_LEGACY_BRIDGE=false
 
 STACK_DIR="$(dirname -- "$(dirname -- "$(dirname -- "${BASH_SOURCE[0]}")")")"
 
+APP_DIR="$(dirname "${KERNEL_DIR}")"
 if [ "${EZ_VERSION}" = "ezplatform33" ]; then
-    APP_DIR=vendor/ibexa/oss-skeleton
     CONFIG_DIR="${APP_DIR}/config"
 elif [ "${EZ_VERSION}" = "ezplatform3" ]; then
-    APP_DIR=vendor/ezsystems/ezplatform
     CONFIG_DIR="${APP_DIR}/config"
 elif [ "${EZ_VERSION}" = "ezplatform2" ]; then
-    APP_DIR=vendor/ezsystems/ezplatform
     CONFIG_DIR="${APP_DIR}/app/config"
 elif [ "${EZ_VERSION}" = "ezplatform" ]; then
-    APP_DIR=vendor/ezsystems/ezplatform
     CONFIG_DIR="${APP_DIR}/app/config"
 elif [ "${EZ_VERSION}" = "ezpublish-community" ]; then
-    APP_DIR=vendor/ezsystems/ezpublish-community
     CONFIG_DIR="${APP_DIR}/ezpublish/config"
 else
     printf "\n\e[31mERROR:\e[0m unsupported eZ version '${EZ_VERSION}'\n\n" >&2
@@ -92,7 +88,7 @@ for BUNDLE in ${EZ_BUNDLES}; do
         ARG=
     fi
     if [ -f "${CONFIG_DIR}/bundles.php" ]; then
-        if ! fgrep -q "${BUNDLE}::class  => ['all' => true]," "${CONFIG_DIR}/bundles.php"; then
+        if ! fgrep -q "${BUNDLE}::class => ['all' => true]," "${CONFIG_DIR}/bundles.php"; then
             BUNDLE=${BUNDLE//\\/\\\\}
             sed -i "/${LAST_BUNDLE}::class *=> *\[/i ${BUNDLE}::class => \['all' => true\]," "${CONFIG_DIR}/bundles.php"
         fi
@@ -147,8 +143,29 @@ if [ "${EZ_VERSION}" = "ezplatform3" -o "${EZ_VERSION}" = "ezplatform33" ]; then
     if [ ! -d public/var ]; then
         mkdir -p public/var
     fi
+    # 6. fix autoload_runtime.php
+    if [ -f vendor/autoload_runtime.php ]; then
+        sed -i "s#'project_dir' => dirname(__DIR__, 1),#'project_dir' => dirname(__DIR__, 1) . '/vendor/ibexa/oss-skeleton',#" vendor/autoload_runtime.php
+    fi
+    # 7. fix dotenv
+    if [ -f vendor/ibexa/oss-skeleton/.env ]; then
+        if [ -z "${DB_HOST}" ]; then
+            DB_HOST=${DB_TYPE}
+        fi
+        # @todo make dynamic
+        DB_VERSION=8
+        DB_PORT=3306
+        if [ ! -f vendor/ibexa/oss-skeleton/.env.behat ]; then
+            echo "APP_ENV=behat" > vendor/ibexa/oss-skeleton/.env.behat
+            echo "DATABASE_URL=\"${DB_TYPE}://${DB_EZ_USER}:${DB_EZ_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_EZ_DATABASE}?serverVersion=${DB_VERSION}&charset=utf8mb4\"" >> vendor/ibexa/oss-skeleton/.env.behat
+        else
+            # @todo test
+            sed -i "s#APP_ENV=.+#APP_ENV=behat#" vendor/ibexa/oss-skeleton/.env.behat
+            sed -i "s#DATABASE_URL=.+#\"${DB_TYPE}://${DB_EZ_USER}:${DB_EZ_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_EZ_DATABASE}?serverVersion=${DB_VERSION}&charset=utf8mb4\"#" vendor/ibexa/oss-skeleton/.env.behat
+        fi
+    fi
 
-    # Remaining to do:
+    # Remaining to do, possibly:
     # - TranslationResourceFilesPass::getTranslationFiles (line 58) - or find out why the 3d param to translator.default service has not been replaced
     # - doctrine / dbal / url set in (???)
     # - hack behatbundle's file stages.yaml to disable EzSystems\Behat\Subscriber\PublishInTheFuture
@@ -156,9 +173,10 @@ if [ "${EZ_VERSION}" = "ezplatform3" -o "${EZ_VERSION}" = "ezplatform33" ]; then
 fi
 
 # Fix the eZ console autoload config if needed (ezplatform 2 and ezplatform 3)
-if [ -f "${APP_DIR}/bin/console" ]; then
-    sed -i "s#'/../vendor/autoload.php'#'/../../../../vendor/autoload.php'#" "${APP_DIR}/bin/console"
-    sed -i "s#dirname(__DIR__).'/vendor/autoload.php'#dirname(__DIR__).'/../../../vendor/autoload.php'#" "${APP_DIR}/bin/console"
+if [ -f "${CONSOLE_CMD}" ]; then
+    sed -i "s#'/../vendor/autoload.php'#'/../../../../vendor/autoload.php'#" "${CONSOLE_CMD}"
+    sed -i "s#dirname(__DIR__).'/vendor/autoload.php'#dirname(__DIR__).'/../../../vendor/autoload.php'#" "${CONSOLE_CMD}"
+    sed -i "s#dirname(__DIR__).'/vendor/autoload_runtime.php'#dirname(__DIR__).'/../../../vendor/autoload_runtime.php'#" "${CONSOLE_CMD}"
 fi
 
 # Set up config related to LegacyBridge if needed
