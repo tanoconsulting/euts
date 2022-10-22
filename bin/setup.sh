@@ -71,7 +71,7 @@ if [ -n "${TRAVIS}" -o -n "${GITHUB_ACTION}" ]; then
 fi
 
 source "$(dirname -- "${BASH_SOURCE[0]}")/set-env-vars.sh"
-if [ "${EZ_VERSION}" != "ezplatform3" ]; then
+if [ "${EZ_VERSION}" != "ezplatform3" -a "${EZ_VERSION}" != "ezplatform33" ]; then
     # Create the database from sql files present in either the legacy stack or kernel (has to be run after composer install)
     ${BIN_DIR}/create-db.sh
     # Set up eZ configuration files (if ez legacy is installed, this runs a legacy script, which might fail with no db schema available)
@@ -86,7 +86,7 @@ fi
 #${BIN_DIR}/sfconsole.sh cache:clear --no-debug
 #${BIN_DIR}/sfconsole.sh assetic:dump
 
-# TODO for eZPlatform, do we need to set up SOLR as well ?
+# TODO for eZPlatform, do we need to set up SOLR as well ? (Note that ezpl3.3 has a different folder name)
 #if [ "$EZ_VERSION" != "ezpublish" ]; then ./vendor/ezsystems/ezplatform-solr-search-engine && bin/.travis/init_solr.sh; fi
 
 echo "Setup done"

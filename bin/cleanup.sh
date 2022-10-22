@@ -8,7 +8,11 @@ set -e
 
 source "$(dirname -- "${BASH_SOURCE[0]}")/set-env-vars.sh"
 
-if [ "${EZ_VERSION}" = "ezplatform3" ]; then
+if [ "${EZ_VERSION}" = "ezplatform33" ]; then
+    if [ -z "${VAR_DIR}" ]; then
+        VAR_DIR=vendor/ibexa/oss-skeleton/var
+    fi
+elif [ "${EZ_VERSION}" = "ezplatform3" ]; then
     if [ -z "${VAR_DIR}" ]; then
         VAR_DIR=vendor/ezsystems/ezplatform/var
     fi

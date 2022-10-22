@@ -19,7 +19,10 @@ INSTALL_LEGACY_BRIDGE=false
 
 STACK_DIR="$(dirname -- "$(dirname -- "$(dirname -- "${BASH_SOURCE[0]}")")")"
 
-if [ "${EZ_VERSION}" = "ezplatform3" ]; then
+if [ "${EZ_VERSION}" = "ezplatform33" ]; then
+    APP_DIR=vendor/ibexa/oss-skeleton
+    CONFIG_DIR="${APP_DIR}/config"
+elif [ "${EZ_VERSION}" = "ezplatform3" ]; then
     APP_DIR=vendor/ezsystems/ezplatform
     CONFIG_DIR="${APP_DIR}/config"
 elif [ "${EZ_VERSION}" = "ezplatform2" ]; then
@@ -37,7 +40,7 @@ else
 fi
 
 # hopefully these bundles will stay there :-) it is important that they are loaded after the kernel ones...
-if [ "${EZ_VERSION}" = "ezplatform3" ]; then
+if [ "${EZ_VERSION}" = "ezplatform3" -o "${EZ_VERSION}" = "ezplatform33" ]; then
     LAST_BUNDLE='Lexik\\Bundle\\JWTAuthenticationBundle\\LexikJWTAuthenticationBundle'
 elif [ "${EZ_VERSION}" = "ezplatform" -o "${EZ_VERSION}" = "ezplatform2" ]; then
     LAST_BUNDLE=AppBundle
@@ -122,7 +125,7 @@ if [ -f "${CONFIG_DIR}/packages/ezplatform_admin_ui.yaml" ]; then
     #sed -i "s#'%kernel.project_dir%/vendor/ezsystems/ezplatform-admin-ui/src/bundle/Resources/translations/#'%kernel.root_dir%/../../ezplatform-admin-ui/src/bundle/Resources/translations/#" ${CONFIG_DIR}/packages/ezplatform_admin_ui.yaml
 fi
 
-if [ "${EZ_VERSION}" = "ezplatform3" ]; then
+if [ "${EZ_VERSION}" = "ezplatform3" -o "${EZ_VERSION}" = "ezplatform33" ]; then
     # 1. Registration of services from ezplatform/config/services_behat.yml fails
     # @todo investigate if there is a better alternative to this "fix"
     if [ -f "${CONFIG_DIR}/services_behat.yaml" ]; then
@@ -137,9 +140,9 @@ if [ "${EZ_VERSION}" = "ezplatform3" ]; then
         sed -i 's#use Zend\\Code\\Generator\\ClassGenerator;#use Laminas\\Code\\Generator\\ClassGenerator;#' vendor/symfony/proxy-manager-bridge/LazyProxy/PhpDumper/LazyLoadingValueHolderGenerator.php
     fi
     # 4. Hack InstallPlatformCommand.php and friends, fix $console = escapeshellarg('bin/console');
-    sed -i "s#escapeshellarg('bin/console')#escapeshellarg('vendor/ezsystems/ezplatform/bin/console')#" vendor/ezsystems/ezplatform-kernel/eZ/Bundle/PlatformInstallerBundle/src/Command/InstallPlatformCommand.php
-    sed -i "s#escapeshellarg('bin/console')#escapeshellarg('vendor/ezsystems/ezplatform/bin/console')#" vendor/ezsystems/ezplatform-kernel/eZ/Bundle/EzPublishCoreBundle/Features/Context/ConsoleContext.php
-    sed -i "s#escapeshellarg('bin/console')#escapeshellarg('vendor/ezsystems/ezplatform/bin/console')#" vendor/ezsystems/behatbundle/src/bundle/Command/CreateExampleDataManagerCommand.php
+    sed -i "s#escapeshellarg('bin/console')#escapeshellarg('${CONSOLE_CMD}')#" vendor/ezsystems/ezplatform-kernel/eZ/Bundle/PlatformInstallerBundle/src/Command/InstallPlatformCommand.php
+    sed -i "s#escapeshellarg('bin/console')#escapeshellarg('${CONSOLE_CMD}')#" vendor/ezsystems/ezplatform-kernel/eZ/Bundle/EzPublishCoreBundle/Features/Context/ConsoleContext.php
+    sed -i "s#escapeshellarg('bin/console')#escapeshellarg('${CONSOLE_CMD}')#" vendor/ezsystems/behatbundle/src/bundle/Command/CreateExampleDataManagerCommand.php
     # 5. create dir ./public/var
     if [ ! -d public/var ]; then
         mkdir -p public/var
@@ -240,6 +243,8 @@ if [ -f phpunit.xml.dist ]; then
         sed -i 's/"vendor\/ezsystems\/ezpublish-community\/ezpublish"/"vendor\/ezsystems\/ezplatform\/app"/' phpunit.xml.dist
     elif [ "${EZ_VERSION}" = "ezplatform3" ]; then
         sed -i 's/"vendor\/ezsystems\/ezpublish-community\/ezpublish"/"vendor\/ezsystems\/ezplatform\/src"/' phpunit.xml.dist
+    elif [ "${EZ_VERSION}" = "ezplatform33" ]; then
+        sed -i 's/"vendor\/ezsystems\/ezpublish-community\/ezpublish"/"vendor\/ibexa\/oss-skeleton\/src"/' phpunit.xml.dist
     fi
 fi
 

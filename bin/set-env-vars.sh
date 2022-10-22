@@ -34,8 +34,15 @@ if [ $? -eq 0 ]; then
         else
             EZ_VERSION=$(composer show | grep ezsystems/ezplatform-kernel || true)
             if [ -n "${EZ_VERSION}" ]; then
-                # @todo what about ezplatform 4?
-                export EZ_VERSION=ezplatform3
+                EZ_VERSION=$(composer show | grep ibexa/oss || true)
+                if [ -z "${EZ_VERSION}" ]; then
+                    export EZ_VERSION=ezplatform3
+                else
+                    export EZ_VERSION=ezplatform33
+                fi
+            else
+                # @todo detect ezplatform 4
+                :
             fi
         fi
         # No need to abort here if  EZ_VERSION is null: we do it later
@@ -54,6 +61,8 @@ else
             EZ_VERSION=ezplatform2
         elif [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:3.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:~3.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:^3.'* ]]; then
             EZ_VERSION=ezplatform3
+        elif [[ "${EZ_PACKAGES}" == *'ibexa/oss-skeleton:3.3'* ]] || [[ "${EZ_PACKAGES}" == *'ibexa/oss-skeleton:~3.3'* ]] || [[ "${EZ_PACKAGES}" == *'ibexa/oss-skeleton:^3.3'* ]]; then
+            EZ_VERSION=ezplatform3
         fi
     fi
 fi
@@ -62,12 +71,25 @@ fi
 #if [ -z "${EZ_BUNDLES}" -a -n "${EZ_PACKAGES}" ]; then
 #fi
 
-if [ "${EZ_VERSION}" = "ezplatform3" ]; then
+if [ "${EZ_VERSION}" = "ezplatform33" ]; then
+    if [ -z "${KERNEL_CLASS}" ]; then
+        export KERNEL_CLASS=App\\Kernel
+    fi
+    if [ -z "${KERNEL_DIR}" ]; then
+        export KERNEL_DIR=vendor/ibexa/oss-skeleton/src
+    fi
+    if [ -z "${CONSOLE_CMD}" ]; then
+        export CONSOLE_CMD=vendor/ibexa/oss-skeleton/bin/console
+    fi
+elif [ "${EZ_VERSION}" = "ezplatform3" ]; then
     if [ -z "${KERNEL_CLASS}" ]; then
         export KERNEL_CLASS=App\\Kernel
     fi
     if [ -z "${KERNEL_DIR}" ]; then
         export KERNEL_DIR=vendor/ezsystems/ezplatform/src
+    fi
+    if [ -z "${CONSOLE_CMD}" ]; then
+        CONSOLE_CMD=vendor/ezsystems/ezplatform/bin/console
     fi
 elif [ "${EZ_VERSION}" = "ezplatform2" ]; then
     if [ -z "${KERNEL_CLASS}" ]; then
@@ -76,6 +98,9 @@ elif [ "${EZ_VERSION}" = "ezplatform2" ]; then
     if [ -z "${KERNEL_DIR}" ]; then
         export KERNEL_DIR=vendor/ezsystems/ezplatform/app
     fi
+    if [ -z "${CONSOLE_CMD}" ]; then
+        CONSOLE_CMD=vendor/ezsystems/ezplatform/bin/console
+    fi
 elif [ "${EZ_VERSION}" = "ezplatform" ]; then
     if [ -z "${KERNEL_CLASS}" ]; then
         export KERNEL_CLASS=AppKernel
@@ -83,12 +108,18 @@ elif [ "${EZ_VERSION}" = "ezplatform" ]; then
     if [ -z "${KERNEL_DIR}" ]; then
         export KERNEL_DIR=vendor/ezsystems/ezplatform/app
     fi
+    if [ -z "${CONSOLE_CMD}" ]; then
+        CONSOLE_CMD=vendor/ezsystems/ezplatform/app/console
+    fi
 elif [ "${EZ_VERSION}" = "ezpublish-community" ]; then
     if [ -z "${KERNEL_CLASS}" ]; then
         export KERNEL_CLASS=EzPublishKernel
     fi
     if [ -z "${KERNEL_DIR}" ]; then
         export KERNEL_DIR=vendor/ezsystems/ezpublish-community/ezpublish
+    fi
+    if [ -z "${CONSOLE_CMD}" ]; then
+        CONSOLE_CMD=vendor/ezsystems/ezpublish-community/ezpublish/console
     fi
 else
     printf "\n\e[31mERROR:\e[0m unsupported eZ version '${EZ_VERSION}'\n\n" >&2
