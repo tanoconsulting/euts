@@ -123,23 +123,29 @@ if [ -f "${CONFIG_DIR}/packages/ezplatform_admin_ui.yaml" ]; then
 fi
 
 if [ "${EZ_VERSION}" = "ezplatform3" ]; then
-    # 1. registration of services from ezplatform/config/services_behat.yml -> use an sf env which is neither test nor behat or avoid including it
+    # 1. Registration of services from ezplatform/config/services_behat.yml fails
+    # @todo investigate if there is a better alternative to this "fix"
     if [ -f "${CONFIG_DIR}/services_behat.yaml" ]; then
         mv "${CONFIG_DIR}/services_behat.yaml" "${CONFIG_DIR}/services_behat.yaml.orig"
     fi
-    # 2. EzSystemsEzPlatformGraphQLExtension::PACKAGE_DIR_PATH or the derived ezplatform.graphql.schema.fields_definition_file, ezplatform.graphql.package.root_dir
+    # 2. Fix EzSystemsEzPlatformGraphQLExtension::PACKAGE_DIR_PATH, or the derived ezplatform.graphql.schema.fields_definition_file, ezplatform.graphql.package.root_dir
     sed -i "s#const PACKAGE_DIR_PATH = '/vendor/ezsystems/ezplatform-graphql'#const PACKAGE_DIR_PATH = '/../../../vendor/ezsystems/ezplatform-graphql'#" vendor/ezsystems/ezplatform-graphql/src/DependencyInjection/EzSystemsEzPlatformGraphQLExtension.php
-    # 3. Symfony\Bridge\ProxyManager\LazyProxy\PhpDumper\LazyLoadingValueHolderGenerator to move from Zend\Code\Generator\ClassGenerator to Laminas
-    sed -i 's#use Zend\\Code\\Generator\\ClassGenerator;#use Laminas\\Code\\Generator\\ClassGenerator;#' vendor/symfony/proxy-manager-bridge/LazyProxy/PhpDumper/LazyLoadingValueHolderGenerator.php
-    # 4. hack InstallPlatformCommand.php, change $console = escapeshellarg('bin/console');  and friends
+    # 3. Inconsistency between ocramius/proxy-manager and symfony/proxy-manager-bridge (composer version matching is too loose
+    #    and there will probably be no minor versions released for old symfony/proxy-manager-bridge)
+    #    Symfony\Bridge\ProxyManager\LazyProxy\PhpDumper\LazyLoadingValueHolderGenerator to move from Zend\Code\Generator\ClassGenerator to Laminas
+    if grep -q 'Laminas\Code\Generator\ClassGenerator' vendor/ocramius/proxy-manager/src/ProxyManager/ProxyGenerator/LazyLoadingValueHolderGenerator.php; then
+        sed -i 's#use Zend\\Code\\Generator\\ClassGenerator;#use Laminas\\Code\\Generator\\ClassGenerator;#' vendor/symfony/proxy-manager-bridge/LazyProxy/PhpDumper/LazyLoadingValueHolderGenerator.php
+    fi
+    # 4. Hack InstallPlatformCommand.php and friends, fix $console = escapeshellarg('bin/console');
     sed -i "s#escapeshellarg('bin/console')#escapeshellarg('vendor/ezsystems/ezplatform/bin/console')#" vendor/ezsystems/ezplatform-kernel/eZ/Bundle/PlatformInstallerBundle/src/Command/InstallPlatformCommand.php
     sed -i "s#escapeshellarg('bin/console')#escapeshellarg('vendor/ezsystems/ezplatform/bin/console')#" vendor/ezsystems/ezplatform-kernel/eZ/Bundle/EzPublishCoreBundle/Features/Context/ConsoleContext.php
     sed -i "s#escapeshellarg('bin/console')#escapeshellarg('vendor/ezsystems/ezplatform/bin/console')#" vendor/ezsystems/behatbundle/src/bundle/Command/CreateExampleDataManagerCommand.php
-    # 5. create dir ./public
+    # 5. create dir ./public/var
     if [ ! -d public/var ]; then
         mkdir -p public/var
     fi
 
+    # Remaining to do:
     # - TranslationResourceFilesPass::getTranslationFiles (line 58) - or find out why the 3d param to translator.default service has not been replaced
     # - doctrine / dbal / url set in (???)
     # - hack behatbundle's file stages.yaml to disable EzSystems\Behat\Subscriber\PublishInTheFuture
@@ -177,6 +183,8 @@ if [ "${EZ_VERSION}" = "ezpublish-community" ]; then
     cat "${STACK_DIR}/config/ezpublish-legacy/config.php" > vendor/ezsystems/ezpublish-legacy/config.php
 fi
 
+# The Symfony console command has to be operational by this point
+
 if [ "${EZ_VERSION}" = "ezpublish-community" -o "${INSTALL_LEGACY_BRIDGE}" = true ]; then
 
     "${STACK_DIR}/bin/sfconsole.sh" ezpublish:legacybundles:install_extensions --force
@@ -184,7 +192,7 @@ if [ "${EZ_VERSION}" = "ezpublish-community" -o "${INSTALL_LEGACY_BRIDGE}" = tru
     # If top-level project is an extension, symlink it
     # We use the same test as LegacyBundleInstallCommand
     if [ -f ezinfo.php -o -f extension.xml ]; then
-        # There's no good way to know the name of the extension, so we assume it is the first in the list
+        # There's no easy way to know the name of the extension, so we assume it is the first in the list
         ARR=($EZ_LEGACY_EXTENSIONS)
         EXTENSION=${ARR[0]}
         if [ ! -L "vendor/ezsystems/ezpublish-legacy/extension/${EXTENSION}" -a ! -d "vendor/ezsystems/ezpublish-legacy/extension/${EXTENSION}" ]; then
@@ -234,7 +242,5 @@ if [ -f phpunit.xml.dist ]; then
         sed -i 's/"vendor\/ezsystems\/ezpublish-community\/ezpublish"/"vendor\/ezsystems\/ezplatform\/src"/' phpunit.xml.dist
     fi
 fi
-
-# @todo why is there a problem with vendor/ezsystems/ezplatform/config/services_behat.yaml ?
 
 echo Done

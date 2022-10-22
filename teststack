@@ -187,6 +187,19 @@ check_requirements() {
 # @todo loop over all args instead of allowing just one
 cleanup() {
     case "${1}" in
+        containers)
+            if [ ${SILENT} != true ]; then
+                echo "Do you really want to delete all project containers and their images?"
+                select yn in "Yes" "No"; do
+                    case $yn in
+                        Yes ) break ;;
+                        No ) exit 1 ;;
+                    esac
+                done
+            fi
+
+            ${DOCKER_COMPOSE} down
+        ;;
         data)
             if [ ${SILENT} != true ]; then
                 echo "Do you really want to delete all database data?"
@@ -198,12 +211,12 @@ cleanup() {
                 done
             fi
 
-            find ./data/ -type f ! -name .gitkeep -delete
+            find "./data/${DB_TYPE}/${COMPOSE_PROJECT_NAME}" -type f ! -name .gitkeep -delete
             # leftover sockets happen...
-            find ./data/ -type s -delete
-            find ./data/ -type d -empty -delete
+            find "./data/${DB_TYPE}/${COMPOSE_PROJECT_NAME}" -type s -delete
+            find "./data/${DB_TYPE}/${COMPOSE_PROJECT_NAME}" -type d -empty -delete
         ;;
-        docker-images)
+        docker-images | dead-images)
             cleanup_dead_docker_images
         ;;
         docker-logs)
@@ -216,14 +229,18 @@ cleanup() {
             done
         ;;
         ez-cache)
-            docker exec  "${WEB_CONTAINER}" su "${WEB_USER}" -c "../teststack/bin/cleanup.sh ez-cache"
+            docker exec "${WEB_CONTAINER}" su "${WEB_USER}" -c "../teststack/bin/cleanup.sh ez-cache"
         ;;
         ez-logs)
             docker exec "${WEB_CONTAINER}" su "${WEB_USER}" -c "../teststack/bin/cleanup.sh ez-logs"
         ;;
         logs)
-            find ./logs/ -type f ! -name .gitkeep -delete
-            #find ../app/var/log/ -type f ! -name .gitkeep -delete
+            find "./logs/${DB_TYPE}/${COMPOSE_PROJECT_NAME}" -type f ! -name .gitkeep -delete
+        ;;
+        vendors)
+            # @todo it would be better to do the removal from outside the container, but we would have to be sure of the
+            #       location of the test stack compared to the project's root
+            docker exec "${WEB_CONTAINER}" su "${WEB_USER}" -c "../teststack/bin/cleanup.sh vendors"
         ;;
         *)
             printf "\n\e[31mERROR:\e[0m unknown cleanup target ${1}\n\n" >&2
@@ -298,6 +315,10 @@ load_config() {
     # @todo check UID, GID from conf vs. current. If different, ask for confirmation before running
     #if []; then
     #fi
+
+    # make sure the necessary folders exist which will be mounted by the DB containers
+    if [ ! -d "docker/data/${DB_TYPE}/${COMPOSE_PROJECT_NAME}" ]; then mkdir "docker/data/${DB_TYPE}/${COMPOSE_PROJECT_NAME}"; fi
+    if [ ! -d "docker/logs/${DB_TYPE}/${COMPOSE_PROJECT_NAME}" ]; then mkdir "docker/logs/${DB_TYPE}/${COMPOSE_PROJECT_NAME}"; fi
 }
 
 setup_app() {

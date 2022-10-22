@@ -26,8 +26,8 @@ services:
             # As opposed to TRAVIS=true ;-)
             - DOCKER=true
         volumes:
-            - ${TESTSTACK_DATA_DIR:-./data}/postgresql/:/var/lib/postgresql
-            - ${TESTSTACK_LOGS_DIR:-./logs}/postgresql/:/var/log/postgresql
+            - ${TESTSTACK_DATA_DIR:-./data}/postgresql/${COMPOSE_PROJECT_NAME:-euts}/:/var/lib/postgresql
+            - ${TESTSTACK_LOGS_DIR:-./logs}/postgresql/${COMPOSE_PROJECT_NAME:-euts}/:/var/log/postgresql
             # @todo in case we have to run some db configuration based on eZ version, we should mount db-config.sh
             #- ../:/home/test/teststack
         # uncomment this to be able to access the db from the host

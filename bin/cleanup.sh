@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Housekeeping - remove cache, logs.
+# Housekeeping - remove cache, logs, etc.
 #
 # Uses env vars: EZ_VERSION
 
@@ -49,6 +49,9 @@ case "${1}" in
             rm -rf ${LEGACY_VAR_DIR}/log/*
             rm -rf ${LEGACY_VAR_DIR}/*/log/*
         fi
+    ;;
+    vendors | vendor)
+        rm -rf vendor/*
     ;;
     *)
         printf "\n\e[31mERROR:\e[0m unknown cleanup target '${1}'\n\n" >&2

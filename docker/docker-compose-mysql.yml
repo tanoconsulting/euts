@@ -31,8 +31,8 @@ services:
             - DOCKER=true
         volumes:
             #- ./config/mysql/mysql_${TESTSTACK_DB_SIZE}.cnf:/etc/mysql/conf.d/mysql.cnf
-            - ${TESTSTACK_DATA_DIR:-./data}/mysql/:/var/lib/mysql
-            - ${TESTSTACK_LOGS_DIR:-./logs}/mysql/:/var/log/mysql
+            - ${TESTSTACK_DATA_DIR:-./data}/mysql/${COMPOSE_PROJECT_NAME:-euts}/:/var/lib/mysql
+            - ${TESTSTACK_LOGS_DIR:-./logs}/mysql/${COMPOSE_PROJECT_NAME:-euts}/:/var/log/mysql
             - ../:/home/test/teststack
         #tmpfs:
         #    # used for mysql temp tables. Useful with ez5 db schema / queries (it creates lots of temp tables on disk)

@@ -1,3 +1,10 @@
+Version 0.6.0 (unreleased)
+==========================
+
+* improved support for testing projects depending on eZPlatform 3.1 and 3.2
+
+* use a per-project directory to store the db data, easing execution of test running on different envs from a single dir
+
 Version 0.5.2
 =============
 
