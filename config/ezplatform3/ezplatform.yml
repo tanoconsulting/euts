@@ -25,6 +25,7 @@ parameters:
 
 doctrine:
     dbal:
+        # @todo mysql server version should NOT be hardcoded
         server_version: '5.6'
         url: 'mysql://%database_user%:%database_password%@%database_host%:3306/%database_name%'
 
