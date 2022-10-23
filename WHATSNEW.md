@@ -5,6 +5,8 @@ Version 0.6.0 (unreleased)
 
 * use a per-project directory to store the db data, easing execution of test running on different envs from a single dir
 
+* install nodejs and npm by default in the test container (not supported yet for debian jessie and stretch containers)
+
 Version 0.5.2
 =============
 

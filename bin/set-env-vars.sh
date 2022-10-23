@@ -20,6 +20,7 @@ if [ $? -eq 0 ]; then
 
     # Figure out EZ_VERSION if required
     if [ -z "${EZ_VERSION}" ]; then
+        # @todo make this work when current dir != project root dir. Do we need and env var for that?
         EZ_VERSION=$(composer show | grep ezsystems/ezpublish-kernel || true)
         if [ -n "${EZ_VERSION}" ]; then
             if [[ "${EZ_VERSION}" == *" v7."* ]]; then
@@ -62,7 +63,7 @@ else
         elif [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:3.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:~3.'* ]] || [[ "${EZ_PACKAGES}" == *'ezsystems/ezplatform:^3.'* ]]; then
             EZ_VERSION=ezplatform3
         elif [[ "${EZ_PACKAGES}" == *'ibexa/oss-skeleton:3.3'* ]] || [[ "${EZ_PACKAGES}" == *'ibexa/oss-skeleton:~3.3'* ]] || [[ "${EZ_PACKAGES}" == *'ibexa/oss-skeleton:^3.3'* ]]; then
-            EZ_VERSION=ezplatform3
+            EZ_VERSION=ezplatform33
         fi
     fi
 fi

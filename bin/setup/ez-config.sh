@@ -121,6 +121,7 @@ if [ -f "${CONFIG_DIR}/packages/ezplatform_admin_ui.yaml" ]; then
     #sed -i "s#'%kernel.project_dir%/vendor/ezsystems/ezplatform-admin-ui/src/bundle/Resources/translations/#'%kernel.root_dir%/../../ezplatform-admin-ui/src/bundle/Resources/translations/#" ${CONFIG_DIR}/packages/ezplatform_admin_ui.yaml
 fi
 
+# EzPlatform 3 stuff - a lot of it!
 if [ "${EZ_VERSION}" = "ezplatform3" -o "${EZ_VERSION}" = "ezplatform33" ]; then
     # 1. Registration of services from ezplatform/config/services_behat.yml fails
     # @todo investigate if there is a better alternative to this "fix"
@@ -147,7 +148,7 @@ if [ "${EZ_VERSION}" = "ezplatform3" -o "${EZ_VERSION}" = "ezplatform33" ]; then
     if [ -f vendor/autoload_runtime.php ]; then
         sed -i "s#'project_dir' => dirname(__DIR__, 1),#'project_dir' => dirname(__DIR__, 1) . '/vendor/ibexa/oss-skeleton',#" vendor/autoload_runtime.php
     fi
-    # 7. fix dotenv
+    # 7. fix .env stock file having wrong symfony env and db config
     if [ -f vendor/ibexa/oss-skeleton/.env ]; then
         if [ -z "${DB_HOST}" ]; then
             DB_HOST=${DB_TYPE}
@@ -155,14 +156,19 @@ if [ "${EZ_VERSION}" = "ezplatform3" -o "${EZ_VERSION}" = "ezplatform33" ]; then
         # @todo make dynamic
         DB_VERSION=8
         DB_PORT=3306
-        if [ ! -f vendor/ibexa/oss-skeleton/.env.behat ]; then
-            echo "APP_ENV=behat" > vendor/ibexa/oss-skeleton/.env.behat
-            echo "DATABASE_URL=\"${DB_TYPE}://${DB_EZ_USER}:${DB_EZ_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_EZ_DATABASE}?serverVersion=${DB_VERSION}&charset=utf8mb4\"" >> vendor/ibexa/oss-skeleton/.env.behat
+        if [ ! -f "vendor/ibexa/oss-skeleton/.env.${APP_ENV}" ]; then
+            echo "APP_ENV=${APP_ENV}" > "vendor/ibexa/oss-skeleton/.env.${APP_ENV}"
+            echo "DATABASE_URL=\"${DB_TYPE}://${DB_EZ_USER}:${DB_EZ_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_EZ_DATABASE}?serverVersion=${DB_VERSION}&charset=utf8mb4\"" >> "vendor/ibexa/oss-skeleton/.env.${APP_ENV}"
         else
             # @todo test
-            sed -i "s#APP_ENV=.+#APP_ENV=behat#" vendor/ibexa/oss-skeleton/.env.behat
-            sed -i "s#DATABASE_URL=.+#\"${DB_TYPE}://${DB_EZ_USER}:${DB_EZ_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_EZ_DATABASE}?serverVersion=${DB_VERSION}&charset=utf8mb4\"#" vendor/ibexa/oss-skeleton/.env.behat
+            sed -i "s#APP_ENV=.+#APP_ENV=${APP_ENV}#" "vendor/ibexa/oss-skeleton/.env.${APP_ENV}"
+            sed -i "s#DATABASE_URL=.+#\"${DB_TYPE}://${DB_EZ_USER}:${DB_EZ_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_EZ_DATABASE}?serverVersion=${DB_VERSION}&charset=utf8mb4\"#" "vendor/ibexa/oss-skeleton/.env.${APP_ENV}"
         fi
+    fi
+    # 8. create an empty manifest for webpack encore (required because atm we fail at running the encore command)
+    if [ -d vendor/ibexa/oss-skeleton -a ! -f vendor/ibexa/oss-skeleton/public/build/manifest.json ]; then
+        if [ ! -d vendor/ibexa/oss-skeleton/public/build ]; then mkdir -p vendor/ibexa/oss-skeleton/public/build; fi
+        echo '{}' > vendor/ibexa/oss-skeleton/public/build/manifest.json
     fi
 
     # Remaining to do, possibly:
@@ -252,6 +258,20 @@ if [ "${EZ_VERSION}" = "ezpublish-community" -o "${INSTALL_LEGACY_BRIDGE}" = tru
     ${STACK_DIR}/bin/sfconsole.sh ezpublish:legacy:script bin/php/ezpgenerateautoloads.php
 
     # @todo allow end user to specify legacy settings & design items when running with ezpublish-community or legacy-bridge
+fi
+
+# Make sure there is yarn installed, finish setting up the app
+if [ "${EZ_VERSION}" = "ezplatform33" ]; then
+    which yarn >/dev/null 2>/dev/null
+    if [ $? -ne 0 ]; then
+        sudo npm install --global yarn
+    fi
+
+    # NB: keep this in sync with the scripts from ibexa/oss-skeleton/composer.json
+    # @todo ibexa:encore:compile atm fails with error message Error: Duplicate name "ezplatform-richtext-onlineeditor-js}" already exists as an Entrypoint
+    # @todo assets:install mishandles the link to the top-level bundle
+    #(cd vendor/ibexa/oss-skeleton; yarn install; "${STACK_DIR}/bin/sfconsole.sh" assets:install --relative; "${STACK_DIR}/bin/sfconsole.sh" ibexa:encore:compile --config-name app; "${STACK_DIR}/bin/sfconsole.sh" bazinga:js-translation:dump public/assets --merge-domains; "${STACK_DIR}/bin/sfconsole.sh" ibexa:encore:compile)
+    (cd vendor/ibexa/oss-skeleton; yarn install; "${STACK_DIR}/bin/sfconsole.sh" assets:install --relative; "${STACK_DIR}/bin/sfconsole.sh" bazinga:js-translation:dump public/assets --merge-domains;)
 fi
 
 # Fix the phpunit configuration if needed
