@@ -36,7 +36,7 @@ Commands:
     cleanup WHAT      remove temporary data/logs/caches/etc... CATEGORY can be any of:
                         - data            NB: this removes all your data! Better done when containers are stopped
                         - docker-images   removes only unused images. Can be quite beneficial to free up space
-                        - docker-logs     NB: for this to work, you'll need to run this script as root
+                        - docker-logs     NB: for this to work, you'll need to run this script as root, eg. with sudo -E
                         - ez-cache
                         - ez-logs
                         - logs            removes log files from the databases, webservers
