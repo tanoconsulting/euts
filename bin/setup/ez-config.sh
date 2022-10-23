@@ -61,7 +61,7 @@ fi
 # only for ezplatform3
 if [ -f "${STACK_DIR}/config/${EZ_VERSION}/ezplatform.yml" ]; then
     if [ -f "${CONFIG_DIR}/packages/behat/ezplatform.yaml" ]; then
-        SUBDIR=behat
+        SUBDIR=behat/
     else
         SUBDIR=
     fi
