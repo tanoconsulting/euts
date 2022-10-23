@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
 # Set up env vars (if not already set):
-# - KERNEL_CLASS, KERNEL_DIR (used by phpunit)
-# Requires composer dependencies to have been set up already, if EZ_VERSION is not set.
+# - KERNEL_CLASS, KERNEL_DIR (used by phpunit), COMPOSER (used by composer)
+# - CONSOLE_CMD, for includer scripts
 #
-# Uses env vars: EZ_VERSION, `composer` command if EZ_VERSION not set
+# Ideally composer dependencies should have been set up already, if EZ_VERSION is not set.
+#
+# Uses env vars: EZ_VERSION, `composer` command or EZ_PACKAGES if EZ_VERSION not set
 #
 # To be executed using 'source'
 
@@ -13,7 +15,7 @@
 # @todo what if `which` is not installed?
 if which composer >/dev/null 2>/dev/null; then
     if [ -n "${COMPOSE_PROJECT_NAME}" ]; then
-        COMPOSER="composer_${COMPOSE_PROJECT_NAME}.json"
+        export COMPOSER="composer_${COMPOSE_PROJECT_NAME}.json"
     fi
 
     # Figure out EZ_VERSION if required
@@ -70,52 +72,53 @@ fi
 #if [ -z "${EZ_BUNDLES}" -a -n "${EZ_PACKAGES}" ]; then
 #fi
 
+# KERNEL_CLASS, KERNEL_DIR vars need to be exported as they are used by subprocesses of the includer shell script
 if [ "${EZ_VERSION}" = "ezplatform33" ]; then
     if [ -z "${KERNEL_CLASS}" ]; then
-        KERNEL_CLASS=App\\Kernel
+        export KERNEL_CLASS=App\\Kernel
     fi
     if [ -z "${KERNEL_DIR}" ]; then
-        KERNEL_DIR=vendor/ibexa/oss-skeleton/src
+        export KERNEL_DIR=vendor/ibexa/oss-skeleton/src
     fi
     if [ -z "${CONSOLE_CMD}" ]; then
         CONSOLE_CMD=vendor/ibexa/oss-skeleton/bin/console
     fi
 elif [ "${EZ_VERSION}" = "ezplatform3" ]; then
     if [ -z "${KERNEL_CLASS}" ]; then
-        KERNEL_CLASS=App\\Kernel
+        export KERNEL_CLASS=App\\Kernel
     fi
     if [ -z "${KERNEL_DIR}" ]; then
-        KERNEL_DIR=vendor/ezsystems/ezplatform/src
+        export KERNEL_DIR=vendor/ezsystems/ezplatform/src
     fi
     if [ -z "${CONSOLE_CMD}" ]; then
         CONSOLE_CMD=vendor/ezsystems/ezplatform/bin/console
     fi
 elif [ "${EZ_VERSION}" = "ezplatform2" ]; then
     if [ -z "${KERNEL_CLASS}" ]; then
-        KERNEL_CLASS=AppKernel
+        export KERNEL_CLASS=AppKernel
     fi
     if [ -z "${KERNEL_DIR}" ]; then
-        KERNEL_DIR=vendor/ezsystems/ezplatform/app
+        export KERNEL_DIR=vendor/ezsystems/ezplatform/app
     fi
     if [ -z "${CONSOLE_CMD}" ]; then
         CONSOLE_CMD=vendor/ezsystems/ezplatform/bin/console
     fi
 elif [ "${EZ_VERSION}" = "ezplatform" ]; then
     if [ -z "${KERNEL_CLASS}" ]; then
-        KERNEL_CLASS=AppKernel
+        export KERNEL_CLASS=AppKernel
     fi
     if [ -z "${KERNEL_DIR}" ]; then
-        KERNEL_DIR=vendor/ezsystems/ezplatform/app
+        export KERNEL_DIR=vendor/ezsystems/ezplatform/app
     fi
     if [ -z "${CONSOLE_CMD}" ]; then
         CONSOLE_CMD=vendor/ezsystems/ezplatform/app/console
     fi
 elif [ "${EZ_VERSION}" = "ezpublish-community" ]; then
     if [ -z "${KERNEL_CLASS}" ]; then
-        KERNEL_CLASS=EzPublishKernel
+        export KERNEL_CLASS=EzPublishKernel
     fi
     if [ -z "${KERNEL_DIR}" ]; then
-        KERNEL_DIR=vendor/ezsystems/ezpublish-community/ezpublish
+        export KERNEL_DIR=vendor/ezsystems/ezpublish-community/ezpublish
     fi
     if [ -z "${CONSOLE_CMD}" ]; then
         CONSOLE_CMD=vendor/ezsystems/ezpublish-community/ezpublish/console
