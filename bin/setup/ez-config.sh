@@ -133,8 +133,10 @@ if [ "${EZ_VERSION}" = "ezplatform3" -o "${EZ_VERSION}" = "ezplatform33" ]; then
     # 3. Inconsistency between ocramius/proxy-manager and symfony/proxy-manager-bridge (composer version matching is too loose
     #    and there will probably be no minor versions released for old symfony/proxy-manager-bridge)
     #    Symfony\Bridge\ProxyManager\LazyProxy\PhpDumper\LazyLoadingValueHolderGenerator to move from Zend\Code\Generator\ClassGenerator to Laminas
-    if grep -q 'Laminas\\Code\\Generator\\ClassGenerator' vendor/ocramius/proxy-manager/src/ProxyManager/ProxyGenerator/LazyLoadingValueHolderGenerator.php; then
-        sed -i 's#use Zend\\Code\\Generator\\ClassGenerator;#use Laminas\\Code\\Generator\\ClassGenerator;#' vendor/symfony/proxy-manager-bridge/LazyProxy/PhpDumper/LazyLoadingValueHolderGenerator.php
+    if [ -f vendor/ocramius/proxy-manager/src/ProxyManager/ProxyGenerator/LazyLoadingValueHolderGenerator.php ]; then
+        if grep -q 'Laminas\\Code\\Generator\\ClassGenerator' vendor/ocramius/proxy-manager/src/ProxyManager/ProxyGenerator/LazyLoadingValueHolderGenerator.php; then
+            sed -i 's#use Zend\\Code\\Generator\\ClassGenerator;#use Laminas\\Code\\Generator\\ClassGenerator;#' vendor/symfony/proxy-manager-bridge/LazyProxy/PhpDumper/LazyLoadingValueHolderGenerator.php
+        fi
     fi
     # 4. Hack InstallPlatformCommand.php and friends, fix $console = escapeshellarg('bin/console');
     sed -i "s#escapeshellarg('bin/console')#escapeshellarg('${CONSOLE_CMD}')#" vendor/ezsystems/ezplatform-kernel/eZ/Bundle/PlatformInstallerBundle/src/Command/InstallPlatformCommand.php
@@ -262,16 +264,18 @@ fi
 
 # Make sure there is yarn installed, finish setting up the app
 if [ "${EZ_VERSION}" = "ezplatform33" ]; then
-    which yarn >/dev/null 2>/dev/null
-    if [ $? -ne 0 ]; then
+    if which yarn >/dev/null 2>/dev/null; then
+        :
+    else
         sudo npm install --global yarn
     fi
 
     # NB: keep this in sync with the scripts from ibexa/oss-skeleton/composer.json
     # @todo ibexa:encore:compile atm fails with error message Error: Duplicate name "ezplatform-richtext-onlineeditor-js}" already exists as an Entrypoint
     # @todo assets:install mishandles the link to the top-level bundle
+    ABSOLUTE_CMD=$(readlink -f "${CONSOLE_CMD}")
     #(cd vendor/ibexa/oss-skeleton; yarn install; "${STACK_DIR}/bin/sfconsole.sh" assets:install --relative; "${STACK_DIR}/bin/sfconsole.sh" ibexa:encore:compile --config-name app; "${STACK_DIR}/bin/sfconsole.sh" bazinga:js-translation:dump public/assets --merge-domains; "${STACK_DIR}/bin/sfconsole.sh" ibexa:encore:compile)
-    (cd vendor/ibexa/oss-skeleton; yarn install; "${STACK_DIR}/bin/sfconsole.sh" assets:install --relative; "${STACK_DIR}/bin/sfconsole.sh" bazinga:js-translation:dump public/assets --merge-domains;)
+    (cd vendor/ibexa/oss-skeleton; yarn install; php "${ABSOLUTE_CMD}" assets:install --relative; php "${ABSOLUTE_CMD}" bazinga:js-translation:dump public/assets --merge-domains;)
 fi
 
 # Fix the phpunit configuration if needed

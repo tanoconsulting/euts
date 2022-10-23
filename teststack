@@ -34,8 +34,9 @@ Manages the Test Environment Docker Stack
 Commands:
     build             build or rebuild the complete set of containers and set up eZ. Leaves the stack running
     cleanup WHAT      remove temporary data/logs/caches/etc... CATEGORY can be any of:
+                        - containers      removes all the project's containers and their images
                         - data            NB: this removes all your data! Better done when containers are stopped
-                        - docker-images   removes only unused images. Can be quite beneficial to free up space
+                        - dead-images     removes unused docker images. Can be quite beneficial to free up space
                         - docker-logs     NB: for this to work, you'll need to run this script as root, eg. with sudo -E
                         - ez-cache
                         - ez-logs
@@ -198,7 +199,7 @@ cleanup() {
                 done
             fi
 
-            ${DOCKER_COMPOSE} down
+            ${DOCKER_COMPOSE} down --rmi all
         ;;
         data)
             if [ ${SILENT} != true ]; then
