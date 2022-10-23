@@ -11,8 +11,7 @@
 # @todo also set up APP_ENV, SYMFONY_ENV (defaulting to 'behat')
 
 # @todo what if `which` is not installed?
-which composer >/dev/null 2>/dev/null
-if [ $? -eq 0 ]; then
+if which composer >/dev/null 2>/dev/null; then
     if [ -n "${COMPOSE_PROJECT_NAME}" ]; then
         COMPOSER="composer_${COMPOSE_PROJECT_NAME}.json"
     fi

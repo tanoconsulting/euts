@@ -7,22 +7,21 @@ echo "Setting up Composer..."
 INSTALL_COMPOSER=false
 
 # @todo what if `which` is not installed?
-which composer >/dev/null 2>/dev/null
-if [ $? -ne 0 ]; then
-    INSTALL_COMPOSER=true
-else
+if which composer >/dev/null 2>/dev/null; then
     # We might have to downgrade composer, in case it was already installed and we manually downgraded php to a version
-    # it does not support
+    # it does not support.
+    # NB: take care when Composer 2.5 and later are out: they might not support php 7.2, etc...
     PHPVER=$(php -r 'echo implode(".",array_slice(explode(".",PHP_VERSION),0,2));' 2>/dev/null)
     if [ "$PHPVER" = '5.6' -o "$PHPVER" = '7.0' -o "$PHPVER" = '7.1' ]; then
-        # @todo be smarter - this will break with composer 2.4 and up
-        CV=$(composer --version | grep -F '2.3.' 2>/dev/null)
+        CV=$(composer --version | grep -E '2\.[3456789]\.' 2>/dev/null)
         if [ -n "$CV" ];  then
             # q: would it be better to remove it via apt?
-            sudo rm $(which composer)
+            sudo rm "$(which composer)"
             INSTALL_COMPOSER=true
         fi
     fi
+else
+    INSTALL_COMPOSER=true
 fi
 
 if [ $INSTALL_COMPOSER = true ]; then
@@ -31,7 +30,7 @@ if [ $INSTALL_COMPOSER = true ]; then
     chmod 755 ./docker/images/ez/root/build/getcomposer.sh
     sudo ./docker/images/ez/root/build/getcomposer.sh
     if [ -d "$HOME/.cache/composer" ]; then
-        sudo chown -R $(id -u) $HOME/.cache/composer
+        sudo chown -R "$(id -u)" "$HOME/.cache/composer"
     fi
 fi
 

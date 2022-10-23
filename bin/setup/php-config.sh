@@ -12,12 +12,12 @@ STACK_DIR="$(dirname -- "$(dirname -- "$(dirname -- "${BASH_SOURCE[0]}")")")"
 
 # Increase php memory limit (need to do this now or we risk composer failing)
 if [ "${TRAVIS}" = "true" ]; then
-    phpenv config-add ${STACK_DIR}/config/php/zzz_php.ini
+    phpenv config-add "${STACK_DIR}/config/php/zzz_php.ini"
 else
-    INI_PATH=$(php -i | grep 'Scan this dir for additional .ini files')
-    INI_PATH=${INI_PATH/Scan this dir for additional .ini files => /}
+    INI_PATH="$(php -i | grep 'Scan this dir for additional .ini files')"
+    INI_PATH="${INI_PATH/Scan this dir for additional .ini files => /}"
     # @todo use a symlink instead
-    sudo cp ${STACK_DIR}/config/php/zzz_php.ini ${INI_PATH}
+    sudo cp "${STACK_DIR}/config/php/zzz_php.ini" "${INI_PATH}"
 fi
 
 # Disable xdebug for speed (both for executing composer and running tests); we enable it only when generating code coverage

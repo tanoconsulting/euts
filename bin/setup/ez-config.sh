@@ -198,7 +198,7 @@ if [ "${INSTALL_LEGACY_BRIDGE}" = true ]; then
     if [ -f "${CONFIG_DIR}/config_legacy_bridge.yml" -o -L "${CONFIG_DIR}/config_legacy_bridge.yml" ]; then
         rm "${CONFIG_DIR}/config_legacy_bridge.yml"
     fi
-    ln -s "$(realpath ${STACK_DIR}/config/legacy-bridge/config_legacy_bridge.yml)" "${CONFIG_DIR}/config_legacy_bridge.yml"
+    ln -s "$(realpath "${STACK_DIR}/config/legacy-bridge/config_legacy_bridge.yml")" "${CONFIG_DIR}/config_legacy_bridge.yml"
 
     if ! grep -E -q "^ +resource *: *['\"]@EzPublishLegacyBundle/Resources/config/routing.yml['\"]" "${CONFIG_DIR}/routing.yml" ; then
         echo '_ezpublishLegacyRoutes:' >> "${CONFIG_DIR}/routing.yml"
@@ -231,7 +231,7 @@ if [ "${EZ_VERSION}" = "ezpublish-community" -o "${INSTALL_LEGACY_BRIDGE}" = tru
         EXTENSION=${ARR[0]}
         if [ ! -L "vendor/ezsystems/ezpublish-legacy/extension/${EXTENSION}" -a ! -d "vendor/ezsystems/ezpublish-legacy/extension/${EXTENSION}" ]; then
             # @todo print a warning if target extension exists and is a dir instead of a symlink, or a symlink with wrong target
-            ln -s $(realpath .) "vendor/ezsystems/ezpublish-legacy/extension/${EXTENSION}"
+            ln -s "$(realpath .)" "vendor/ezsystems/ezpublish-legacy/extension/${EXTENSION}"
         fi
     fi
 
@@ -241,7 +241,7 @@ if [ "${EZ_VERSION}" = "ezpublish-community" -o "${INSTALL_LEGACY_BRIDGE}" = tru
             if [ -d "ezpublish_legacy/${EXTENSION}" ]; then
                 if [ ! -L "vendor/ezsystems/ezpublish-legacy/extension/${EXTENSION}" -a ! -d "vendor/ezsystems/ezpublish-legacy/extension/${EXTENSION}" ]; then
                     # @todo print a warning if target extension exists and is a dir instead of a symlink, or a symlink with wrong target
-                    ln -s $(realpath "ezpublish_legacy/${EXTENSION}") "vendor/ezsystems/ezpublish-legacy/extension/${EXTENSION}"
+                    ln -s "$(realpath "ezpublish_legacy/${EXTENSION}")" "vendor/ezsystems/ezpublish-legacy/extension/${EXTENSION}"
                 fi
             fi
         done
@@ -262,7 +262,7 @@ if [ "${EZ_VERSION}" = "ezpublish-community" -o "${INSTALL_LEGACY_BRIDGE}" = tru
     done
 
     # generate legacy autoloads
-    ${STACK_DIR}/bin/sfconsole.sh ezpublish:legacy:script bin/php/ezpgenerateautoloads.php
+    "${STACK_DIR}/bin/sfconsole.sh" ezpublish:legacy:script bin/php/ezpgenerateautoloads.php
 
     # @todo allow end user to specify legacy settings & design items when running with ezpublish-community or legacy-bridge
 fi

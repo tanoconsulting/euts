@@ -9,7 +9,7 @@ set -e
 DB_HOST_FLAG=
 
 if [ -z "${DB_HOST}" ]; then
-    DB_HOST=${DB_TYPE}
+    DB_HOST="${DB_TYPE}"
 fi
 
 # @todo check that all required vars have a value
@@ -19,7 +19,7 @@ case "${DB_TYPE}" in
         #if [ "${TRAVIS}" != "true" ]; then
         #    DB_HOST_FLAG="-h ${DB_TYPE}"
         #fi
-        mysql -h ${DB_HOST} -u${DB_EZ_USER} -p${DB_EZ_PASSWORD} ${DB_EZ_DATABASE}
+        mysql -h ${DB_HOST} -u${DB_EZ_USER} -p${DB_EZ_PASSWORD} "${DB_EZ_DATABASE}"
         ;;
     postgresql)
 

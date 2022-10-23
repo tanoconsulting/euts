@@ -50,41 +50,41 @@ if [ "${PHP_VERSION}" = "5.6" -a -n "${TRAVIS}" ]; then
 fi
 
 if [ -n "${PHP_VERSION}" ]; then
-    ${BIN_DIR}/setup/php.sh
+    "${BIN_DIR}/setup/php.sh"
 fi
 
-${BIN_DIR}/setup/php-config.sh
+"${BIN_DIR}/setup/php-config.sh"
 
 # This is done by Travis automatically... Check if on GHA we also always get the latest version
 #if [ "${TRAVIS}" != "true" ]; then
 #    composer selfupdate
 #fi
 
-${BIN_DIR}/setup/composer.sh
+"${BIN_DIR}/setup/composer.sh"
 
-${BIN_DIR}/setup/composer-dependencies.sh
+"${BIN_DIR}/setup/composer-dependencies.sh"
 
 # When this is run in the test container, the db server is in another container. No need to try to configure it remotely.
 # Otoh, when running on Travis or GHA, the db server runs within the same VM
 if [ -n "${TRAVIS}" -o -n "${GITHUB_ACTION}" ]; then
-    ${BIN_DIR}/setup/db-config.sh
+    "${BIN_DIR}/setup/db-config.sh"
 fi
 
 source "$(dirname -- "${BASH_SOURCE[0]}")/set-env-vars.sh"
 if [ "${EZ_VERSION}" != "ezplatform3" -a "${EZ_VERSION}" != "ezplatform33" ]; then
     # Create the database from sql files present in either the legacy stack or kernel (has to be run after composer install)
-    ${BIN_DIR}/create-db.sh
+    "${BIN_DIR}/create-db.sh"
     # Set up eZ configuration files (if ez legacy is installed, this runs a legacy script, which might fail with no db schema available)
-    ${BIN_DIR}/setup/ez-config.sh
+    "${BIN_DIR}/setup/ez-config.sh"
 else
     # For eZPlatform 3, we have to swap the order of execution
-    ${BIN_DIR}/setup/ez-config.sh
-    ${BIN_DIR}/create-db.sh
+    "${BIN_DIR}/setup/ez-config.sh"
+    "${BIN_DIR}/create-db.sh"
 fi
 
 # TODO are these needed at all? Also: are they available / the same for every eZP version?
-#${BIN_DIR}/sfconsole.sh cache:clear --no-debug
-#${BIN_DIR}/sfconsole.sh assetic:dump
+#"${BIN_DIR}/sfconsole.sh" cache:clear --no-debug
+#"${BIN_DIR}/sfconsole.sh" assetic:dump
 
 # TODO for eZPlatform, do we need to set up SOLR as well ? (Note that ezpl3.3 has a different folder name)
 #if [ "$EZ_VERSION" != "ezpublish" ]; then ./vendor/ezsystems/ezplatform-solr-search-engine && bin/.travis/init_solr.sh; fi
