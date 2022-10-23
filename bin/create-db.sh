@@ -105,9 +105,9 @@ elif [ "${EZ_VERSION}" = "ezplatform" -o "${EZ_VERSION}" = "ezplatform2" ]; then
 elif [ "${EZ_VERSION}" = "ezplatform3" -o "${EZ_VERSION}" = "ezplatform33" ]; then
 
     if [ "${EZ_VERSION}" = "ezplatform33" ]; then
-        CMDROOT=ezplatform
-    else
         CMDROOT=ibexa
+    else
+        CMDROOT=ezplatform
     fi
     php ${CONSOLE_CMD} "${CMDROOT}:install" clean --skip-indexing
     php ${CONSOLE_CMD} "${CMDROOT}:graphql:generate-schema"
