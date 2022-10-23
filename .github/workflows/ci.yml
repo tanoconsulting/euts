@@ -70,6 +70,7 @@ jobs:
                 cp tests/config/composer.json .
                 # patch the configuration file we will use: we won't have the mig bundle available
                 sed -i 's/Kaliop\\eZMigrationBundle\\EzMigrationBundle //' ${{ matrix.config_file }}
+                sed -i 's/Kaliop\\eZMigrationBundle\\eZMigrationBundle //' ${{ matrix.config_file }}
 
             # 1st test: set up the app and check that the sf console works - locally
 
