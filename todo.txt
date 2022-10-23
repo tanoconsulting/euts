@@ -21,6 +21,8 @@ v0.y - more test coverage, cleanups
 
 - add .travis.yml for self-testing on Travis (either without docker use, or using ubuntu as base for containers)
 
+- add to .gitignore the files generated during local run of teststack testing
+
 v0.z - features
 
 - allow to specify extra packages to install in the test container, eg. pstotext. Also/alternatively: allow to add
