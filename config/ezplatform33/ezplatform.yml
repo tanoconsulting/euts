@@ -1,0 +1,35 @@
+
+# This file will replace (and then include) the equivalent one from eZPlatform distribution
+# Used to set up an eZPlatform env from scratch for testing purposes (eg. on Travis)
+
+imports:
+    - { resource: ezplatform_orig.yaml }
+    - { resource: ../config_behat.php }
+
+parameters:
+
+    # Reduce the need for env vars (avoid overriding the .env file)
+    #search_engine: '%env(SEARCH_ENGINE)%'
+    #ezplatform.session.save_path: '%env(SESSION_SAVE_PATH)%'
+    #cache_pool: '%env(CACHE_POOL)%'
+    #httpcache_default_ttl: '%env(HTTPCACHE_DEFAULT_TTL)%'
+    #purge_server: '%env(HTTPCACHE_PURGE_SERVER)%'
+
+    # Fix for: 'Incompatible use of dynamic environment variables "SESSION_HANDLER_ID" found in parameters.'
+    ezplatform.session.handler_id: 'session.handler.native_file'
+
+    ezplatform.behat.enable_enterprise_services: false
+    ezpublish.kernel.root_dir: "%kernel.project_dir%/../../../vendor/ezsystems/ezplatform-kernel"
+    ezrichtext.resources: '%kernel.project_dir%/../../../vendor/ezsystems/ezplatform-richtext/src/lib/eZ/RichText/Resources'
+    ezpublish.fieldType.ezxmltext.converter.html5.resources: "%kernel.project_dir%/../../../vendor/ezsystems/ezplatform-xmltext-fieldtype/lib/FieldType/XmlText/Input/Resources/stylesheets/eZXml2Html5.xsl"
+
+doctrine:
+    dbal:
+        # @todo mysql server version should NOT be hardcoded
+        server_version: '5.6'
+        url: 'mysql://%database_user%:%database_password%@%database_host%:3306/%database_name%'
+
+framework:
+    session:
+        # Fix for https://github.com/symfony/symfony/issues/32837
+        handler_id: '%ezplatform.session.handler_id%'

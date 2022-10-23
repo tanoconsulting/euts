@@ -60,8 +60,13 @@ if [ -f "${STACK_DIR}/config/${EZ_VERSION}/ezpublish_behat.yml" ]; then
 fi
 # only for ezplatform3
 if [ -f "${STACK_DIR}/config/${EZ_VERSION}/ezplatform.yml" ]; then
-    grep -q 'ezplatform_orig.yaml' "${CONFIG_DIR}/packages/behat/ezplatform.yaml" || mv "${CONFIG_DIR}/packages/behat/ezplatform.yaml" "${CONFIG_DIR}/packages/behat/ezplatform_orig.yaml"
-    cp "${STACK_DIR}/config/${EZ_VERSION}/ezplatform.yml" "${CONFIG_DIR}/packages/behat/ezplatform.yaml"
+    if [ -f "${CONFIG_DIR}/packages/behat/ezplatform.yaml" ]; then
+        SUBDIR=behat
+    else
+        SUBDIR=
+    fi
+    grep -q 'ezplatform_orig.yaml' "${CONFIG_DIR}/packages/${SUBDIR}ezplatform.yaml" || mv "${CONFIG_DIR}/packages/${SUBDIR}ezplatform.yaml" "${CONFIG_DIR}/packages/${SUBDIR}ezplatform_orig.yaml"
+    cp "${STACK_DIR}/config/${EZ_VERSION}/ezplatform.yml" "${CONFIG_DIR}/packages/${SUBDIR}ezplatform.yaml"
 fi
 
 if [ -n "${EZ_TEST_CONFIG_SYMFONY}" ]; then
