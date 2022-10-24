@@ -55,12 +55,13 @@ if [ "${PHP_VERSION}" = default ]; then
         php${PHPSUFFIX}-xdebug \
         ${EXTRA_PACKAGES}
 else
-    if apt-cache show "php${PHP_VERSION}" >/dev/null 2>/dev/null; then
-        :
+    if apt-cache show "^php${PHP_VERSION}$" >/dev/null 2>/dev/null; then
+        echo "PHP version found in existing apt repositories"
     elif update-alternatives --list php 2>/dev/null | fgrep -q "php${PHP_VERSION}"; then
-        :
+        echo "PHP version found in update-alternatives"
     else
         # The correct php version is not available. Set up custom repos to get it
+        echo "PHP version not found in existing apt repositories, setting up the ondrej one"
 
         # On GHA runners ubuntu version, many php versions are preinstalled. We remove them if found.
         # NB: this takes quite some time to execute. We should allow to execute it on demand
