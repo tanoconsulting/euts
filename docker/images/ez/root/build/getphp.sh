@@ -28,6 +28,11 @@ if [ "$2" != norefresh ]; then
     apt-get update
 fi
 
+# a small shortcut to simplify the logic later
+if [ "${PHP_VERSION}" = 5.6 -a "${DEBIAN_VERSION}" = jessie ]; then
+    PHP_VERSION=default
+fi
+
 if [ "${PHP_VERSION}" = default ]; then
     if [ "${DEBIAN_VERSION}" = jessie -o "${DEBIAN_VERSION}" = precise -o "${DEBIAN_VERSION}" = trusty ]; then
         PHPSUFFIX=5
