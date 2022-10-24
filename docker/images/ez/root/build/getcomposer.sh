@@ -4,6 +4,8 @@
 
 # @todo support a different target install dir / filename
 
+echo "Installing Composer..."
+
 COMPOSER_VERSION="$1"
 if [ -n "${COMPOSER_VERSION}" ]; then
     COMPOSER_VERSION="--${COMPOSER_VERSION}"
@@ -28,4 +30,7 @@ fi
 php composer-setup.php $COMPOSER_VERSION --install-dir=/usr/local/bin --filename=composer
 RESULT=$?
 rm composer-setup.php
+
+echo Done
+
 exit $RESULT
