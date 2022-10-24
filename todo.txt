@@ -13,11 +13,15 @@ v0.y - more test coverage, cleanups
 - make it easier to understand which env vars apply only to the docker version of the stack and which ones apply as well
   to the CI workers. Start with PHP_VERSION, MYSQL_VERSION
 
-- bring back composer cache to /home/$user/.composer when on gha - add some chown at container build and boot times?
-  (look also at https://github.com/actions/cache/blob/main/examples.md#php---composer to make it persistent
-  across builds)
+- make sure that composer cache is saved in ./docker/data/.composer from the containers (but take care about the case of
+  parallel runs of composer install...)
 
-- move composer.json from tests to doc/ (once we removed from it cache-dir)
+- bring composer cache to $(pwd)/docker/data/.composer when on gha - add some chown at container build and boot times?
+  or make it a symlink to a folder outside the code dir and make it persistent across builds - look at
+  https://github.com/actions/cache/blob/main/examples.md#php---composer
+  Also, prefer COMPOSER_CACHE_DIR in ci.yml to setting it in composer.json
+
+- check if we can use `env:` in place of all `export` lines in the steps of ci.yml
 
 - add .travis.yml for self-testing on Travis (either without docker use, or using ubuntu as base for containers)
 
