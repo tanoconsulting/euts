@@ -53,14 +53,13 @@ v0.z - features
 
 - improve finding ./docker vs /home/test/teststack/docker in php.sh, composer.sh
 
-- docs: finish 3 sets of example .euts.env files: minimal, with LB, complex (ezmb)
-  also: bundle w. legacy ext; pure-legacy ext
+- docs: add other sets of example .euts.env files: minimal, with LB, bundle w. legacy ext; pure-legacy ext
 
 - make teststack create a full config file by default instead of an empty one ? at least have an action to create it / print it
 
 - allow project to specify a different test execution command from phpunit (or rename runtests) ?
 
-- port from phpxmlrpc the enabling/disabling of code coverage (check differences wrt. what we do here)
+- port from phpxmlrpc the enabling/disabling of code coverage (is it still needed? check differences wrt. what we do here)
 
 - remove 'silence php warnings' from default php config; push it to consumer bundles ? (via: allow custom php configs...)
 
@@ -79,7 +78,7 @@ vN?
   images are pre-loaded on gha ubuntu 20, 22 workers)
 
 - how to specify custom legacy configs for test setups ? (see legacy-bridge way of doing minimal config)
-- do we need to run commands to install ezpl/legacy assets on setup ?
+- do we need to run commands to install ezpl/legacy assets on setup ? (partially done for ezpl 3.3...)
 
 - make 'll' work for 'test' user
 
@@ -105,7 +104,6 @@ vN?
     - also: do we need to run any update sql when creating the mysql schema?
 
 - make it easy to have many different test envs installed and possibly running in parallel:
-  - need to add custom network subnets ?
   - add a cli command for that
   - document it
 
@@ -116,6 +114,8 @@ vN?
 
 - test execution of tests based on other test frameworks than phpunit: ...
 
+- test using a different Sf env than `behat`
+
 - test usage together with https://github.com/g1a/composer-test-scenarios
 
 - check best method for teststack installation (git vs. curl+sh)
@@ -123,8 +123,6 @@ vN?
   - set APP_ENV and SYMFONY_ENV if unset ?
 - teststack: add a check for min docker, docker-compose version (note: seems like we can use --env-file only since docker-compose 1.24)
 - also: give to the user a friendlier error message if she's not in the docker group
-- review ez docker build:
-  - use a shell script for all steps, to make it easy to fully provision on boot instead of build
 - allow to use custom siteaccess names ?
 - allow to install different mysql clients (at least for debian versions which have them)
 - make installation of java in ez container optional. Also: add pstotext/pdftotext
