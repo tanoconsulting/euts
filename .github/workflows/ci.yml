@@ -60,8 +60,8 @@ jobs:
                 # this directory is used in the composer.json file
                 mkdir /tmp/composer_cache
                 # patch the configuration file we will use: we won't have the mig bundle available
-                sed -i 's/Kaliop\\eZMigrationBundle\\EzMigrationBundle //' ${{ matrix.config_file }}
-                sed -i 's/Kaliop\\eZMigrationBundle\\eZMigrationBundle //' ${{ matrix.config_file }}
+                sed -i 's/Kaliop\\eZMigrationBundle\\EzMigrationBundle //' doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config_file }}
+                sed -i 's/Kaliop\\eZMigrationBundle\\eZMigrationBundle //' doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config_file }}
 
             # @todo stop unused services such as webserver, php-fpm, etc... to leave more memory available for the tests
 
@@ -93,7 +93,7 @@ jobs:
               run: |
                 export DB_HOST=mysql
                 export GITHUB_ACTION=
-                ./teststack -e ${{ matrix.config_file }} -n -w 300 build
+                ./teststack -e doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config_file }} -n -w 300 build
 
             # troubleshooting test stack build failures
             #- name: troubleshooting info
@@ -104,7 +104,7 @@ jobs:
               run: |
                 export DB_HOST=mysql
                 export GITHUB_ACTION=
-                export TESTSTACK_CONFIG_FILE=${{ matrix.config_file }}
+                export TESTSTACK_CONFIG_FILE=doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config_file }}
                 ./teststack logs
                 ./teststack ps
                 ./teststack services
