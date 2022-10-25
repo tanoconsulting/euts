@@ -1,9 +1,15 @@
-Version 0.6.0 (unreleased)
-==========================
+Version 0.6.1
+=============
+
+* fix: install Composer dependencies from a given composer.lock file (it broke recently because apparently Composer
+  now requires a composer.json file to be available in any case in that scenario)
+
+Version 0.6.0
+=============
 
 * improved support for testing projects depending on eZPlatform 3.1, 3.2 and 3.3 (the latter is considered experimental)
 
-* use a per-project directory to store the db data, easing execution of tests running on different db versions from a single dir
+* use a per-project directory to store the db data, easing execution from a single dir of tests running on different db versions
 
 * install nodejs and npm by default in the test container (not supported yet for debian jessie and stretch containers)
 
