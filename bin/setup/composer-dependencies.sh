@@ -38,6 +38,24 @@ fi
 # A different work around for this has been found in setting up an alias for them in the std composer.json require-dev section
 #- 'if [ "$EZ_VERSION" != "ezpublish" ]; then sed -i ''s/"license": "GPL-2.0",/"license": "GPL-2.0", "minimum-stability": "dev", "prefer-stable": true,/'' composer.json; fi'
 
+# Set up a custom composer.json file if needed
+if [ -n "${COMPOSE_PROJECT_NAME}" ]; then
+    export COMPOSER="composer_${COMPOSE_PROJECT_NAME}.json"
+    if [ -f composer.json ]; then
+        cp composer.json "${COMPOSER}"
+    else
+        if [ ! -f "${COMPOSER}" ]; then
+            printf "\n\e[31mERROR:\e[0m ${COMPOSER} file can not be found\n\n" >&2
+            exit 1
+        fi
+    fi
+else
+    if [ ! -f composer.json ]; then
+        printf "\n\e[31mERROR:\e[0m composer.json file can not be found\n\n" >&2
+        exit 1
+    fi
+fi
+
 # Allow installing a precomputed set of packages. Useful to save memory, eg. for running with php 5.6...
 if [ -n "${EZ_COMPOSER_LOCK}" ]; then
     echo "Installing packages via Composer using existing lock file ${EZ_COMPOSER_LOCK}..."
@@ -54,31 +72,15 @@ if [ -n "${EZ_COMPOSER_LOCK}" ]; then
         cp "${EZ_COMPOSER_LOCK}" composer.lock
     fi
 
-    # @todo it seems that Composer will still look into the contents of composer.json, for eg. allow-plugins.
-    #       We should probably back it up and remove it if found...
-
     composer install --no-interaction
 else
     echo "Installing packages via Composer: the ones in composer.json plus ${EZ_PACKAGES}..."
 
     if [ -n "${COMPOSE_PROJECT_NAME}" ]; then
-        export COMPOSER="composer_${COMPOSE_PROJECT_NAME}.json"
-        if [ -f composer.json ]; then
-            cp composer.json "${COMPOSER}"
-        else
-            if [ ! -f "${COMPOSER}" ]; then
-                printf "\n\e[31mERROR:\e[0m ${COMPOSER} file can not be found\n\n" >&2
-                exit 1
-            fi
-        fi
         if [ -f "composer_${COMPOSE_PROJECT_NAME}.lock" ]; then
             rm "composer_${COMPOSE_PROJECT_NAME}.lock"
         fi
     else
-        if [ ! -f composer.json ]; then
-            printf "\n\e[31mERROR:\e[0m composer.json file can not be found\n\n" >&2
-            exit 1
-        fi
         if [ -f "composer.lock" ]; then
             rm "composer.lock"
         fi
