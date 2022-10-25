@@ -9,11 +9,29 @@
 # @todo this file can now be used outside of docker. Check that os is debian/ubuntu before trying to install php
 # @todo test the matrix of ubuntu versions (xenial, bionic, focal, jammy) vs. all php versions incl. 'default'
 
+echo "Installing the required php version..."
+
 set -e
 
 # install php
 PHP_VERSION="$1"
+
+if [ -z "${PHP_VERSION}" ]; then
+    printf "\n\e[31mERROR:\e[0m unknown PHP version to install\n\n" >&2
+    exit 1
+fi
+
 DEBIAN_VERSION=$(lsb_release -s -c)
+
+# we refresh the apt cache here, in case this is executed outside getpackages.sh
+if [ "$2" != norefresh ]; then
+    apt-get update
+fi
+
+# a small shortcut to simplify the logic later
+if [ "${PHP_VERSION}" = 5.6 -a "${DEBIAN_VERSION}" = jessie ]; then
+    PHP_VERSION=default
+fi
 
 if [ "${PHP_VERSION}" = default ]; then
     if [ "${DEBIAN_VERSION}" = jessie -o "${DEBIAN_VERSION}" = precise -o "${DEBIAN_VERSION}" = trusty ]; then
@@ -42,13 +60,16 @@ if [ "${PHP_VERSION}" = default ]; then
         php${PHPSUFFIX}-xdebug \
         ${EXTRA_PACKAGES}
 else
-    if update-alternatives --list php 2>/dev/null | fgrep -q "php${PHP_VERSION}"; then
-        :
+    if apt-cache show "^php${PHP_VERSION}$" >/dev/null 2>/dev/null; then
+        echo "PHP version found in existing apt repositories"
+    elif update-alternatives --list php 2>/dev/null | fgrep -q "php${PHP_VERSION}"; then
+        echo "PHP version found in update-alternatives"
     else
         # The correct php version is not available. Set up custom repos to get it
+        echo "PHP version not found in existing apt repositories, setting up the ondrej one"
 
         # On GHA runners ubuntu version, many php versions are preinstalled. We remove them if found.
-        # NB: this takes quite some time to execute. We should allow it optionally
+        # NB: this takes quite some time to execute. We should allow to execute it on demand
         #for PHP_CURRENT in $(dpkg -l | grep -E 'php.+-common' | awk '{print $2}'); do
         #    if [ "${PHP_CURRENT}" != "php${PHP_VERSION}-common" ]; then
         #        apt-get purge -y "${PHP_CURRENT}"
@@ -65,7 +86,7 @@ else
     fi
 
     EXTRA_PACKAGES=
-    if [ "${PHP_VERSION}" != '8.0' -a "${PHP_VERSION}" != '8.1' ]; then
+    if [ "${PHP_VERSION}" != '8.0' -a "${PHP_VERSION}" != '8.1' -a "${PHP_VERSION}" != '8.2' ]; then
         EXTRA_PACKAGES="php${PHP_VERSION}-json"
     fi
 
@@ -86,4 +107,9 @@ else
     update-alternatives --set php /usr/bin/php${PHP_VERSION}
 fi
 
+# Left in in case we'd want to check we really got what we asked for...
+#PHPVER=$(php -r 'echo implode(".",array_slice(explode(".",PHP_VERSION),0,2));' 2>/dev/null)
+
 php -v
+
+echo Done

@@ -15,6 +15,9 @@ Version 0.6.0
 
 * the `teststack` command learned action `cleanup containers`; `cleanup docker-images` was renamed to `cleanup dead-images`
 
+* fix: do not try to install php from a custom repository when the desired version is available in the apt repos already
+  set up in the operating system
+
 Version 0.5.2
 =============
 

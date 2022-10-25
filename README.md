@@ -10,11 +10,12 @@ a specific version of the CMS and database, or on a combination of versions.
 
 Features:
 
-* allows to run your bundle's tests on any version of eZPublish-Community, eZPlatform 1 and eZPlatform 2
+* allows to run your bundle's tests on any version of eZPublish-Community, eZPlatform 1, eZPlatform 2 and eZPlatform 3
 * allows to run your bundle's tests on multiple versions of eZPlatform/eZPublish from a single source directory
 * allows specifying extra composer packages to be installed and symfony bundles or legacy extensions to be activated
 * allows to run your bundle's tests on many versions of PHP (Docker execution only)
-* allows to run your bundle's tests on many versions of MySQL (Docker execution only)
+* allows to run your bundle's tests on many versions of MySQL/MariaDB (Docker execution only)
+* allows to run your bundle's tests on many versions of Debian/Ubuntu as underlying OS (Docker execution only)
 * provides a single command-line tool for managing the test stack and running tests, including maintenance operations
   such as database reset, logs cleanup, etc... (Docker execution only)
 
@@ -27,7 +28,7 @@ Step 1 can be omitted when the tests are run on a server which already has php/m
 (only Ubuntu/Debian are supported in that case).
 
 Not (yet) supported:
-- running tests on PostgreSQL instead of Mysql: this is a work in progress
+- running tests on PostgreSQL instead of MySQL: this is a work in progress
 - running tests which require eZ to be set up with Redis or Memcached: this is a work in progress; see the FAQ later for details
 - running browser-based tests: this has not yet been tested
 
@@ -35,7 +36,7 @@ Requirements
 ------------
 
 * Git (for a quick way to download this tool)
-* Bash shell
+* Bash shell, and a smattering of command-line tools such as `which`, `find`, etc...
 
 For running tests in Docker containers:
 * Docker version 1.13 or later
@@ -143,20 +144,21 @@ Quick Start
 6. commit the `.euts.env` file into version control. Don't forget to add the `/teststack` folder to your .gitignore file
    to avoid accidentally committing it to your project's source code
 
-7. Set up your tests to be run on Travis
-
-   See an example configuration [.travis.yml](doc/config_examples/.travis.yml) file
-
-   Note that, to perform tests on Travis, it is not necessary to run the whole tests stack - for most scenarios eZ
-   can be set up and the test suite execute without building and starting Docker containers.
-
-8. Set up your tests to be run on GitHub Actions
+7. Set up your tests to be run on GitHub Actions
 
    See an example configuration [.travis.yml](doc/config_examples/github_actions.yml) file
 
    Note that, to perform tests on GitHub workers, it is not necessary to run the whole tests stack - for most scenarios
    eZ can be set up and the test suite execute without building and starting Docker containers.
    If on the other hand you prefer to run the tests using containers inside the workers, you are free to do that.
+
+8. Set up your tests to be run on Travis
+
+   See an example configuration [.travis.yml](doc/config_examples/.travis.yml) file
+
+   Note that, to perform tests on Travis, it is not necessary to run the whole tests stack - for most scenarios eZ
+   can be set up and the test suite execute without building and starting Docker containers.
+
 
 Troubleshooting
 ---------------
@@ -292,7 +294,11 @@ Q: When I run `teststack start`, there is a long wait while the script says only
 
 A: sure. Start a second shell, go to the project's folder and run `./teststack/teststack logs ez`
 
-Q: Do you know of any bundles do make use of this one for testing, so that I can explore how they do it?
+Q: Do you know of any bundles which do make use of this one for testing, so that I can explore how they do it?
+
+A: sure. At least the following ones: https://github.com/kaliop-uk/ezmigrationbundle,
+    https://github.com/kaliop-uk/ezworkfloenginebundle, https://github.com/kaliop-uk/ezloreimpsumbundle,
+    https://github.com/kaliop/ezobjectwrapper or https://github.com/tanoconsulting/ezmigrationbundle2
 
 Q: When I run the tests on GitHub using Actions, I get an error `Could not authenticate against github.com `
 
@@ -303,9 +309,6 @@ A: in that case, change the action's yml config to pass automatically GitHub's c
             env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-A: sure. At least the following ones: https://github.com/kaliop/ezobjectwrapper, https://github.com/kaliop-uk/ezmigrationbundle,
-   https://github.com/kaliop-uk/ezworkfloenginebundle, https://github.com/kaliop-uk/ezloreimpsumbundle,
-
 Q: Are there other projects that you know of that have similar goals as this package?
 
 A: certainly there are. Ones that I know of are f.e. https://github.com/Plopix/symfony-bundle-app-wrapper and
@@ -313,6 +316,6 @@ A: certainly there are. Ones that I know of are f.e. https://github.com/Plopix/s
 
 Q: Are you testing this Test Stack itself?
 
-A: inception!!! ;-) In fact, yes, we strive to test it, using Github Actions
+A: inception!!! ;-) In fact, yes, we do to test it, using Github Actions
 
 [![Build Status](https://github.com/tanoconsulting/euts/actions/workflows/ci.yml/badge.svg)](https://github.com/tanoconsulting/euts/actions/workflows/ci.yml)

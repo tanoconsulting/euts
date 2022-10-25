@@ -28,6 +28,7 @@ if [ -n "${TESTSTACK_PHP_VERSION}" ]; then
 fi
 
 # For php 5.6, Composer needs humongous amounts of ram - which we don't have on Travis. Enable swap as workaround
+# @todo we could probably disable this when EZ_COMPOSER_LOCK is used instead of EZ_PACKAGES
 if [ "${PHP_VERSION}" = "5.6" -a -n "${TRAVIS}" ]; then
     echo "Setting up a swap file..."
 

@@ -9,6 +9,8 @@
 # @todo allow optional install of custom packages (is it better here or at boot time?)
 # @todo in case this file is used outside of docker: check that os is debian/ubuntu before trying to install php
 
+echo "Installing software packages..."
+
 PHP_VERSION=$1
 # `lsb-release` is not yet onboard...
 DEBIAN_VERSION=$(cat /etc/os-release | grep 'VERSION_CODENAME=' | sed 's/VERSION_CODENAME=//')
@@ -60,5 +62,9 @@ else
     DEBIAN_FRONTEND=noninteractive apt-get install -y npm
 fi
 
-# @todo what if we are not in the correct dir?
-./getphp.sh "${PHP_VERSION}"
+echo Done
+
+if [ -n "${PHP_VERSION}" ]; then
+    # @todo what if we are not in the correct dir?
+    ./getphp.sh "${PHP_VERSION}" norefresh
+fi

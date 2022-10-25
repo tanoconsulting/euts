@@ -7,55 +7,45 @@ jobs:
         runs-on: ${{ matrix.operating-system }}
         env:
             SYMFONY_ENV: behat
+            APP_ENV: behat
             DB_HOST: localhost
-            # @todo run at least one test on pgsql. Also: make docker tests run on mysql versions 5.6, 5.7, 8.0
+            # @todo run at least one test on pgsql
             DB_TYPE: mysql
             DB_ROOT_PASSWORD: root
             DB_EZ_USER: ezp
             DB_EZ_PASSWORD: ezp
             DB_EZ_DATABASE: behattestdb
-            # @todo skip setting this, always use the php version from the config file ?
-            # Note that PHP_VERSION has higher priority than TESTSTACK_PHP_VERSION from the config file
-            PHP_VERSION: ${{ matrix.php }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         strategy:
             fail-fast: false
             matrix:
                 # @see https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners for available os versions
                 # @todo add some tests running on 'windows-latest'
                 include:
-                    - php: "5.6"
+                    - config_file: '.euts.cp.env'
                       operating-system: 'ubuntu-20.04'
-                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.cp.env'
 
-                    - php: "7.0"
+                    - config_file: '.euts.1.7.env'
                       operating-system: 'ubuntu-20.04'
-                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.1.7.env'
-                    - php: "7.1"
+                    - config_file: '.euts.1.13.env'
                       operating-system: 'ubuntu-20.04'
-                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.1.13.env'
 
-                    - php: "7.2"
+                    - config_file: '.euts.2.3.env'
                       operating-system: 'ubuntu-22.04'
-                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.3.env'
-                    - php: "7.3"
+                    - config_file: '.euts.2.4.env'
                       operating-system: 'ubuntu-22.04'
-                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.4.env'
-                    - php: "7.4"
+                    - config_file: '.euts.2.5.env'
                       operating-system: 'ubuntu-22.04'
-                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.2.5.env'
 
-                    - php: "7.3"
+                    - config_file: '.euts.3.0.env'
                       operating-system: 'ubuntu-20.04'
-                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.3.0.env'
-                    - php: "7.3"
+                    - config_file: '.euts.3.1.env'
                       operating-system: 'ubuntu-20.04'
-                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.3.1.env'
-                    - php: "7.4"
+                    - config_file: '.euts.3.2.env'
                       operating-system: 'ubuntu-22.04'
-                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.3.2.env'
-                    - php: "8.0"
+                    - config_file: '.euts.3.3.env'
                       operating-system: 'ubuntu-22.04'
-                      config_file: 'doc/config_examples/bundle_with_extra_dependencies/.euts.3.3.env'
+
         steps:
             - name: checkout code
               uses: actions/checkout@v2
@@ -64,21 +54,23 @@ jobs:
               run: |
                 # just in case...
                 chmod 755 ./teststack ./bin/*.sh ./bin/setup/*.sh
-                # a minimal composer.json is required to allow installation of package dependencies using "dev-master",
-                # fix behattestdb for ez cp version, etc...
-                mkdir /tmp/composer_cache
+                # a minimal composer.json is required to allow installation of package dependencies using "dev-branchXX",
+                # fix behatbundle for ez cp version, hack roave/securityadvisories for unsafe dependencies, etc...
                 cp tests/config/composer.json .
+                # this directory is used in the composer.json file
+                mkdir /tmp/composer_cache
                 # patch the configuration file we will use: we won't have the mig bundle available
-                sed -i 's/Kaliop\\eZMigrationBundle\\EzMigrationBundle //' ${{ matrix.config_file }}
-                sed -i 's/Kaliop\\eZMigrationBundle\\eZMigrationBundle //' ${{ matrix.config_file }}
+                sed -i 's/Kaliop\\eZMigrationBundle\\EzMigrationBundle //' doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config_file }}
+                sed -i 's/Kaliop\\eZMigrationBundle\\eZMigrationBundle //' doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config_file }}
 
-            # 1st test: set up the app and check that the sf console works - locally
+            # @todo stop unused services such as webserver, php-fpm, etc... to leave more memory available for the tests
+
+            # 1st test: set up the app and check that the sf console works - locally on the worker vm
 
             # set up the test stack locally, ie. without docker containers
-            # NB: the php version in use here is not the one from the .env config file, but the one set in the matrix above
             - name: GHA test
               run: |
-                set -a && . ${{ matrix.config_file }} && set +a
+                set -a && . doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config_file }} && set +a
                 ./bin/setup.sh
                 ./bin/sfconsole.sh list
               env:
@@ -87,10 +79,9 @@ jobs:
             # reset the env which we built
             - name: cleanup env
               run: |
-                # @todo stop other services such as webserver, to leave ore ram available for the docker tests
                 sudo systemctl stop mysql.service
-                # @todo using the composer.lock file and vendors from the previous run makes install quicker, but then we
-                #       should make sure php versions (and extensions) are in sync.
+                # @todo using the composer.lock file and vendors from the local run would make install quicker, but then
+                #       we should make sure php versions (and extensions) are in sync.
                 mv vendor vendor_nodocker
 
             # 2nd test: set up the container stack and check that the sf console works in it
@@ -102,18 +93,18 @@ jobs:
               run: |
                 export DB_HOST=mysql
                 export GITHUB_ACTION=
-                ./teststack -e ${{ matrix.config_file }} -n -w 300 build
+                ./teststack -e doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config_file }} -n -w 300 build
 
-            # troubleshooting failures
-            #-
-            #    if: ${{ failure() }}
-            #    run: 'DB_HOST=mysql ./teststack -e ${{ matrix.config_file }} logs ez; ./teststack -e ${{ matrix.config_file }} top'
+            # troubleshooting test stack build failures
+            #- name: troubleshooting info
+            #  if: ${{ failure() }}
+            #  run: 'DB_HOST=mysql ./teststack -e ${{ matrix.config_file }} logs ez; ./teststack -e ${{ matrix.config_file }} top'
 
             - name: 'docker stack: test'
               run: |
                 export DB_HOST=mysql
                 export GITHUB_ACTION=
-                export TESTSTACK_CONFIG_FILE=${{ matrix.config_file }}
+                export TESTSTACK_CONFIG_FILE=doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config_file }}
                 ./teststack logs
                 ./teststack ps
                 ./teststack services
@@ -131,6 +122,8 @@ jobs:
                 ./teststack cleanup ez-logs
                 ./teststack stop
                 ./teststack cleanup logs
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             # troubleshooting failures
             #- name: troubleshooting info
