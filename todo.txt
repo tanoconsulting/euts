@@ -1,12 +1,47 @@
 See also: https://github.com/tanoconsulting/euts/issues
 
+v0.a - GHA action
+
+wrap up the `setup` part into a GHA Action:
+either as a container action, or as a composite action
+1A. cont. action: check out in detail how to pass multiple/structured args to the container running the action -> its a
+   list, comma-separated or whitespace separated? note that the container entrypoint could be a non-shell script, eg. php :-D
+   a simple solution would of course be to pass in a single arg: euts env file ;-)
+1B. composite action: check out where the teststack files end up located compared to the source code dir (there should
+   be an env var available telling us both)
+2. make it possible to request only parts of the setup: make them all optional
+3. inception?: allow composite action to run tests in 2 modes: local or container
+4. inception!: when in local mode, make it also possible to set up a custom db version in gha, with an if
+   `if: ${{ env.DAY_OF_WEEK == 'Monday' }}`
+
+- in current GHA tests (here and all other bundles, we could unset COMPOSE_PROJECT_NAME before running setup.sh, or make
+  it autodetect it)
+
+- look at https://dev.to/sourcegraph/how-to-build-github-actions-in-php-with-minicli-and-docker-1k6m for a simpler way to
+  get composer onboard
+
+v0.b - alt. reality
+
+explore possibility of rewriting this on top of GHA technology:
+- shivammathur/setup-php allows to set up many php versions with extensions etc
+- ramsey/composer-install should ease composer installation; it allows to install lowest deps too
+- actions/checkout allows to check out code (base sw) in a subdir: this greatly removes the need for patching configs
+- shogo82148/actions-setup-mysql or mirromutth/mysql-action allow to install custom mysql versions
+- nektos/act allows to run the GHA tests in a local container!
+ -> check persistence / shell access
+- ...
+- profit!
+
 v0.x - docs
 
-- add examples using a simpler sets of packages: ez only
+- add examples using a simpler set of packages: ez only
 
 - find a better command than `git clone`, to insure users always get the latest tag instead of 'main' on install
 
 v0.y - more test coverage, cleanups
+
+- set up 2 env vars, similar to what GHA does, for the teststack root dir and workspace root dir - in case we allow custom
+  setup scripts
 
 - improve mysql dockerfile: bring back timezone, cleanup steps working for all base OSes
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Set up fully the test environment (except for installing required sw packages): mysql, php, composer, eZ, etc...
-# Has to be useable from the Docker test container as well as from Travis and GH-hosted runners.
+# Has to be useable from the Docker test container as well as locally in Travis and GH-hosted runners.
 # Has to be run from the project (bundle) top dir.
 #
 # Uses env vars: TRAVIS, PHP_VERSION, GITHUB_ACTION

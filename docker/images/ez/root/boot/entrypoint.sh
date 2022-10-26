@@ -96,7 +96,7 @@ else
 
     if [ "${TESTSTACK_SETUP_APP_ON_BOOT}" = 'force' -o ! -f ${CONTAINER_USER_HOME}/setup_ok ]; then
         echo "[$(date)] Setting up the Application..."
-        su test -c "cd ${CONTAINER_USER_HOME}/bundle && ../teststack/bin/setup.sh; echo \$? > ${CONTAINER_USER_HOME}/setup_ok"
+        su test -c "cd ${CONTAINER_USER_HOME}/workspace && ../teststack/bin/setup.sh; echo \$? > ${CONTAINER_USER_HOME}/setup_ok"
     fi
 fi
 

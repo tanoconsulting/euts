@@ -1,3 +1,9 @@
+Version 0.x.y (unreleased)
+==========================
+
+* changed: in the test container, the dir where the project is installed is now `/home/test/workspace` - it was previously
+  `/home/test/bundle`
+
 Version 0.6.1
 =============
 

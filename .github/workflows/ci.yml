@@ -110,7 +110,7 @@ jobs:
                 ./teststack services
                 ./teststack images
                 ./teststack top
-                ./teststack exec cp /home/test/teststack/tests/config/composer.json /home/test/bundle
+                ./teststack exec cp /home/test/teststack/tests/config/composer.json /home/test/workspace
                 ./teststack stop
                 # set up the application
                 ./teststack setup

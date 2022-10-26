@@ -13,19 +13,19 @@ CONTAINER_USER_HOME=$(echo "$ORIGPASSWD" | cut -f6 -d:)
 #fi
 TESTSTACK_VENDOR_DIR="vendor_${COMPOSE_PROJECT_NAME}"
 
-# @todo we assume that /home/test/bundle/vendor is never a file...
+# @todo we assume that /home/test/workspace/vendor is never a file...
 
-if [ -d "${CONTAINER_USER_HOME}/bundle/vendor" -a ! -L "${CONTAINER_USER_HOME}/bundle/vendor" ]; then
+if [ -d "${CONTAINER_USER_HOME}/workspace/vendor" -a ! -L "${CONTAINER_USER_HOME}/workspace/vendor" ]; then
     printf "\n\e[33mWARNING:\e[0m vendor folder is not a symlink\n\n"
 fi
 
-if [ -L "${CONTAINER_USER_HOME}/bundle/vendor" -o ! -d "${CONTAINER_USER_HOME}/bundle/vendor" ]; then
+if [ -L "${CONTAINER_USER_HOME}/workspace/vendor" -o ! -d "${CONTAINER_USER_HOME}/workspace/vendor" ]; then
     echo "[$(date)] Setting up vendor folder as symlink to ${TESTSTACK_VENDOR_DIR}..."
 
-    if [ ! -d "${CONTAINER_USER_HOME}/bundle/${TESTSTACK_VENDOR_DIR}" ]; then
-        mkdir "${CONTAINER_USER_HOME}/bundle/${TESTSTACK_VENDOR_DIR}"
+    if [ ! -d "${CONTAINER_USER_HOME}/workspace/${TESTSTACK_VENDOR_DIR}" ]; then
+        mkdir "${CONTAINER_USER_HOME}/workspace/${TESTSTACK_VENDOR_DIR}"
     fi
-    chown -R test:test "${CONTAINER_USER_HOME}/bundle/${TESTSTACK_VENDOR_DIR}"
+    chown -R test:test "${CONTAINER_USER_HOME}/workspace/${TESTSTACK_VENDOR_DIR}"
 
     # The double-symlink craze makes it possible to have the 'vendor' symlink on the host disk (mounted as volume),
     # while allowing each container to have it point to a different target 'real' vendor dir which is also on the

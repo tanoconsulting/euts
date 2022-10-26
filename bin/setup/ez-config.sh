@@ -2,6 +2,7 @@
 
 # Set up eZ configuration.
 # Requires composer dependencies to have been set up already.
+# Has to be run from the project (bundle) top dir.
 #
 # Uses env vars: EZ_VERSION, EZ_BUNDLES, EZ_LEGACY_EXTENSIONS, EZ_TEST_CONFIG_SYMFONY, EZ_TEST_CONFIGS_LEGACY
 

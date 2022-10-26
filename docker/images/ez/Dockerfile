@@ -58,7 +58,7 @@ RUN chmod 755 /root/boot/*.sh
 
 RUN echo '0' > /var/build_ok
 
-WORKDIR /home/test/bundle
+WORKDIR /home/test/workspace
 
 # 80: haproxy / varnish / apache
 # 443: haproxy / apache
