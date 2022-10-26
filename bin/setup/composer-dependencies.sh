@@ -7,6 +7,9 @@
 
 # @todo generate and echo a hash which can be used to determine in the future if we need to run composer again (as it
 #       would install different packages compared to the ones installed currently)
+#
+# @todo automatically check: if there are legacy extensions to enable, and ezplatform is any version except community,
+#       we should add ezsystems/legacy-bridge to the list of packages
 
 set -e
 

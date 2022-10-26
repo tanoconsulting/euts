@@ -4,6 +4,9 @@ Version 0.x.y (unreleased)
 * changed: in the test container, the dir where the project is installed is now `/home/test/workspace` - it was previously
   `/home/test/bundle`
 
+* fix: when the teststack is used to test a pure legacy extension (ie. not one within a bundle), it woudl hand at the phase
+       of generating autoloads. We now prevent it from scanning the vendors folder
+
 Version 0.6.1
 =============
 

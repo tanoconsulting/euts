@@ -85,6 +85,9 @@ else
     echo "# It is replaced by a symlink to a yaml file with settings useful for running tests when the env var EZ_TEST_CONFIG_SYMFONY is set" >> "${CONFIG_DIR}/config_behat_bundle.yml"
 fi
 
+### @todo automatically check: if there are legacy extensions to enable, and ezplatform is any version except community,
+###       we should add eZ\Bundle\EzPublishLegacyBundle\EzPublishLegacyBundle to the list of bundles
+
 # Load the custom bundles in the Sf kernel
 for BUNDLE in ${EZ_BUNDLES}; do
     if [ "${BUNDLE}" = 'eZ\Bundle\EzPublishLegacyBundle\EzPublishLegacyBundle' ]; then
@@ -224,6 +227,8 @@ if [ "${EZ_VERSION}" = "ezpublish-community" -o "${INSTALL_LEGACY_BRIDGE}" = tru
 
     "${STACK_DIR}/bin/sfconsole.sh" ezpublish:legacybundles:install_extensions --force
 
+    EXCLUDE=
+
     # If top-level project is an extension, symlink it
     # We use the same test as LegacyBundleInstallCommand
     if [ -f ezinfo.php -o -f extension.xml ]; then
@@ -234,6 +239,9 @@ if [ "${EZ_VERSION}" = "ezpublish-community" -o "${INSTALL_LEGACY_BRIDGE}" = tru
             # @todo print a warning if target extension exists and is a dir instead of a symlink, or a symlink with wrong target
             ln -s "$(realpath .)" "vendor/ezsystems/ezpublish-legacy/extension/${EXTENSION}"
         fi
+        # Since extension is the top-level folder, it will contain the vendor folder, and possibly a teststack one as well.
+        # We have to make sure the php classes in there do not get scanned
+        EXCLUDE="--exclude 'extension/${EXTENSION}'/vendor[_/]'"
     fi
 
     # If top-level project is a bundle with extensions, symlink them
@@ -263,7 +271,7 @@ if [ "${EZ_VERSION}" = "ezpublish-community" -o "${INSTALL_LEGACY_BRIDGE}" = tru
     done
 
     # generate legacy autoloads
-    "${STACK_DIR}/bin/sfconsole.sh" ezpublish:legacy:script bin/php/ezpgenerateautoloads.php
+    "${STACK_DIR}/bin/sfconsole.sh" ezpublish:legacy:script bin/php/ezpgenerateautoloads.php $EXCLUDE
 
     # @todo allow end user to specify legacy settings & design items when running with ezpublish-community or legacy-bridge
 fi
