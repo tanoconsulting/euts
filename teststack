@@ -70,7 +70,7 @@ Options:
 Advanced Options:
     -c                clean up docker images which have become useless - when running 'build'
     -d                discard existing containers and force them to rebuild from scratch (this forces a full app set up as well) - when running 'build'
-    -f                freshen: force app set up via resetting containers to clean-build status besides updating them if needed - when running 'build'
+    -f                freshen: force app set up via resetting containers to clean-build status besides updating them if needed - when running 'build', 'start'
     -i                interactive - when running 'exec'
     -n                do not set up the app - when running 'build', 'start'
     -s                force the app to be set up - when running 'build', 'start'
@@ -581,10 +581,14 @@ case "${COMMAND}" in
     ;;
 
     start)
-        if [ "${SETUP_APP_ON_BOOT}" != '' ]; then
-            export TESTSTACK_SETUP_APP_ON_BOOT=${SETUP_APP_ON_BOOT}
+        if [ ${RECREATE} = 'true' ]; then
+            ${DOCKER_COMPOSE} up -d --force-recreate || exit $?
+        else
+            if [ "${SETUP_APP_ON_BOOT}" != '' ]; then
+                export TESTSTACK_SETUP_APP_ON_BOOT=${SETUP_APP_ON_BOOT}
+            fi
+            ${DOCKER_COMPOSE} up -d ${2} || exit $?
         fi
-        ${DOCKER_COMPOSE} up -d ${2} || exit $?
 
         if [ -z "${2}" ]; then
             wait_for_bootstrap all
