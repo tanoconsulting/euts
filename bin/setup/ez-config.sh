@@ -235,13 +235,18 @@ if [ "${EZ_VERSION}" = "ezpublish-community" -o "${INSTALL_LEGACY_BRIDGE}" = tru
         # There's no easy way to know the name of the extension, so we assume it is the first in the list
         ARR=($EZ_LEGACY_EXTENSIONS)
         EXTENSION=${ARR[0]}
+
+        if [ -z "${EXTENSION}" ]; then
+            printf "\n\e[33mWARNING:\e[0m top level folder looks like a legacy extension, but there is no legacy extension specified for activation\n\n"
+        fi
+
         if [ ! -L "vendor/ezsystems/ezpublish-legacy/extension/${EXTENSION}" -a ! -d "vendor/ezsystems/ezpublish-legacy/extension/${EXTENSION}" ]; then
             # @todo print a warning if target extension exists and is a dir instead of a symlink, or a symlink with wrong target
             ln -s "$(realpath .)" "vendor/ezsystems/ezpublish-legacy/extension/${EXTENSION}"
         fi
         # Since extension is the top-level folder, it will contain the vendor folder, and possibly a teststack one as well.
         # We have to make sure the php classes in there do not get scanned
-        EXCLUDE="--exclude 'extension/${EXTENSION}'/vendor[_/]'"
+        EXCLUDE="--exclude 'extension/${EXTENSION}/vendor[_/]'"
     fi
 
     # If top-level project is a bundle with extensions, symlink them
