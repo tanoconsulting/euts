@@ -7,6 +7,8 @@ Version 0.x.y (unreleased)
 * fix: when the teststack is used to test a pure legacy extension (ie. not one within a bundle), it woudl hand at the phase
        of generating autoloads. We now prevent it from scanning the vendors folder
 
+* new: command `teststack start` learned option `-f`, which was already supported by `teststack build`
+
 Version 0.6.1
 =============
 

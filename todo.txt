@@ -11,14 +11,13 @@ either as a container action, or as a composite action
    be an env var available telling us both)
 2. make it possible to request only parts of the setup: make them all optional
 3. inception?: allow composite action to run tests in 2 modes: local or container
-4. inception!: when in local mode, make it also possible to set up a custom db version in gha, with an if
+4. inception!: when in local mode, make it also possible to set up a custom db version in gha, with an if, ex.
    `if: ${{ env.DAY_OF_WEEK == 'Monday' }}`
+
+- add teststack/bin to $PATH of container user
 
 - in current GHA tests (here and all other bundles, we could unset COMPOSE_PROJECT_NAME before running setup.sh, or make
   it autodetect it)
-
-- look at https://dev.to/sourcegraph/how-to-build-github-actions-in-php-with-minicli-and-docker-1k6m for a simpler way to
-  get composer onboard
 
 v0.b - alt. reality
 
@@ -27,6 +26,8 @@ explore possibility of rewriting this on top of GHA technology:
 - ramsey/composer-install should ease composer installation; it allows to install lowest deps too
 - actions/checkout allows to check out code (base sw) in a subdir: this greatly removes the need for patching configs
 - shogo82148/actions-setup-mysql or mirromutth/mysql-action allow to install custom mysql versions
+- look at https://dev.to/sourcegraph/how-to-build-github-actions-in-php-with-minicli-and-docker-1k6m for a simpler way to
+  get composer onboard
 - nektos/act allows to run the GHA tests in a local container!
  -> check persistence / shell access
 - ...
@@ -36,12 +37,16 @@ v0.x - docs
 
 - add examples using a simpler set of packages: ez only
 
+- add examples using a legacy-only extension (ezdbi)
+
 - find a better command than `git clone`, to insure users always get the latest tag instead of 'main' on install
+  (this can be alleviated for gha if installing as an action)
+
+- document better: the choices for passing github auth to the teststack
 
 v0.y - more test coverage, cleanups
 
-- set up 2 env vars, similar to what GHA does, for the teststack root dir and workspace root dir - in case we allow custom
-  setup scripts
+- improve finding ./docker vs /home/test/teststack/docker in php.sh (why cant we just use ./docker ?)
 
 - improve mysql dockerfile: bring back timezone, cleanup steps working for all base OSes
 
@@ -64,6 +69,9 @@ v0.y - more test coverage, cleanups
 
 v0.z - features
 
+- set up 2 env vars, similar to what GHA does, for the teststack root dir and workspace root dir - in case we allow custom
+  setup scripts
+
 - allow to specify extra packages to install in the test container, eg. pstotext. Also/alternatively: allow to add
   extra setup scripts
 
@@ -72,7 +80,7 @@ v0.z - features
     - OK - test: do legacy extensions of bundles get enabled/symlinked ? (specify a dependency on such a bundle)
     - OK - same for legacy exts as depepdency (not a bundle)
     - test: legacy exts inside top-level bundle (ezworkflowengineb.)
-    - test: legacy ext as top-level bundle (ezdbi <- needs GHA)
+    - OK - test: legacy ext as top-level bundle (ezdbi)
     - test all of the above with a CP install too
   - OK - do set up legacy-routing when setting up LBridge
 
@@ -85,8 +93,6 @@ v0.z - features
 - improve teststack runtests: on fail, dump sf and legacy error logs
 
 - add a teststack cleanup command which removes everything: data, logs, containers, images, vendors
-
-- improve finding ./docker vs /home/test/teststack/docker in php.sh, composer.sh
 
 - docs: add other sets of example .euts.env files: minimal, with LB, bundle w. legacy ext; pure-legacy ext
 
@@ -117,8 +123,6 @@ vN?
 
 - make 'll' work for 'test' user
 
-- change the names of env vars used for docker to be the same as the ones used by ezplatform3 ?
-
 - make teststack detect a change in CONTAINER_USER_UID dynamically on every invocation
 
 - reintroduce hash of composer packages for autodetection of need to rerun composer
@@ -133,6 +137,8 @@ vN?
   for those are installed
 - check if we are missing a redis extension for php, as well as any php ext. required by Ibexa (see https://doc.ibexa.co/en/latest/getting_started/requirements/)
 
+- change the names of env vars used for docker to be the same as the ones used by ezplatform3 ?
+
 - make one test run on postgres (both on gha and on docker)
   - the creation of the schema is not trivial for ezplatform 1 and 2 => internalize the schema creation sql here,
     with some php-based magic used to determine which updates to run. Or just run the pg test with ezpl3 ;-)
@@ -140,6 +146,7 @@ vN?
 
 - make it easy to have many different test envs installed and possibly running in parallel:
   - add a cli command for that
+  - test it (take care about sharing of composer cache dir)
   - document it
 
 - allow installation of custom php exts (via an env var and/or examining composer.json)

@@ -213,8 +213,8 @@ How It Works
 ### Directory layout on the host
 
     - Bundle folder (root)
-        - .euts.env
-        - teststack
+        - .euts.env (can be in other locations as well)
+        - teststack (can be in other locations as well)
             - ...
         - vendor_xxx
             - ezsystems
@@ -227,10 +227,10 @@ How It Works
 
 ### Directory layout within the eZ (test) Container
 
-    - /home/tests
+    - /home/test
         - teststack (mount of the 'teststack' host folder)
             - ...
-        - bundle (mount of the 'bundle root' host folder)
+        - workspace (mount of the 'bundle root' host folder)
             - vendor (symlink to vendor_xxx)
             - vendor_xxx
             - ...
