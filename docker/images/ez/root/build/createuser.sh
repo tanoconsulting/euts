@@ -1,19 +1,21 @@
 #!/bin/sh
 
-# @todo make the name of the user variable, as well as its GID & UID
+# @todo grab the name of the user from cli options, maybe its GID & UID too
 
-echo "Creating user 'test'..."
+CONTAINER_USER=test
 
-addgroup --gid 1013 test
-adduser --system --uid=1013 --gid=1013 --home /home/test --shell /bin/bash test
-adduser test test
+echo "Creating user '${CONTAINER_USER}'..."
 
-mkdir -p /home/test/.ssh
-cp /etc/skel/.[!.]* /home/test
+addgroup --gid 1013 "${CONTAINER_USER}"
+adduser --system --uid=1013 --gid=1013 --home "/home/${CONTAINER_USER}" --shell /bin/bash "${CONTAINER_USER}"
+adduser "${CONTAINER_USER}" "${CONTAINER_USER}"
 
-adduser test sudo
-sed -i '$ a test   ALL=\(ALL:ALL\) NOPASSWD: ALL' /etc/sudoers
+mkdir -p "/home/${CONTAINER_USER}/.ssh"
+cp /etc/skel/.[!.]* "/home/${CONTAINER_USER}"
 
-chown -R test:test /home/test
+adduser "${CONTAINER_USER}" sudo
+sed -i "$ a ${CONTAINER_USER}   ALL=\(ALL:ALL\) NOPASSWD: ALL" /etc/sudoers
+
+chown -R "${CONTAINER_USER}:${CONTAINER_USER}" "/home/${CONTAINER_USER}"
 
 echo Done

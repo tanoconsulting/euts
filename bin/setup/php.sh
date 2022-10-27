@@ -16,9 +16,10 @@ if [ "${PHPVER}" = "${PHP_VERSION}" ]; then
 else
     echo "Installing php version ${PHP_VERSION}"
 
+    # @todo replace `cd` with creating a var to use in place of ./
     cd "$(dirname -- "$(dirname -- "$(dirname -- "${BASH_SOURCE[0]}")")")"
 
-    # @todo can we be smarter than this ?
+    # @todo can we be smarter than this ? Also: is this required at all?
     if [ -f ./docker/images/ez/root/build/getphp.sh ]; then
         chmod 755 ./docker/images/ez/root/build/getphp.sh
         sudo ./docker/images/ez/root/build/getphp.sh "${PHP_VERSION}"
