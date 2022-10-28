@@ -196,13 +196,13 @@ if [ -f "${CONSOLE_CMD}" ]; then
     sed -i "s#dirname(__DIR__).'/vendor/autoload_runtime.php'#dirname(__DIR__).'/../../../vendor/autoload_runtime.php'#" "${CONSOLE_CMD}"
 fi
 
-# Set up config related to LegacyBridge if needed
+# Set up config related to the Legacy Bridge if needed
 # @see https://github.com/ezsystems/LegacyBridge/blob/1.5/INSTALL-MANUALLY.md
 if [ "${INSTALL_LEGACY_BRIDGE}" = true ]; then
     if [ -f "${CONFIG_DIR}/config_legacy_bridge.yml" -o -L "${CONFIG_DIR}/config_legacy_bridge.yml" ]; then
         rm "${CONFIG_DIR}/config_legacy_bridge.yml"
     fi
-    ln -s "$(realpath "${STACK_DIR}/config/legacy-bridge/config_legacy_bridge.yml")" "${CONFIG_DIR}/config_legacy_bridge.yml"
+    ln -s "$(realpath "${STACK_DIR}/config/${EZ_VERSION}/legacy-bridge/config_legacy_bridge.yml")" "${CONFIG_DIR}/config_legacy_bridge.yml"
 
     if ! grep -E -q "^ +resource *: *['\"]@EzPublishLegacyBundle/Resources/config/routing.yml['\"]" "${CONFIG_DIR}/routing.yml" ; then
         echo '_ezpublishLegacyRoutes:' >> "${CONFIG_DIR}/routing.yml"
@@ -216,7 +216,7 @@ else
     echo "# It is replaced by a symlink to a yaml file with settings required by the Legacy Bridge when required" >> "${CONFIG_DIR}/config_legacy_bridge.yml"
 fi
 
-# Set up config for ezpublish-community
+# Set up config for ezpublish-legacy
 if [ "${EZ_VERSION}" = "ezpublish-community" ]; then
     cat "${STACK_DIR}/config/ezpublish-legacy/config.php" > vendor/ezsystems/ezpublish-legacy/config.php
 fi
@@ -224,6 +224,10 @@ fi
 # The Symfony console command has to be operational by this point
 
 if [ "${EZ_VERSION}" = "ezpublish-community" -o "${INSTALL_LEGACY_BRIDGE}" = true ]; then
+
+    if [ -f "${STACK_DIR}/config/${EZ_VERSION}/ezpublish-legacy/config.php" ]; then
+        cat "${STACK_DIR}/config/${EZ_VERSION}/ezpublish-legacy/config.php" > vendor/ezsystems/ezpublish-legacy/config.php
+    fi
 
     "${STACK_DIR}/bin/sfconsole.sh" ezpublish:legacybundles:install_extensions --force
 
