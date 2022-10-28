@@ -4,7 +4,7 @@
 # Requires composer dependencies to have been set up already.
 # Has to be run from the project (bundle) top dir.
 #
-# Uses env vars: EZ_VERSION, EZ_BUNDLES, EZ_LEGACY_EXTENSIONS, EZ_TEST_CONFIG_SYMFONY, EZ_TEST_CONFIGS_LEGACY
+# Uses env vars: EZ_VERSION, EZ_BUNDLES, EZ_LEGACY_EXTENSIONS, EZ_TEST_CONFIG_SYMFONY
 
 # @todo check if all required vars have a value
 # @todo replace this with a php script? It is starting to be a mess...
@@ -196,7 +196,7 @@ if [ -f "${CONSOLE_CMD}" ]; then
     sed -i "s#dirname(__DIR__).'/vendor/autoload_runtime.php'#dirname(__DIR__).'/../../../vendor/autoload_runtime.php'#" "${CONSOLE_CMD}"
 fi
 
-# Set up config related to the Legacy Bridge if needed
+# Set up Symfony config related to the Legacy Bridge if needed
 # @see https://github.com/ezsystems/LegacyBridge/blob/1.5/INSTALL-MANUALLY.md
 if [ "${INSTALL_LEGACY_BRIDGE}" = true ]; then
     if [ -f "${CONFIG_DIR}/config_legacy_bridge.yml" -o -L "${CONFIG_DIR}/config_legacy_bridge.yml" ]; then

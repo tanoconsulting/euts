@@ -8,6 +8,7 @@
 
 # @todo check if all required env vars have a value
 # @todo support a -v option
+# @todo allow executing a specified set of tasks instead of all of them
 
 set -e
 
