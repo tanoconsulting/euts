@@ -216,11 +216,6 @@ else
     echo "# It is replaced by a symlink to a yaml file with settings required by the Legacy Bridge when required" >> "${CONFIG_DIR}/config_legacy_bridge.yml"
 fi
 
-# Set up config for ezpublish-legacy
-if [ "${EZ_VERSION}" = "ezpublish-community" ]; then
-    cat "${STACK_DIR}/config/ezpublish-legacy/config.php" > vendor/ezsystems/ezpublish-legacy/config.php
-fi
-
 # The Symfony console command has to be operational by this point
 
 if [ "${EZ_VERSION}" = "ezpublish-community" -o "${INSTALL_LEGACY_BRIDGE}" = true ]; then
