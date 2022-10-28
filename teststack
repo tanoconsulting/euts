@@ -311,6 +311,8 @@ load_config() {
         DB_TYPE=mysql
     fi
 
+    # @todo implement here BC for moving from TESTSTACK_PHP_VERSION to PHP_VERSION
+
     create_compose_command
 
     # @todo check UID, GID from conf vs. current. If different, ask for confirmation before running

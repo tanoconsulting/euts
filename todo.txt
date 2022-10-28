@@ -14,8 +14,6 @@ either as a container action, or as a composite action
 4. inception!: when in local mode, make it also possible to set up a custom db version in gha, with an if, ex.
    `if: ${{ env.DAY_OF_WEEK == 'Monday' }}`
 
-- add teststack/bin to $PATH of container user
-
 - in current GHA tests (here and all other bundles, we could unset COMPOSE_PROJECT_NAME before running setup.sh, or make
   it autodetect it)
 
@@ -46,7 +44,15 @@ v0.x - docs
 
 v0.y - more test coverage, cleanups
 
+- add teststack/bin to $PATH of container user
+
+- when test user logs in via `teststack enter`, we should set KERNEL_DIR, COMPOSER, ... -> run set-env-vars.sh
+
 - improve finding ./docker vs /home/test/teststack/docker in php.sh (why cant we just use ./docker ?)
+
+- since we added $PROJECT_NAME to the path to the data and logs, could we use one teststack shared amongst many projects,
+  without the need to set server-specific env vars in .euts.env?  eg. add a cli option to override TESTSTACK_APP_DIR, or
+  use dirname("${BASH_SOURCE[0]}")
 
 - improve mysql dockerfile: bring back timezone, cleanup steps working for all base OSes
 
@@ -94,7 +100,7 @@ v0.z - features
 
 - add a teststack cleanup command which removes everything: data, logs, containers, images, vendors
 
-- docs: add other sets of example .euts.env files: minimal, with LB, bundle w. legacy ext; pure-legacy ext
+- docs: add other sets of example .euts.env files: minimal, with LB (bundle w. legacy ext); pure-legacy ext
 
 - make teststack create a full config file by default instead of an empty one ? at least have an action to create it / print it
 
