@@ -301,10 +301,34 @@ load_config() {
     fi
 
     if [ -n "${VERBOSITY}" ]; then
-        echo "Using config file: ${CONFIG_FILE}"
+        echo "Using config file: $(realpath -- "${CONFIG_FILE}")"
     fi
 
     dotenv ${CONFIG_FILE}
+
+    if [ -z "${TESTSTACK_APP_DIR}" ]; then
+        # the user did not specify the app dir. We try to be smart while respecting BC: we look for the app in
+        # 1. the parent dir of the test stack (BC)
+        # 2. the dir where the config file is
+        # 3. go up from the dir where the config file is
+        # looking for composer.json
+        if [ ! -f "$(dirname -- "$(dirname -- "${BASH_SOURCE[0]}")")/composer.json" ]; then
+            #if [ "${CONFIG_FILE}" = "${DEFAULT_CONFIG_FILE}" ]; then
+            #else
+            #fi
+            TEST_DIR="${CONFIG_FILE}"
+            while [[ "${TEST_DIR}" == *'/'* ]]; do
+                TEST_DIR="$(dirname -- "${TEST_DIR}")"
+                if [ -f "${TEST_DIR}/composer.json" ]; then
+                    export TESTSTACK_APP_DIR="$(realpath -- "${TEST_DIR}")"
+                    if [ -n "${VERBOSITY}" ]; then
+                        echo "Using app dir: ${TESTSTACK_APP_DIR}"
+                    fi
+                    break;
+                fi
+            done
+        fi
+    fi
 
     # same default as in docker-compose.yml
     if [ -z "${DB_TYPE}" ]; then
@@ -487,7 +511,7 @@ fi
 
 load_config
 
-cd $(dirname -- ${BASH_SOURCE[0]})/docker
+cd $(dirname -- "${BASH_SOURCE[0]}"})/docker
 
 # make sure the necessary folders exist which will be mounted by the DB containers
 if [ ! -d "./data/${DB_TYPE}/${COMPOSE_PROJECT_NAME}" ]; then mkdir "./data/${DB_TYPE}/${COMPOSE_PROJECT_NAME}"; fi
