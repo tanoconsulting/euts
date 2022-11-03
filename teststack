@@ -316,7 +316,7 @@ load_config() {
             #if [ "${CONFIG_FILE}" = "${DEFAULT_CONFIG_FILE}" ]; then
             #else
             #fi
-            TEST_DIR="${CONFIG_FILE}"
+            TEST_DIR="$(realpath -- "${CONFIG_FILE}")"
             while [[ "${TEST_DIR}" == *'/'* ]]; do
                 TEST_DIR="$(dirname -- "${TEST_DIR}")"
                 if [ -f "${TEST_DIR}/composer.json" ]; then
@@ -327,6 +327,7 @@ load_config() {
                     break;
                 fi
             done
+
         fi
     fi
 

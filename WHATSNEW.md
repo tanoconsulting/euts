@@ -1,3 +1,8 @@
+Version 0.7.1 (unreleased)
+==========================
+
+* fix: determining TESTSTACK_APP_DIR when the config file is given using a relative path
+
 Version 0.7.0
 =============
 
