@@ -3,6 +3,8 @@ Version 0.7.1 (unreleased)
 
 * fix: determining TESTSTACK_APP_DIR when the config file is given using a relative path
 
+* fix: avoid a problem with some liip imagine-bundle versions and eZP CP
+
 Version 0.7.0
 =============
 

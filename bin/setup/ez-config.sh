@@ -130,6 +130,12 @@ if [ -f "${CONFIG_DIR}/packages/ezplatform_admin_ui.yaml" ]; then
     #sed -i "s#'%kernel.project_dir%/vendor/ezsystems/ezplatform-admin-ui/src/bundle/Resources/translations/#'%kernel.root_dir%/../../ezplatform-admin-ui/src/bundle/Resources/translations/#" ${CONFIG_DIR}/packages/ezplatform_admin_ui.yaml
 fi
 
+# and some liip fixes for old SF versions
+if [ -f "vendor/liip/imagine-bundle/Resources/config/routing.yaml" -a -f vendor/ezsystems/ezpublish-community/ezpublish/config/routing.yml ]; then
+    cp vendor/liip/imagine-bundle/Resources/config/routing.yaml vendor/liip/imagine-bundle/Resources/config/routing.yml
+    sed -i 's#resource: "@LiipImagineBundle/Resources/config/routing.xml"#resource: "@LiipImagineBundle/Resources/config/routing.yml"#' vendor/ezsystems/ezpublish-community/ezpublish/config/routing.yml
+fi
+
 # EzPlatform 3 stuff - a lot of it!
 if [ "${EZ_VERSION}" = "ezplatform3" -o "${EZ_VERSION}" = "ezplatform33" ]; then
     # 1. Registration of services from ezplatform/config/services_behat.yml fails
