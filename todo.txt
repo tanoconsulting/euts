@@ -42,6 +42,8 @@ v0.x - docs
 
 - document better: the choices for passing github auth to the teststack
 
+- document better: running tests for ezp-legacy extensions
+
 v0.y - more test coverage, cleanups
 
 - add teststack/bin to $PATH of container user
@@ -49,10 +51,6 @@ v0.y - more test coverage, cleanups
 - when test user logs in via `teststack enter`, we should set KERNEL_DIR, COMPOSER, ... -> run set-env-vars.sh
 
 - improve finding ./docker vs /home/test/teststack/docker in php.sh (why cant we just use ./docker ?)
-
-- since we added $PROJECT_NAME to the path to the data and logs, could we use one teststack shared amongst many projects,
-  without the need to set server-specific env vars in .euts.env?  eg. add a cli option to override TESTSTACK_APP_DIR, or
-  use dirname("${BASH_SOURCE[0]}")
 
 - improve mysql dockerfile: bring back timezone, cleanup steps working for all base OSes
 

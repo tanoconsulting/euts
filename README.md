@@ -51,8 +51,8 @@ To install in the `teststack` directory:
 
     git clone --depth 1 https://github.com/tanoconsulting/euts.git teststack
 
-Note that you can use any other name for the folder where this tool will be installed - but so far it has only been
-tested running from within the top-level project folder.
+Note that you can use any other name for the folder where this tool will be installed - it can even be outside your
+project's root directory.
 
 Note that you might want to check out a specific tag/release of this bundle instead of `main`, to make your CI tests
 run reliably over time.
