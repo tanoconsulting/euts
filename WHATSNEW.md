@@ -1,5 +1,5 @@
-Version 0.x.y (unreleased)
-==========================
+Version 0.7.0
+=============
 
 * fix: allow setting up the Legacy Bridge along with eZPlatform version 1 - it would work only with  eZPlatform 2 beforehand
 
