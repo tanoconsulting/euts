@@ -73,6 +73,7 @@ jobs:
                 set -a && . doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config_file }} && set +a
                 ./bin/setup.sh
                 ./bin/sfconsole.sh list
+                ./bin/sfconsole.sh cache:clear
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -119,6 +120,7 @@ jobs:
                 #- run: './teststack unpause'
                 #- run: './teststack resetdb'
                 ./teststack exec ../teststack/bin/sfconsole.sh list
+                ./teststack exec ../teststack/bin/sfconsole.sh cache:clear
                 ./teststack cleanup ez-logs
                 ./teststack stop
                 ./teststack cleanup logs
