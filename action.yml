@@ -15,11 +15,14 @@ inputs:
         description: "The command used to run the test suite. If left empty, it defaults to the teststack's runtests.sh"
         required: true
         default: ''
-    upload-code-coverage:
+    code-coverage-service:
         description: "Whether to generate and upload code coverage to 3rd party services. Supported: scrutinizer, codecov"
         required: true
         default: ''
-
+    repo-token:
+        description: "GitHub acces token. Used to avoid API rate limiting when downloading composer dependencies. Set it to `${{ secrets.GITHUB_TOKEN }}`"
+        required: true
+        default: ''
 runs:
     using: "composite"
     steps:
@@ -35,6 +38,9 @@ runs:
             else
                 echo "Error: the configuration file '${{ inputs.configuration-file }}' was not found"
                 exit 1
+            fi
+            if [ -n "${{ inputs.repo-token }}" ]; then
+                export GITHUB_TOKEN="${{ inputs.repo-token }}"
             fi
             "${{ github.action_path }}/bin/setup.sh"
             if [ -z "${{ inputs.test-command }}" ]; then
@@ -53,9 +59,6 @@ runs:
             fi
         shell: bash
         if: ${{ inputs.run-on == 'host' }}
-        env:
-            # This is useful to avoid sporadic test failures due to reaching API limits
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       -
         run: |
             if [ -z "{{ inputs.configuration-file }}" ]; then
@@ -68,6 +71,9 @@ runs:
             else
                 echo "Error: the configuration file was not found"
                 exit 1
+            fi
+            if [ -n "${{ inputs.repo-token }}" ]; then
+                export GITHUB_TOKEN="${{ inputs.repo-token }}"
             fi
             "${{ github.action_path }}/teststack" setup
             if [ -z "${{ inputs.test-command }}" ]; then
@@ -86,5 +92,3 @@ runs:
             fi
         shell: bash
         if: ${{ inputs.run-on == 'containers' }}
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
