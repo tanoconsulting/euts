@@ -20,7 +20,7 @@ inputs:
         required: true
         default: ''
     repo-token:
-        description: "GitHub acces token. Used to avoid API rate limiting when downloading composer dependencies. Set it to `$ { { secrets.GITHUB_TOKEN } }`"
+        description: "GitHub access token. Used to avoid API rate limiting when downloading composer dependencies. Set it to `$ { { secrets.GITHUB_TOKEN } }`"
         required: true
         default: ''
 runs:
@@ -28,6 +28,8 @@ runs:
     steps:
       -
         run: |
+            env | sort
+            exit 0
             if [ -z "${{ inputs.configuration-file }}" ]; then
                 echo "Error: a non-empty configuration file name is required"
                 exit 1
