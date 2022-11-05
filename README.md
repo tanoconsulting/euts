@@ -13,7 +13,7 @@ Features:
 * allows to run your bundle's tests on any version of eZPublish-Community, eZPlatform 1, eZPlatform 2 and eZPlatform 3
 * allows to run your bundle's tests on multiple versions of eZPlatform/eZPublish from a single source directory
 * allows specifying extra composer packages to be installed and symfony bundles or legacy extensions to be activated
-* allows to run your bundle's tests on many versions of PHP (Docker execution only)
+* allows to run your bundle's tests on many versions of PHP
 * allows to run your bundle's tests on many versions of MySQL/MariaDB (Docker execution only)
 * allows to run your bundle's tests on many versions of Debian/Ubuntu as underlying OS (Docker execution only)
 * provides a single command-line tool for managing the test stack and running tests, including maintenance operations
@@ -24,8 +24,8 @@ It works by:
 2. downloading and setting up the desired version of eZP and creating the database with the stock schema definition.
 At this point, the testsuite of the bundle in question can be executed.
 
-Step 1 can be omitted when the tests are run on a server which already has php/mysql installed, such as a CI environment
-(only Ubuntu/Debian are supported in that case).
+Step 1 can be omitted when the tests are run on a server/vm which already has php/mysql installed, such as a CI environment
+(only Ubuntu/Debian servers are supported in that case).
 
 Not (yet) supported:
 - running tests on PostgreSQL instead of MySQL: this is a work in progress
@@ -42,7 +42,8 @@ For running tests in Docker containers:
 * Docker version 1.13 or later
 * Docker Compose version 1.x (NB: Docker Compose v2 is not supported yet)
 
-For running tests without Docker: see the requirements for the version of eZPlatform that you intend to use
+For running tests without Docker: see the requirements for the version of eZPlatform that you intend to use, including
+a database server.
 
 Installation
 ------------
@@ -62,18 +63,24 @@ Quick Start
 
 0. write some tests for your bundle, which can be executed from the command-line
 
-1. create a configuration file
+1. create a test stack configuration file
 
-   The default name for the config file is `.euts.env`. You can use a different file name, in which case you would
-   have to tell it to the `teststack` command either via usage of the `-e` option, or by setting an environment
-   variable.
+   The test stack is configured by defining environment variables. You will need to set values at the very least for
+   EZ_PACKAGES and EZ_BUNDLES - those are the Composer packages that are required to run your tests and the Symfony
+   bundles that will be loaded in the eZP kernel.
+
+   In order to simplify the management of all the environment variables, the test stack supports usage of a "dot env"
+   configuration file, holding values for all the variables you require. Using such a file is a recommended practice.
+   The default name for the configuration file is `.euts.env`.
 
        touch .euts.env
 
-   In the config file, you need to set values at the very least for EZ_PACKAGES and EZ_BUNDLES - those are the Composer
-   packages that are required to run your tests and the Symfony bundles that will be loaded in the eZP kernel.
-   Some example configuration files can be found in the _doc/config_examples_ folder.
-   The full list of available config variables and their purpose is found in [.euts.env.example](./.euts.env.example).
+   Add to the configuration file all required values - the full list of available config variables and their purpose is
+   found in [.euts.env.example](./.euts.env.example). Some example configuration files can be found in the
+   _doc/config_examples_ folder.
+
+   You can choose to use a different file name or location than `./.euts.env`, in which case you would have to tell it
+   to the `teststack` command, either via usage of the `-e` option, or by setting the environment variable TESTSTACK_CONFIG_FILE.
 
 2. make sure that your project's `composer.json` is compatible with the Test Stack:
 
@@ -132,7 +139,7 @@ Quick Start
 
        ./teststack/teststack -r runtests My/Test/Folder
 
-   NB: this currently assumes that your test suite uses PhpUnit.
+   NB: this currently assumes that your test suite uses PhpUnit, and that phpunit is part of composer's `require-dev` section.
    If your tests are driven by any other command, you can use instead:
 
        ./teststack/teststack exec My/Test/Script
@@ -146,7 +153,7 @@ Quick Start
 
 7. Set up your tests to be run on GitHub Actions
 
-   See an example configuration [.travis.yml](doc/config_examples/github_actions.yml) file
+   See an example configuration [github_actions.yml](doc/config_examples/github_actions.yml) file
 
    Note that, to perform tests on GitHub workers, it is not necessary to run the whole tests stack - for most scenarios
    eZ can be set up and the test suite execute without building and starting Docker containers.

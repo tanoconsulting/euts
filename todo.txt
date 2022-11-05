@@ -1,50 +1,29 @@
 See also: https://github.com/tanoconsulting/euts/issues
 
-v0.a - GHA action
+v0.a - finish GHA action
 
-wrap up the `setup` part into a GHA Action:
-either as a container action, or as a composite action
-1A. cont. action: check out in detail how to pass multiple/structured args to the container running the action -> its a
-   list, comma-separated or whitespace separated? note that the container entrypoint could be a non-shell script, eg. php :-D
-   a simple solution would of course be to pass in a single arg: euts env file ;-)
-1B. composite action: check out where the teststack files end up located compared to the source code dir (there should
-   be an env var available telling us both)
-2. make it possible to request only parts of the setup: make them all optional
-3. inception?: allow composite action to run tests in 2 modes: local or container
-4. inception!: when in local mode, make it also possible to set up a custom db version in gha, with an if, ex.
-   `if: ${{ env.DAY_OF_WEEK == 'Monday' }}`
+1. make it possible to request only parts of the setup: make them all optional (also outside gha?)
+2. test gha action 'containers' mode
+2. do test gha action as part of CI
+3. inception!: when in 'local' mode, make it also possible to set up a custom db version in gha, with an if
 
-- in current GHA tests (here and all other bundles, we could unset COMPOSE_PROJECT_NAME before running setup.sh, or make
-  it autodetect it)
-
-v0.b - alt. reality
-
-explore possibility of rewriting this on top of GHA technology:
-- shivammathur/setup-php allows to set up many php versions with extensions etc
-- ramsey/composer-install should ease composer installation; it allows to install lowest deps too
-- actions/checkout allows to check out code (base sw) in a subdir: this greatly removes the need for patching configs
-- shogo82148/actions-setup-mysql or mirromutth/mysql-action allow to install custom mysql versions
-- look at https://dev.to/sourcegraph/how-to-build-github-actions-in-php-with-minicli-and-docker-1k6m for a simpler way to
-  get composer onboard
-- nektos/act allows to run the GHA tests in a local container!
- -> check persistence / shell access
-- ...
-- profit!
-
-v0.x - docs
+v0.w - docs
 
 - add examples using a simpler set of packages: ez only
 
 - add examples using a legacy-only extension (ezdbi)
 
 - find a better command than `git clone`, to insure users always get the latest tag instead of 'main' on install
-  (this can be alleviated for gha if installing as an action)
+  (this is alleviated for gha when using as an action)
 
 - document better: the choices for passing github auth to the teststack
 
 - document better: running tests for ezp-legacy extensions
 
-v0.y - more test coverage, cleanups
+v0.x - more test coverage, cleanups
+
+- in current GHA tests (here and all other bundles), we could unset COMPOSE_PROJECT_NAME before running setup.sh, or make
+  it autodetect it
 
 - add teststack/bin to $PATH of container user
 
@@ -71,7 +50,7 @@ v0.y - more test coverage, cleanups
 
 - add to .gitignore the files generated during local run of teststack testing
 
-v0.z - features
+v0.y - features
 
 - set up 2 env vars, similar to what GHA does, for the teststack root dir and workspace root dir - in case we allow custom
   setup scripts
@@ -104,7 +83,7 @@ v0.z - features
 
 - allow project to specify a different test execution command from phpunit (or rename runtests) ?
 
-- port from phpxmlrpc the enabling/disabling of code coverage (is it still needed? check differences wrt. what we do here)
+- port from phpxmlrpc the enabling/disabling of code coverage (check differences wrt. what we do here)
 
 - remove 'silence php warnings' from default php config; push it to consumer bundles ? (via: allow custom php configs...)
 
@@ -112,7 +91,7 @@ v0.z - features
 
 - document: phpunit bootstrap.php (???)
 
-vN?
+v0.z?
 
 - allow teststack cmd to only run the containerized DB container, so that it could be used on GHA/Travis
   (this will need to add a port mapping to mysql docker-compose file)
@@ -187,3 +166,17 @@ vN?
   - eg. usage of GOSS for testing the builds of the teststack
 - move config file to .yml (or extras section in composer.json ?) and use php in a dedicated container to run the teststack script ?
 - rename teststack actions to follow a sf-like pattern? eg. stack:build, test:run, etc... ?
+
+v0 - alt. reality
+
+explore possibility of rewriting this on top of GHA technology:
+- shivammathur/setup-php allows to set up many php versions with extensions etc
+- ramsey/composer-install should ease composer installation; it allows to install lowest deps too
+- actions/checkout allows to check out code (base sw) in a subdir: this greatly removes the need for patching configs
+- shogo82148/actions-setup-mysql or mirromutth/mysql-action allow to install custom mysql versions
+- look at https://dev.to/sourcegraph/how-to-build-github-actions-in-php-with-minicli-and-docker-1k6m for a simpler way to
+  get composer onboard
+- nektos/act allows to run the GHA tests in a local container!
+ -> check persistence of the container / shell access
+- ...
+- profit!

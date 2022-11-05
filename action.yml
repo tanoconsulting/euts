@@ -5,14 +5,15 @@ description: 'Sets up the desired eZPlatform version and runs tests'
 
 inputs:
     configuration-file:
-        description: 'Path to the configuration file which defines the test environment to set up'
+        description: 'Path to the configuration file which defines the test environment to set up. Required when not defining env vars'
         required: true
+        default: ''
     run-on:
         description: 'Whether to use Docker Containers or run tests on the runner VM. Values: host, containers'
         required: true
         default: 'host'
     test-command:
-        description: "The command used to run the test suite. If left empty, it defaults to the teststack's runtests.sh"
+        description: "The command used to run the test suite. If left empty, it defaults to the teststack's `runtests`"
         required: true
         default: ''
     code-coverage-service:
@@ -28,11 +29,10 @@ runs:
     steps:
       -
         run: |
-            env | sort
-            exit 0
             if [ -z "${{ inputs.configuration-file }}" ]; then
-                echo "Error: a non-empty configuration file name is required"
-                exit 1
+                if [ -z "${EZ_PACKAGES}" ]; then
+                    echo "Warning: no configuration file is used, and no packages are defined in the EZ_PACKAGES env var"
+                fi
             elif [ -f "${{ github.workspace }}/${{ inputs.configuration-file }}" ]; then
                 set -a && . "${{ github.workspace }}/${{ inputs.configuration-file }}" && set +a
             elif [ -f "${{ inputs.configuration-file }}" ]; then
@@ -64,8 +64,9 @@ runs:
       -
         run: |
             if [ -z "{{ inputs.configuration-file }}" ]; then
-                echo "Error: a non-empty configuration file name is required"
-                exit 1
+                if [ -z "${EZ_PACKAGES}" ]; then
+                    echo "Warning: no configuration file is used, and no packages are defined in the EZ_PACKAGES env var"
+                fi
             elif [ -f "${{ github.workspace }}/${{ inputs.configuration-file }}" ]; then
                 export TESTSTACK_CONFIG_FILE="${{ github.workspace }}/${{ inputs.configuration-file }}"
             elif [ -f "${{ inputs.configuration-file }}" ]; then
