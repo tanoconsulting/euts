@@ -1,5 +1,8 @@
-Version 0.7.1 (unreleased)
-==========================
+Version 0.8
+===========
+
+* new: simplified using the test stack on GitHub Actions by making it available as a custom action. This usage is
+  documented via the example [GHA workflow](doc/config_examples/github_actions.yml)
 
 * fix: determining TESTSTACK_APP_DIR when the config file is given using a relative path
 
