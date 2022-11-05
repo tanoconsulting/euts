@@ -1,7 +1,9 @@
-# An example GitHub Actions configuration file for a bundle which aims to be compatible with both eZPublish 5 and eZPlatform 1 and 2.
+# An example GitHub Actions workflow for a bundle which aims to be compatible with both eZPublish 5 and eZPlatform 1 and 2.
+# The workflow defines a single job being run on both git pushes and pull-requests. The job runs the bundle's tests on
+# a wide range of eZ versions. Each test run also uses a different php version.
 # We use kaliop/ezmigrationbundle as an example.
 
-name: CI
+name: Continuous Integration
 
 on: [push, pull_request]
 
@@ -9,9 +11,10 @@ jobs:
     test:
         runs-on: ${{ matrix.operating-system }}
         env:
-            # Depending on the version of eZPlatform in use, you need to set up either SYMFONY_ENV or APP_ENV
-            SYMFONY_ENV: behat
-            APP_ENV: behat
+            # These environment variables are used to configure the tanoconsulting/euts action used in the 2nd workflow
+            # step below.
+            # An alternative setup is to save all the environment variables for each case of the test matrix in a dedicated
+            # configuration file, and pass it to the `configuration-file` input to the action
             DB_HOST: localhost
             DB_TYPE: mysql
             DB_ROOT_PASSWORD: root
@@ -22,9 +25,13 @@ jobs:
             EZ_COMPOSER_LOCK: ${{ matrix.ez_composer_lock }}
             EZ_BUNDLES: ${{ matrix.ez_bundles }}
             EZ_PACKAGES: ${{ matrix.ez_packages }}
+            # Depending on the version of eZPlatform in use, you need to set up either SYMFONY_ENV or APP_ENV
+            SYMFONY_ENV: behat
+            APP_ENV: behat
         strategy:
-            # A wide test matrix - running tests at least once for each stable PHP version, and across as many different
+            # A large test matrix - running tests at least once for each stable PHP version, and across as many different
             # versions as possible of eZPublish / eZPlatform 1 and 2.
+            # The version of mysql in use is always the same for all tests.
             # Besides the bundle under test (Kaliop\eZMigrationBundle\EzMigrationBundle), the tests require, when available
             # for the current eZ kernel, the presence of ezplatform-xmltext-fieldtype, tagsbundle, ez-matrix-bundle or
             # ezplatform-matrix-fieldtype.
@@ -47,6 +54,7 @@ jobs:
                       ez_packages: 'ezsystems/ezpublish-community:~2014.11.1'
                       ez_composer_lock: Tests/composer/composer-cp_2104.11.1.lock
                       operating-system: 'ubuntu-20.04'
+                      code-coverage: ''
                     # eZ Platform 1
                     - ezp: '1.7'
                       php: '7.0'
@@ -54,12 +62,14 @@ jobs:
                       ez_packages: 'ezsystems/ezplatform:~1.7.9 ezsystems/ezplatform-xmltext-fieldtype:^1.1 ezsystems/ez-matrix-bundle:^0.2.1 netgen/tagsbundle:^2.2 ezsystems/behatbundle:^6.3'
                       ez_composer_lock: ''
                       operating-system: 'ubuntu-20.04'
+                      code-coverage: ''
                     - ezp: '1.13'
                       php: '7.1'
                       ez_bundles: 'Kaliop\eZMigrationBundle\EzMigrationBundle EzSystems\EzPlatformXmlTextFieldTypeBundle\EzSystemsEzPlatformXmlTextFieldTypeBundle EzSystems\MatrixBundle\EzSystemsMatrixBundle Netgen\TagsBundle\NetgenTagsBundle'
                       ez_packages: 'ezsystems/ezplatform:~1.13.5 ezsystems/ezplatform-xmltext-fieldtype:^1.1 ezsystems/ez-matrix-bundle:^0.2.1 netgen/tagsbundle:^2.2 ezsystems/behatbundle:^6.3'
                       ez_composer_lock: ''
                       operating-system: 'ubuntu-20.04'
+                      code-coverage: ''
                     # eZ Platform 2
                     - ezp: '2.3'
                       php: '7.2'
@@ -67,57 +77,42 @@ jobs:
                       ez_packages: 'ezsystems/ezplatform:~2.3.2 ezsystems/ezplatform-xmltext-fieldtype:^1.7 ezsystems/ezplatform-matrix-fieldtype:^1.0 netgen/tagsbundle:^3.2 ezsystems/behatbundle:^6.5 ezsystems/repository-forms:<=2.4 sensio/generator-bundle'
                       ez_composer_lock: ''
                       operating-system: 'ubuntu-22.04'
+                      code-coverage: ''
                     - ezp: '2.4'
                       php: '7.3'
                       ez_bundles: 'Kaliop\eZMigrationBundle\EzMigrationBundle EzSystems\EzPlatformXmlTextFieldTypeBundle\EzSystemsEzPlatformXmlTextFieldTypeBundle EzSystems\EzPlatformMatrixFieldtypeBundle\EzPlatformMatrixFieldtypeBundle EzSystems\EzPlatformGraphQL\EzSystemsEzPlatformGraphQLBundle Netgen\TagsBundle\NetgenTagsBundle Lolautruche\EzCoreExtraBundle\EzCoreExtraBundle'
                       ez_packages: 'ezsystems/ezplatform:~2.4.2 ezsystems/ezplatform-xmltext-fieldtype:^1.8 ezsystems/ezplatform-matrix-fieldtype:^1.0 netgen/tagsbundle:^3.3 ezsystems/behatbundle:^6.5 sensio/generator-bundle'
                       ez_composer_lock: ''
                       operating-system: 'ubuntu-22.04'
+                      code-coverage: ''
                     - ezp: '2.5'
                       php: '7.4'
                       ez_bundles: 'Kaliop\eZMigrationBundle\EzMigrationBundle EzSystems\EzPlatformXmlTextFieldTypeBundle\EzSystemsEzPlatformXmlTextFieldTypeBundle Netgen\TagsBundle\NetgenTagsBundle Lolautruche\EzCoreExtraBundle\EzCoreExtraBundle'
                       ez_packages: 'ezsystems/ezplatform:^2.5.15 ezsystems/ezplatform-xmltext-fieldtype:^1.9 netgen/tagsbundle:^3.4 ezsystems/behatbundle:^7.0 sensio/generator-bundle overblog/graphiql-bundle'
                       ez_composer_lock: ''
                       operating-system: 'ubuntu-22.04'
-                    # eZ Platform 3 aka Ibexa BXP
+                      # triggers generation of code-coverage data and uploading it to codecov. Also supported: `scrutinizer`
+                      code-coverage: 'codecov'
+                    # eZ Platform 3 aka Ibexa DXP
                     # Rinse and repeat...
                     # For valid bundle/package combinations, see the .euts files in the folder `bundle_with_extra_dependencies`
         steps:
             # Optional: set up composer cache dir to persist across test runs; install extra sw packages; stop unused
             # services, etc
 
-            -
-                # Check out the source code
-                name: check out the source code
+            -   name: check out the source code
                 uses: actions/checkout@v2
-            -
-                # Retrieve the TestStack tool
-                # Note: you might want to lock the checkout to a specific branch or tag to avoid surprises...
-                name: download the tests tack
-                run: |
-                    git clone --depth 1 https://github.com/tanoconsulting/euts.git teststack
-                    # just in case...
-                    chmod 755 ./teststack/bin/*.sh  ./teststack/bin/setup/*.sh
-            -
-                # Run the TestStack tool setup script. This runs Composer, sets up an appropriate PHP and eZ configuration,
-                # creates a db schema and loads it with default data.
-                name: set up the tests tack
-                run: './teststack/bin/setup.sh'
-                env:
-                    # This is useful to avoid sporadic test failures due to reaching API limits
-                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            -
-                # This simply runs phpunit
-                name: run tests
-                run: './teststack/bin/runtests.sh'
 
-            # In case you want to run the tests with code coverage enabled and upload the results to some external service
-            #-
-            #    name: run tests and upload code coverage
-            #    run: |
-            #        ./teststack/bin/runtests.sh -c coverage.clover
-            #        if [ -f coverage.clover ]; then wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover coverage.clover; fi
-            #        if [ -f coverage.clover ]; then curl -Os https://uploader.codecov.io/latest/linux/codecov && chmod +x codecov && ./codecov -t ${CODECOV_TOKEN} -f coverage.clover; fi
+            -   name: set up the test stack and run tests
+                uses: tanoconsulting/euts@v1
+                with:
+                    # Generate code coverage data and upload it to an online service, only for one case of the test matrix
+                    code-coverage-service: ${{ matrix.code-coverage }}
+                    # This is useful to avoid API rate limiting when downloading composer packages from github
+                    repo-token: ${{ secrets.GITHUB_TOKEN }}
+                    # As an alternative to defining all the environment variables used to configure the test stack
+                    # in this file, we could save them in a dedicated file. Ex:
+                    #configuration-file: Tests/environment/${{ matrix.config_file }}
 
             # To help troubleshooting failures, you can dump as much info as possible
             # TODO dump as well eZPlatform and eZ-Legacy logs

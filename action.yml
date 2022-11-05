@@ -1,0 +1,97 @@
+# This is the definition of a custom GitHub Action, allowing super-easy usage of this tool in GitHub
+
+name: 'eZPlatform Ultimate Test Stack'
+description: 'Sets up the desired eZPlatform version and runs tests'
+
+inputs:
+    configuration-file:
+        description: 'Path to the configuration file which defines the test environment to set up. Required when not defining env vars'
+        required: true
+        default: ''
+    run-on:
+        description: 'Whether to use Docker Containers or run tests on the runner VM. Values: host, containers'
+        required: true
+        default: 'host'
+    test-command:
+        description: "The command used to run the test suite. If left empty, it defaults to the teststack's `runtests`"
+        required: true
+        default: ''
+    code-coverage-service:
+        description: "Whether to generate and upload code coverage to 3rd party services. Supported: scrutinizer, codecov"
+        required: true
+        default: ''
+    repo-token:
+        description: "GitHub access token. Used to avoid API rate limiting when downloading composer dependencies. Set it to `$ { { secrets.GITHUB_TOKEN } }`"
+        required: true
+        default: ''
+runs:
+    using: "composite"
+    steps:
+      -
+        run: |
+            if [ -z "${{ inputs.configuration-file }}" ]; then
+                if [ -z "${EZ_PACKAGES}" ]; then
+                    echo "Warning: no configuration file is used, and no packages are defined in the EZ_PACKAGES env var"
+                fi
+            elif [ -f "${{ github.workspace }}/${{ inputs.configuration-file }}" ]; then
+                set -a && . "${{ github.workspace }}/${{ inputs.configuration-file }}" && set +a
+            elif [ -f "${{ inputs.configuration-file }}" ]; then
+                set -a && . "${{ inputs.configuration-file }}" && set +a
+            else
+                echo "Error: the configuration file '${{ inputs.configuration-file }}' was not found"
+                exit 1
+            fi
+            if [ -n "${{ inputs.repo-token }}" ]; then
+                export GITHUB_TOKEN="${{ inputs.repo-token }}"
+            fi
+            "${{ github.action_path }}/bin/setup.sh"
+            if [ -z "${{ inputs.test-command }}" ]; then
+                if [ -z "${{ inputs.upload-code-coverage }}" ]; then
+                    "${{ github.action_path }}/bin/runtests.sh"
+                else
+                    "${{ github.action_path }}/bin/runtests.sh" -u "${{ inputs.upload-code-coverage }}"
+                fi
+            else
+                # @todo should we check if test-command is a relative path to a script? what if it has double quotes in it instead?
+                # @todo add support for code-coverage
+                ${{ inputs.test-command }}
+                if [ -n "${{ inputs.upload-code-coverage }}" ]; then
+                    echo "Warning: option upload-code-coverage not supported together with test-command"
+                fi
+            fi
+        shell: bash
+        if: ${{ inputs.run-on == 'host' }}
+      -
+        run: |
+            if [ -z "{{ inputs.configuration-file }}" ]; then
+                if [ -z "${EZ_PACKAGES}" ]; then
+                    echo "Warning: no configuration file is used, and no packages are defined in the EZ_PACKAGES env var"
+                fi
+            elif [ -f "${{ github.workspace }}/${{ inputs.configuration-file }}" ]; then
+                export TESTSTACK_CONFIG_FILE="${{ github.workspace }}/${{ inputs.configuration-file }}"
+            elif [ -f "${{ inputs.configuration-file }}" ]; then
+                export TESTSTACK_CONFIG_FILE="${{ inputs.configuration-file }}"
+            else
+                echo "Error: the configuration file was not found"
+                exit 1
+            fi
+            if [ -n "${{ inputs.repo-token }}" ]; then
+                export GITHUB_TOKEN="${{ inputs.repo-token }}"
+            fi
+            "${{ github.action_path }}/teststack" setup
+            if [ -z "${{ inputs.test-command }}" ]; then
+                if [ -z "${{ inputs.upload-code-coverage }}" ]; then
+                    "${{ github.action_path }}/teststack" runtests
+                else
+                    "${{ github.action_path }}/teststack" -o "${{ inputs.upload-code-coverage }}" runtests
+                fi
+            else
+                # @todo should we check if test-command is a relative path to a script? what if it has double quotes in it instead?
+                # @todo add support for code-coverage
+                "${{ github.action_path }}/teststack" exec ${{ inputs.test-command }}
+                if [ -n "${{ inputs.upload-code-coverage }}" ]; then
+                    echo "Warning: option upload-code-coverage not supported together with test-command"
+                fi
+            fi
+        shell: bash
+        if: ${{ inputs.run-on == 'containers' }}
