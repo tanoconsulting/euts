@@ -113,6 +113,14 @@ jobs:
                     # As an alternative to defining all the environment variables used to configure the test stack
                     # in this file, we could save them in a dedicated file. Ex:
                     #configuration-file: Tests/environment/${{ matrix.config_file }}
+                    # This can be changed to `containers` in case you want to use a custom mysql version or to run tests
+                    # in containers anyway, eg. if your worker vm is not running ubuntu / has no php packages available.
+                    # NB: when doing so, make sure the DB_HOST env var in your config is empty or set to `mysql`
+                    #run-on: host
+                    # Set this to anything not empty if you want to use a custom command to run tests.
+                    # Take care that the path to the teststack scripts, such as ex. sfconsole.sh, will be different when
+                    # running the stack on the host (./bin/) from when running it on containers (../teststack/bin)
+                    #test-command: ...
 
             # To help troubleshooting failures, you can dump as much info as possible
             # TODO dump as well eZPlatform and eZ-Legacy logs
