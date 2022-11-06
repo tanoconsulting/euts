@@ -22,36 +22,36 @@ jobs:
                 # @see https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners for available os versions
                 # @todo add some tests running on 'windows-latest'
                 include:
-                    - config_file: '.euts.cp.env'
+                    - config-file: '.euts.cp.env'
                       operating-system: 'ubuntu-20.04'
 
-                    - config_file: '.euts.1.7.env'
+                    - config-file: '.euts.1.7.env'
                       operating-system: 'ubuntu-20.04'
-                    - config_file: '.euts.1.13.env'
+                    - config-file: '.euts.1.13.env'
                       operating-system: 'ubuntu-20.04'
 
-                    - config_file: '.euts.2.3.env'
+                    - config-file: '.euts.2.3.env'
                       operating-system: 'ubuntu-22.04'
-                    - config_file: '.euts.2.4.env'
+                    - config-file: '.euts.2.4.env'
                       operating-system: 'ubuntu-22.04'
-                    - config_file: '.euts.2.5.env'
+                    - config-file: '.euts.2.5.env'
                       operating-system: 'ubuntu-22.04'
 
-                    - config_file: '.euts.3.0.env'
+                    - config-file: '.euts.3.0.env'
                       operating-system: 'ubuntu-20.04'
-                    - config_file: '.euts.3.1.env'
+                    - config-file: '.euts.3.1.env'
                       operating-system: 'ubuntu-20.04'
-                    - config_file: '.euts.3.2.env'
+                    - config-file: '.euts.3.2.env'
                       operating-system: 'ubuntu-22.04'
-                    - config_file: '.euts.3.3.env'
+                    - config-file: '.euts.3.3.env'
                       operating-system: 'ubuntu-22.04'
 
         steps:
-            - name: checkout code
-              uses: actions/checkout@v2
+          - name: checkout code
+            uses: actions/checkout@v2
 
-            - name: setup
-              run: |
+          - name: setup
+            run: |
                 # just in case...
                 chmod 755 ./teststack ./bin/*.sh ./bin/setup/*.sh
                 # a minimal composer.json is required to allow installation of package dependencies using "dev-branchXX",
@@ -60,52 +60,70 @@ jobs:
                 # this directory is used in the composer.json file
                 mkdir /tmp/composer_cache
                 # patch the configuration file we will use: we won't have the mig bundle available
-                sed -i 's/Kaliop\\eZMigrationBundle\\EzMigrationBundle //' doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config_file }}
-                sed -i 's/Kaliop\\eZMigrationBundle\\eZMigrationBundle //' doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config_file }}
+                sed -i 's/Kaliop\\eZMigrationBundle\\EzMigrationBundle //' doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config-file }}
+                sed -i 's/Kaliop\\eZMigrationBundle\\eZMigrationBundle //' doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config-file }}
 
-            # @todo stop unused services such as webserver, php-fpm, etc... to leave more memory available for the tests
+          # @todo stop unused services such as webserver, php-fpm, etc... to leave more memory available for the tests
 
-            # 1st test: set up the app and check that the sf console works - locally on the worker vm
+          # 1st test: set up the app and check that the sf console works - locally on the worker vm
 
-            # set up the test stack locally, ie. without docker containers
-            - name: GHA test
-              run: |
-                set -a && . doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config_file }} && set +a
+          # set up the test stack locally, ie. without docker containers
+          - name: GHA test
+            run: |
+                set -a && . doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config-file }} && set +a
+                # test with no COMPOSE_PROJECT_NAME set. We test later with it set
+                export COMPOSE_PROJECT_NAME=
                 ./bin/setup.sh
                 ./bin/sfconsole.sh list
                 ./bin/sfconsole.sh cache:clear
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-            # reset the env which we built
-            - name: cleanup env
-              run: |
-                sudo systemctl stop mysql.service
+          # reset the env which we built
+          - name: cleanup env
+            run: |
                 # @todo using the composer.lock file and vendors from the local run would make install quicker, but then
                 #       we should make sure php versions (and extensions) are in sync.
-                mv vendor vendor_nodocker
+                mv vendor vendor_nodocker_1
 
-            # 2nd test: set up the container stack and check that the sf console works in it
+          # 2nd test: same as above, but via the custom GitHub Action we implement
 
-            # @todo look at commit 7a0688f47047d70357cee0b77951dcd927157512 for a take on doubling workers and letting each only run one test...
+          - name: GHA action test - host based
+            uses: ./
+            with:
+                configuration-file: doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config-file }}
+                repo-token: ${{ secrets.GITHUB_TOKEN }}
+                test-command: ./bin/sfconsole.sh cache:clear
 
-            # build the test stack docker images - without app setup
-            - name: 'docker stack: containers build'
-              run: |
+          # reset the env which we built
+          - name: cleanup env
+            run: |
+                # @todo using the composer.lock file and vendors from the local run would make install quicker, but then
+                #       we should make sure php versions (and extensions) are in sync.
+                mv vendor vendor_nodocker_2
+                sudo systemctl stop mysql.service
+
+          # 3rd test: set up the container stack and check that the sf console works in it
+
+          # @todo look at commit 7a0688f47047d70357cee0b77951dcd927157512 for a take on doubling workers and letting each only run one test...
+
+          # build the test stack docker images - without app setup
+          - name: 'docker stack: containers build'
+            run: |
                 export DB_HOST=mysql
                 export GITHUB_ACTION=
-                ./teststack -e doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config_file }} -n -w 300 build
+                ./teststack -e doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config-file }} -n -w 300 build
 
-            # troubleshooting test stack build failures
-            #- name: troubleshooting info
+          # troubleshooting test stack build failures
+          #- name: troubleshooting info
             #  if: ${{ failure() }}
-            #  run: 'DB_HOST=mysql ./teststack -e ${{ matrix.config_file }} logs ez; ./teststack -e ${{ matrix.config_file }} top'
+            #  run: 'DB_HOST=mysql ./teststack -e ${{ matrix.config-file }} logs ez; ./teststack -e ${{ matrix.config-file }} top'
 
-            - name: 'docker stack: test'
-              run: |
+          - name: 'docker stack: test'
+            run: |
                 export DB_HOST=mysql
                 export GITHUB_ACTION=
-                export TESTSTACK_CONFIG_FILE=doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config_file }}
+                export TESTSTACK_config-file=doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config-file }}
                 ./teststack logs
                 ./teststack ps
                 ./teststack services
@@ -121,16 +139,32 @@ jobs:
                 #- run: './teststack resetdb'
                 ./teststack exec ../teststack/bin/sfconsole.sh list
                 ./teststack exec ../teststack/bin/sfconsole.sh cache:clear
+                ./teststack cleanup ez-cache
                 ./teststack cleanup ez-logs
+                ./teststack cleanup vendors
                 ./teststack stop
                 ./teststack cleanup logs
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                ./teststack -y cleanup containers
+                ./teststack -y cleanup data
+            env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-            # troubleshooting failures
-            #- name: troubleshooting info
-            #  if: ${{ failure() }}
-            #  run: |
-            #    env
-            #    php -i
-            #    docker logs
+          # 4th same as above, but via the custom GitHub Action we implement
+
+          - name: GHA action test - container based
+            uses: ./
+            with:
+                configuration-file: doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config-file }}
+                repo-token: ${{ secrets.GITHUB_TOKEN }}
+                run-on: containers
+                test-command: ../teststack/bin/sfconsole.sh cache:clear
+            env:
+                DB_HOST: mysql
+
+          # troubleshooting failures
+          #- name: troubleshooting info
+          #  if: ${{ failure() }}
+          #  run: |
+          #    env
+          #    php -i
+          #    docker logs
