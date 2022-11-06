@@ -123,7 +123,7 @@ jobs:
             run: |
                 export DB_HOST=mysql
                 export GITHUB_ACTION=
-                export TESTSTACK_config-file=doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config-file }}
+                export TESTSTACK_config-file='doc/config_examples/bundle_with_extra_dependencies/${{ matrix.config-file }}'
                 ./teststack logs
                 ./teststack ps
                 ./teststack services
