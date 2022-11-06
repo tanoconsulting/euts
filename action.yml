@@ -95,3 +95,9 @@ runs:
             fi
         shell: bash
         if: ${{ inputs.run-on == 'containers' }}
+      -
+        run: |
+            echo "Error: unsupported value '${{ inputs.run-on }}' for `run-on` input"
+            exit 1
+        shell: bash
+        if: ${{ inputs.run-on != 'containers' && inputs.run-on != 'host' }}
