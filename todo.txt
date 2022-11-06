@@ -4,13 +4,6 @@ v0.w - docs
 
 - add examples using a simpler set of packages: ez only
 
-- add examples using a legacy-only extension (ezdbi)
-
-- find a better command than `git clone`, to insure users always get the latest tag instead of 'main' on install
-  (this is alleviated for gha when using as an action)
-
-- document better: the choices for passing github auth to the teststack
-
 - document better: running tests for ezp-legacy extensions
 
 v0.x - more test coverage, cleanups

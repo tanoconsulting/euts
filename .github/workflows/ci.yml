@@ -149,7 +149,7 @@ jobs:
             env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-          # 4th same as above, but via the custom GitHub Action we implement
+          # 4th test: same as above, but via the custom GitHub Action we implement
 
           - name: GHA action test - container based
             uses: ./
