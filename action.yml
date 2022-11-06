@@ -1,4 +1,4 @@
-# This is the definition of a custom GitHub Action, allowing super-easy usage of this tool in GitHub
+# This is the definition of a custom GitHub Action, allowing super-easy usage of this tool in GitHub workflows
 
 name: 'eZPlatform Ultimate Test Stack'
 description: 'Sets up the desired eZPlatform version and runs tests'
@@ -9,7 +9,7 @@ inputs:
         required: true
         default: ''
     run-on:
-        description: 'Whether to use Docker Containers or run tests on the runner VM. Values: host, containers'
+        description: 'Whether to use Docker Containers or run tests on the runner VM. Values: host, containers. When using containers, you have to leave the DB_HOST env var empty or set it to `mysql`'
         required: true
         default: 'host'
     test-command:
