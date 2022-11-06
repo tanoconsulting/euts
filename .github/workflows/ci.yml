@@ -149,6 +149,11 @@ jobs:
             env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+          - name: cleanup env
+            run: |
+                sudo rm -rf docker/data/mysql/*
+                sudo rm -rf docker/logs/mysql/*
+
           # 4th test: same as above, but via the custom GitHub Action we implement
 
           - name: GHA action test - container based
