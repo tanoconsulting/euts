@@ -1,12 +1,5 @@
 See also: https://github.com/tanoconsulting/euts/issues
 
-v0.a - finish GHA action
-
-1. make it possible to request only parts of the setup: make them all optional (also outside gha?)
-2. test gha action 'containers' mode
-2. do test gha action as part of CI
-3. inception!: when in 'local' mode, make it also possible to set up a custom db version in gha, with an if
-
 v0.w - docs
 
 - add examples using a simpler set of packages: ez only
@@ -51,6 +44,11 @@ v0.x - more test coverage, cleanups
 - add to .gitignore the files generated during local run of teststack testing
 
 v0.y - features
+
+- make it possible to request only parts of the setup: make them all optional (in gha action, but also outside it?)
+
+- inception!: when in 'host' mode, make it also possible to set up a custom db version in gha, with an if (or just add an
+   example using an existing gha action?)
 
 - set up 2 env vars, similar to what GHA does, for the teststack root dir and workspace root dir - in case we allow custom
   setup scripts

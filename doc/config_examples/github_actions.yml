@@ -27,7 +27,7 @@ jobs:
             EZ_PACKAGES: ${{ matrix.ez_packages }}
             # Depending on the version of eZPlatform in use, you need to set up either SYMFONY_ENV or APP_ENV
             SYMFONY_ENV: behat
-            APP_ENV: behat
+            #APP_ENV: behat
         strategy:
             # A large test matrix - running tests at least once for each stable PHP version, and across as many different
             # versions as possible of eZPublish / eZPlatform 1 and 2.
@@ -104,7 +104,8 @@ jobs:
                 uses: actions/checkout@v2
 
             -   name: set up the test stack and run tests
-                uses: tanoconsulting/euts@v1
+                # if you prefer to always get the freshest version of the test stack, use `main` instead of a tagged version
+                uses: tanoconsulting/euts@0.8.0
                 with:
                     # Generate code coverage data and upload it to an online service, only for one case of the test matrix
                     code-coverage-service: ${{ matrix.code-coverage }}
