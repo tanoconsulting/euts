@@ -145,7 +145,7 @@ jobs:
                 ./teststack stop
                 ./teststack cleanup logs
                 ./teststack -y cleanup containers
-                ./teststack -y cleanup data
+                sudo ./teststack -y cleanup data
             env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
