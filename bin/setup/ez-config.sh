@@ -76,7 +76,7 @@ fi
 # only for ezplatform4
 if [ -f "${STACK_DIR}/config/${EZ_VERSION}/ibexa.yaml" ]; then
     grep -q 'ibexa_orig.yaml' "${CONFIG_DIR}/packages/ibexa.yaml" || mv "${CONFIG_DIR}/packages/ibexa.yaml" "${CONFIG_DIR}/packages/ibexa_orig.yaml"
-    cp "${STACK_DIR}/config/${EZ_VERSION}/ibexa.yml" "${CONFIG_DIR}/packages/ibexa.yaml"
+    cp "${STACK_DIR}/config/${EZ_VERSION}/ibexa.yaml" "${CONFIG_DIR}/packages/ibexa.yaml"
 fi
 
 if [ -n "${EZ_TEST_CONFIG_SYMFONY}" ]; then

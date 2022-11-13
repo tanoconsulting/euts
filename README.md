@@ -18,6 +18,7 @@ Features:
 * allows to run your bundle's tests on many versions of Debian/Ubuntu as underlying OS (Docker execution only)
 * provides a single command-line tool for managing the test stack and running tests, including maintenance operations
   such as database reset, logs cleanup, etc... (Docker execution only)
+* it even allows to test pure-legacy eZ4 extensions on eZPublish-Community
 
 It works by:
 1. setting up a set of Docker Containers as test environment, with all the components required to run eZ (php, mysql, nodejs, etc...)
