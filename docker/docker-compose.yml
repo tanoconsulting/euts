@@ -11,8 +11,8 @@ services:
                 debian_version: ${TESTSTACK_DEBIAN_VERSION:-buster}
                 debian_mirror: ${TESTSTACK_DEBIAN_MIRROR:-none}
                 do_update_os: ${TESTSTACK_UPDATE_OS_ON_BUILD:-true}
-                # @todo test using ${TESTSTACK_PHP_VERSION:-${PHP_VERSION:-default}}
                 php_version: ${TESTSTACK_PHP_VERSION:-default}
+                node_version: ${TESTSTACK_NODE_VERSION:-default}
                 project_name: ${COMPOSE_PROJECT_NAME:-euts}
                 timezone: ${TESTSTACK_TZ:-none}
         hostname: ez
@@ -29,6 +29,7 @@ services:
             - TESTSTACK_SETUP_APP_ON_BOOT
             # unluckily using PHP_VERSION=${TESTSTACK_PHP_VERSION:-${PHP_VERSION}} does not work
             - TESTSTACK_PHP_VERSION
+            - TESTSTACK_NODE_VERSION
             ## Database configuration
             - DB_TYPE=${DB_TYPE:-mysql}
             - DB_HOST

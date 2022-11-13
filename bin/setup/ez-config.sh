@@ -21,7 +21,9 @@ INSTALL_LEGACY_BRIDGE=false
 STACK_DIR="$(dirname -- "$(dirname -- "$(dirname -- "${BASH_SOURCE[0]}")")")"
 
 APP_DIR="$(dirname "${KERNEL_DIR}")"
-if [ "${EZ_VERSION}" = "ezplatform33" ]; then
+if [ "${EZ_VERSION}" = "ezplatform4" ]; then
+    CONFIG_DIR="${APP_DIR}/config"
+elif [ "${EZ_VERSION}" = "ezplatform33" ]; then
     CONFIG_DIR="${APP_DIR}/config"
 elif [ "${EZ_VERSION}" = "ezplatform3" ]; then
     CONFIG_DIR="${APP_DIR}/config"
@@ -37,7 +39,9 @@ else
 fi
 
 # hopefully these bundles will stay there :-) it is important that they are loaded after the kernel ones...
-if [ "${EZ_VERSION}" = "ezplatform3" -o "${EZ_VERSION}" = "ezplatform33" ]; then
+if [ "${EZ_VERSION}" = "ezplatform4" ]; then
+    LAST_BUNDLE='Lexik\\Bundle\\JWTAuthenticationBundle\\LexikJWTAuthenticationBundle' # @todo verify !!!
+elif [ "${EZ_VERSION}" = "ezplatform3" -o "${EZ_VERSION}" = "ezplatform33" ]; then
     LAST_BUNDLE='Lexik\\Bundle\\JWTAuthenticationBundle\\LexikJWTAuthenticationBundle'
 elif [ "${EZ_VERSION}" = "ezplatform" -o "${EZ_VERSION}" = "ezplatform2" ]; then
     LAST_BUNDLE=AppBundle
@@ -68,6 +72,11 @@ if [ -f "${STACK_DIR}/config/${EZ_VERSION}/ezplatform.yml" ]; then
     fi
     grep -q 'ezplatform_orig.yaml' "${CONFIG_DIR}/packages/${SUBDIR}ezplatform.yaml" || mv "${CONFIG_DIR}/packages/${SUBDIR}ezplatform.yaml" "${CONFIG_DIR}/packages/${SUBDIR}ezplatform_orig.yaml"
     cp "${STACK_DIR}/config/${EZ_VERSION}/ezplatform.yml" "${CONFIG_DIR}/packages/${SUBDIR}ezplatform.yaml"
+fi
+# only for ezplatform4
+if [ -f "${STACK_DIR}/config/${EZ_VERSION}/ezplatform.yml" ]; then
+    grep -q 'ibexa_orig.yaml' "${CONFIG_DIR}/packages/ibexa.yaml" || mv "${CONFIG_DIR}/packages/ibexa.yaml" "${CONFIG_DIR}/packages/ibexa_orig.yaml"
+    cp "${STACK_DIR}/config/${EZ_VERSION}/ibexa.yml" "${CONFIG_DIR}/packages/ibexa.yaml"
 fi
 
 if [ -n "${EZ_TEST_CONFIG_SYMFONY}" ]; then
@@ -136,15 +145,19 @@ if [ -f "vendor/liip/imagine-bundle/Resources/config/routing.yaml" -a -f vendor/
     sed -i 's#resource: "@LiipImagineBundle/Resources/config/routing.xml"#resource: "@LiipImagineBundle/Resources/config/routing.yml"#' vendor/ezsystems/ezpublish-community/ezpublish/config/routing.yml
 fi
 
-# EzPlatform 3 stuff - a lot of it!
-if [ "${EZ_VERSION}" = "ezplatform3" -o "${EZ_VERSION}" = "ezplatform33" ]; then
+# EzPlatform 3/4 stuff - a lot of it!
+if [ "${EZ_VERSION}" = "ezplatform3" -o "${EZ_VERSION}" = "ezplatform33" -o "${EZ_VERSION}" = "ezplatform4" ]; then
     # 1. Registration of services from ezplatform/config/services_behat.yml fails
     # @todo investigate if there is a better alternative to this "fix"
     if [ -f "${CONFIG_DIR}/services_behat.yaml" ]; then
         mv "${CONFIG_DIR}/services_behat.yaml" "${CONFIG_DIR}/services_behat.yaml.orig"
     fi
     # 2. Fix EzSystemsEzPlatformGraphQLExtension::PACKAGE_DIR_PATH, or the derived ezplatform.graphql.schema.fields_definition_file, ezplatform.graphql.package.root_dir
-    sed -i "s#const PACKAGE_DIR_PATH = '/vendor/ezsystems/ezplatform-graphql'#const PACKAGE_DIR_PATH = '/../../../vendor/ezsystems/ezplatform-graphql'#" vendor/ezsystems/ezplatform-graphql/src/DependencyInjection/EzSystemsEzPlatformGraphQLExtension.php
+    if [ -f vendor/ezsystems/ezplatform-graphql/src/DependencyInjection/EzSystemsEzPlatformGraphQLExtension.php ]; then
+        sed -i "s#const PACKAGE_DIR_PATH = '/vendor/ezsystems/ezplatform-graphql'#const PACKAGE_DIR_PATH = '/../../../vendor/ezsystems/ezplatform-graphql'#" vendor/ezsystems/ezplatform-graphql/src/DependencyInjection/EzSystemsEzPlatformGraphQLExtension.php
+    elif [ -f vendor/ibexa/graphql/src/bundle/DependencyInjection/IbexaGraphQLExtension.php ]; then
+        sed -i "s#const PACKAGE_DIR_PATH = '/vendor/ibexa/graphql'#const PACKAGE_DIR_PATH = '/../../../vendor/ibexa/graphql'#" vendor/ibexa/graphql/src/bundle/DependencyInjection/IbexaGraphQLExtension.php
+    fi
     # 3. Inconsistency between ocramius/proxy-manager and symfony/proxy-manager-bridge (composer version matching is too loose
     #    and there will probably be no minor versions released for old symfony/proxy-manager-bridge)
     #    Symfony\Bridge\ProxyManager\LazyProxy\PhpDumper\LazyLoadingValueHolderGenerator to move from Zend\Code\Generator\ClassGenerator to Laminas
@@ -154,9 +167,16 @@ if [ "${EZ_VERSION}" = "ezplatform3" -o "${EZ_VERSION}" = "ezplatform33" ]; then
         fi
     fi
     # 4. Hack InstallPlatformCommand.php and friends, fix $console = escapeshellarg('bin/console');
-    sed -i "s#escapeshellarg('bin/console')#escapeshellarg('${CONSOLE_CMD}')#" vendor/ezsystems/ezplatform-kernel/eZ/Bundle/PlatformInstallerBundle/src/Command/InstallPlatformCommand.php
-    sed -i "s#escapeshellarg('bin/console')#escapeshellarg('${CONSOLE_CMD}')#" vendor/ezsystems/ezplatform-kernel/eZ/Bundle/EzPublishCoreBundle/Features/Context/ConsoleContext.php
-    sed -i "s#escapeshellarg('bin/console')#escapeshellarg('${CONSOLE_CMD}')#" vendor/ezsystems/behatbundle/src/bundle/Command/CreateExampleDataManagerCommand.php
+    # @todo check ezp4 support for this step !!!
+    if [ -f vendor/ezsystems/ezplatform-kernel/eZ/Bundle/PlatformInstallerBundle/src/Command/InstallPlatformCommand.php ]; then
+        sed -i "s#escapeshellarg('bin/console')#escapeshellarg('${CONSOLE_CMD}')#" vendor/ezsystems/ezplatform-kernel/eZ/Bundle/PlatformInstallerBundle/src/Command/InstallPlatformCommand.php
+    fi
+    if [ -f vendor/ezsystems/ezplatform-kernel/eZ/Bundle/EzPublishCoreBundle/Features/Context/ConsoleContext.php ]; then
+        sed -i "s#escapeshellarg('bin/console')#escapeshellarg('${CONSOLE_CMD}')#" vendor/ezsystems/ezplatform-kernel/eZ/Bundle/EzPublishCoreBundle/Features/Context/ConsoleContext.php
+    fi
+    if [ -f vendor/ezsystems/behatbundle/src/bundle/Command/CreateExampleDataManagerCommand.php ]; then
+        sed -i "s#escapeshellarg('bin/console')#escapeshellarg('${CONSOLE_CMD}')#" vendor/ezsystems/behatbundle/src/bundle/Command/CreateExampleDataManagerCommand.php
+    fi
     # 5. create dir ./public/var
     if [ ! -d public/var ]; then
         mkdir -p public/var
@@ -287,7 +307,7 @@ if [ "${EZ_VERSION}" = "ezpublish-community" -o "${INSTALL_LEGACY_BRIDGE}" = tru
 fi
 
 # Make sure there is yarn installed, finish setting up the app
-if [ "${EZ_VERSION}" = "ezplatform33" ]; then
+if [ "${EZ_VERSION}" = "ezplatform33" -o "${EZ_VERSION}" = "ezplatform4" ]; then
     if which yarn >/dev/null 2>/dev/null; then
         :
     else
@@ -310,6 +330,9 @@ if [ -f phpunit.xml.dist ]; then
     elif [ "${EZ_VERSION}" = "ezplatform3" ]; then
         sed -i 's/"vendor\/ezsystems\/ezpublish-community\/ezpublish"/"vendor\/ezsystems\/ezplatform\/src"/' phpunit.xml.dist
     elif [ "${EZ_VERSION}" = "ezplatform33" ]; then
+        sed -i 's/"vendor\/ezsystems\/ezpublish-community\/ezpublish"/"vendor\/ibexa\/oss-skeleton\/src"/' phpunit.xml.dist
+    elif [ "${EZ_VERSION}" = "ezplatform4" ]; then
+        # @todo !!!
         sed -i 's/"vendor\/ezsystems\/ezpublish-community\/ezpublish"/"vendor\/ibexa\/oss-skeleton\/src"/' phpunit.xml.dist
     fi
 fi

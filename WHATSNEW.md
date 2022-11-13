@@ -1,5 +1,12 @@
-Version 0.8
-===========
+Version 0.9.0 (unreleased)
+==========================
+
+* new: support installation of Ibexa 4
+
+* new: allow specifying a custom version of NodeJS to install, via env var TESTSTACK_NODE_VERSION
+
+Version 0.8.0
+=============
 
 * new: simplified using the test stack on GitHub Actions by making it available as a custom action. This usage is
   documented via the example [GHA workflow](doc/config_examples/github_actions.yml)

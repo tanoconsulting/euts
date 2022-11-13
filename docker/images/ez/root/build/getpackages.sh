@@ -7,11 +7,13 @@
 # @todo move redis, memcached to dedicated, optional containers ? This allows running a user-specified version...
 # @todo install elasticache (or is it done by the eZ bundles?)
 # @todo allow optional install of custom packages (is it better here or at boot time?)
-# @todo in case this file is used outside of docker: check that os is debian/ubuntu before trying to install php
 
 echo "Installing software packages..."
 
+# @todo use option parsing for a better command api
 PHP_VERSION=$1
+NODE_VERSION=$2
+
 # `lsb-release` is not yet onboard...
 DEBIAN_VERSION=$(cat /etc/os-release | grep 'VERSION_CODENAME=' | sed 's/VERSION_CODENAME=//')
 if [ -z "${DEBIAN_VERSION}" ]; then
@@ -51,18 +53,12 @@ else
         zip
 fi
 
-# @todo allow install a specific node version, or none, across all OS versions (split the task in its own script). See:
-#       https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-debian-8
-#       https://github.com/nvm-sh/nvm
-#       https://classic.yarnpkg.com/en/docs/install/#debian-stable
-#       https://github.com/nodesource/distributions/blob/master/README.md#deb
-if [ "${DEBIAN_VERSION}" = jessie -o "${DEBIAN_VERSION}" = stretch ]; then
-    echo "NB: not installing npm"
-else
-    DEBIAN_FRONTEND=noninteractive apt-get install -y npm
-fi
-
 echo Done
+
+if [ -n "${NODE_VERSION}" ]; then
+    # @todo what if we are not in the correct dir?
+    ./getnode.sh "${NODE_VERSION}" norefresh
+fi
 
 if [ -n "${PHP_VERSION}" ]; then
     # @todo what if we are not in the correct dir?

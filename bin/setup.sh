@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-# Set up fully the test environment (except for installing required sw packages): mysql, php, composer, eZ, etc...
+# Set up fully the test environment (except for installing required sw packages other than node and php): mysql, nodejs, php, composer, eZ, etc...
 # Has to be useable from the Docker test container as well as locally in Travis and GH-hosted runners.
 # Has to be run from the project (bundle) top dir.
 #
-# Uses env vars: TRAVIS, PHP_VERSION, GITHUB_ACTION
+# Uses env vars: TRAVIS, PHP_VERSION, NODE_VERSION, GITHUB_ACTION
 
 # @todo check if all required env vars have a value
 # @todo support a -v option
@@ -23,6 +23,16 @@ if [ -n "${TESTSTACK_PHP_VERSION}" ]; then
     else
         if [ "${TESTSTACK_PHP_VERSION}" != "${PHP_VERSION}" ]; then
             printf "\n\e[31mERROR:\e[0m env var TESTSTACK_PHP_VERSION is set and different from PHP_VERSION\n\n" >&2
+            exit 1
+        fi
+    fi
+fi
+if [ -n "${TESTSTACK_NODE_VERSION}" ]; then
+    if [ -z "${NODE_VERSION}" ]; then
+        export NODE_VERSION="${TESTSTACK_NODE_VERSION}"
+    else
+        if [ "${TESTSTACK_NODE_VERSION}" != "${NODE_VERSION}" ]; then
+            printf "\n\e[31mERROR:\e[0m env var TESTSTACK_NODE_VERSION is set and different from NODE_VERSION\n\n" >&2
             exit 1
         fi
     fi
@@ -51,6 +61,10 @@ if [ "${PHP_VERSION}" = "5.6" -a -n "${TRAVIS}" ]; then
     #systemctl list-units --type=service
 fi
 
+if [ -n "${NODE_VERSION}" ]; then
+    "${BIN_DIR}/setup/node.sh"
+fi
+
 if [ -n "${PHP_VERSION}" ]; then
     "${BIN_DIR}/setup/php.sh"
 fi
@@ -73,13 +87,13 @@ if [ -n "${TRAVIS}" -o -n "${GITHUB_ACTION}" ]; then
 fi
 
 source "$(dirname -- "${BASH_SOURCE[0]}")/set-env-vars.sh"
-if [ "${EZ_VERSION}" != "ezplatform3" -a "${EZ_VERSION}" != "ezplatform33" ]; then
+if [ "${EZ_VERSION}" != "ezplatform3" -a "${EZ_VERSION}" != "ezplatform33"  -a "${EZ_VERSION}" != "ezplatform4" ]; then
     # Create the database from sql files present in either the legacy stack or kernel (has to be run after composer install)
     "${BIN_DIR}/create-db.sh"
     # Set up eZ configuration files (if ez legacy is installed, this runs a legacy script, which might fail with no db schema available)
     "${BIN_DIR}/setup/ez-config.sh"
 else
-    # For eZPlatform 3, we have to swap the order of execution
+    # For eZPlatform 3 and 4, we have to swap the order of execution
     "${BIN_DIR}/setup/ez-config.sh"
     "${BIN_DIR}/create-db.sh"
 fi

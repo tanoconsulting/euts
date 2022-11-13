@@ -10,6 +10,7 @@ ARG debian_version=buster
 ARG do_shrink_container=true
 ARG do_update_os=true
 ARG php_version=default
+ARG node_version=default
 ARG project_name=euts
 ARG timezone=none
 
@@ -36,7 +37,7 @@ RUN chmod 755 /root/build/*.sh
 # -----------------------------------------------------------------------------
 # depending on os version, the package list will be different
 RUN mkdir -p /usr/share/man/man1; mkdir -p /usr/share/man/man7; \
-    cd /root/build/ && ./getpackages.sh "${php_version}"
+    cd /root/build/ && ./getpackages.sh "${php_version}" "${node_version}"
 
 # Install Composer (a more recent version than the stock one)
 # -----------------------------------------------------------------------------
