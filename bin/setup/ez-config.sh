@@ -40,7 +40,7 @@ fi
 
 # hopefully these bundles will stay there :-) it is important that they are loaded after the kernel ones...
 if [ "${EZ_VERSION}" = "ezplatform4" ]; then
-    LAST_BUNDLE='Lexik\\Bundle\\JWTAuthenticationBundle\\LexikJWTAuthenticationBundle' # @todo verify !!!
+    LAST_BUNDLE='Lexik\\Bundle\\JWTAuthenticationBundle\\LexikJWTAuthenticationBundle'
 elif [ "${EZ_VERSION}" = "ezplatform3" -o "${EZ_VERSION}" = "ezplatform33" ]; then
     LAST_BUNDLE='Lexik\\Bundle\\JWTAuthenticationBundle\\LexikJWTAuthenticationBundle'
 elif [ "${EZ_VERSION}" = "ezplatform" -o "${EZ_VERSION}" = "ezplatform2" ]; then
@@ -167,12 +167,17 @@ if [ "${EZ_VERSION}" = "ezplatform3" -o "${EZ_VERSION}" = "ezplatform33" -o "${E
         fi
     fi
     # 4. Hack InstallPlatformCommand.php and friends, fix $console = escapeshellarg('bin/console');
-    # @todo check ezp4 support for this step !!!
     if [ -f vendor/ezsystems/ezplatform-kernel/eZ/Bundle/PlatformInstallerBundle/src/Command/InstallPlatformCommand.php ]; then
         sed -i "s#escapeshellarg('bin/console')#escapeshellarg('${CONSOLE_CMD}')#" vendor/ezsystems/ezplatform-kernel/eZ/Bundle/PlatformInstallerBundle/src/Command/InstallPlatformCommand.php
     fi
+    if [ -f vendor/ibexa/core/src/bundle/RepositoryInstaller/Command/InstallPlatformCommand.php ]; then
+        sed -i "s#escapeshellarg('bin/console')#escapeshellarg('${CONSOLE_CMD}')#" vendor/ibexa/core/src/bundle/RepositoryInstaller/Command/InstallPlatformCommand.php
+    fi
     if [ -f vendor/ezsystems/ezplatform-kernel/eZ/Bundle/EzPublishCoreBundle/Features/Context/ConsoleContext.php ]; then
         sed -i "s#escapeshellarg('bin/console')#escapeshellarg('${CONSOLE_CMD}')#" vendor/ezsystems/ezplatform-kernel/eZ/Bundle/EzPublishCoreBundle/Features/Context/ConsoleContext.php
+    fi
+    if [ -f vendor/ibexa/core/src/bundle/Core/Features/Context/ConsoleContext.php ]; then
+        sed -i "s#escapeshellarg('bin/console')#escapeshellarg('${CONSOLE_CMD}')#" vendor/ibexa/core/src/bundle/Core/Features/Context/ConsoleContext.php
     fi
     if [ -f vendor/ezsystems/behatbundle/src/bundle/Command/CreateExampleDataManagerCommand.php ]; then
         sed -i "s#escapeshellarg('bin/console')#escapeshellarg('${CONSOLE_CMD}')#" vendor/ezsystems/behatbundle/src/bundle/Command/CreateExampleDataManagerCommand.php
@@ -330,9 +335,6 @@ if [ -f phpunit.xml.dist ]; then
     elif [ "${EZ_VERSION}" = "ezplatform3" ]; then
         sed -i 's/"vendor\/ezsystems\/ezpublish-community\/ezpublish"/"vendor\/ezsystems\/ezplatform\/src"/' phpunit.xml.dist
     elif [ "${EZ_VERSION}" = "ezplatform33" ]; then
-        sed -i 's/"vendor\/ezsystems\/ezpublish-community\/ezpublish"/"vendor\/ibexa\/oss-skeleton\/src"/' phpunit.xml.dist
-    elif [ "${EZ_VERSION}" = "ezplatform4" ]; then
-        # @todo !!!
         sed -i 's/"vendor\/ezsystems\/ezpublish-community\/ezpublish"/"vendor\/ibexa\/oss-skeleton\/src"/' phpunit.xml.dist
     fi
 fi

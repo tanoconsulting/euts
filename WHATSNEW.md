@@ -1,9 +1,11 @@
-Version 0.9.0 (unreleased)
-==========================
+Version 0.9.0
+=============
 
 * new: support installation of Ibexa 4
 
 * new: allow specifying a custom version of NodeJS to install, via env var TESTSTACK_NODE_VERSION
+
+* improved: telling doctrine the correct version of mysql available, for ezplatform 3
 
 Version 0.8.0
 =============

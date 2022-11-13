@@ -102,18 +102,23 @@ elif [ "${EZ_VERSION}" = "ezplatform" -o "${EZ_VERSION}" = "ezplatform2" ]; then
     # work around bug https://jira.ez.no/browse/EZP-31586: the db schema delivered in kernel 7.5.7 does not contain _all_ columns!
     [[ $(composer show | grep ezsystems/ezpublish-kernel | grep -F -q 7.5.7) ]] && ${EZ_DB_COMMAND} < vendor/ezsystems/ezpublish-kernel/data/update/${DB_TYPE}/dbupdate-7.5.4-to-7.5.5.sql
 
-elif [ "${EZ_VERSION}" = "ezplatform3" -o "${EZ_VERSION}" = "ezplatform33" ]; then
+elif [ "${EZ_VERSION}" = "ezplatform3" -o "${EZ_VERSION}" = "ezplatform33"  -o "${EZ_VERSION}" = "ezplatform4" ]; then
 
-    if [ "${EZ_VERSION}" = "ezplatform33" ]; then
+    if [ "${EZ_VERSION}" = "ezplatform33" -o "${EZ_VERSION}" = "ezplatform4" ]; then
         CMDROOT=ibexa
     else
         CMDROOT=ezplatform
     fi
-    php "${CONSOLE_CMD}" "${CMDROOT}:install" clean --skip-indexing
+    if [ "${EZ_VERSION}" = "ezplatform4" ]; then
+        TYPE=ibexa-oss
+    else
+        TYPE=clean
+    fi
+    php "${CONSOLE_CMD}" "${CMDROOT}:install" "${TYPE}" --skip-indexing
     php "${CONSOLE_CMD}" "${CMDROOT}:graphql:generate-schema"
 fi
 
-if [ "${EZ_VERSION}" != "ezplatform3" -a "${EZ_VERSION}" != "ezplatform33" ]; then
+if [ "${EZ_VERSION}" != "ezplatform3" -a "${EZ_VERSION}" != "ezplatform33" -a "${EZ_VERSION}" != "ezplatform4" ]; then
 
     # @todo do not automatically load the eztags schema, but let the test executor tell us which extra sql files to load
     if [ -f vendor/netgen/tagsbundle/Netgen/TagsBundle/Resources/sql/${DB_TYPE}/schema.sql ]; then

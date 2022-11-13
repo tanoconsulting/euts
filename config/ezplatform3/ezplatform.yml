@@ -1,6 +1,6 @@
 
 # This file will replace (and then include) the equivalent one from eZPlatform distribution
-# Used to set up an eZPlatform env from scratch for testing purposes (eg. on Travis)
+# Used to set up an eZPlatform env from scratch for testing purposes (eg. on GHA)
 
 imports:
     - { resource: ezplatform_orig.yaml }
@@ -25,8 +25,7 @@ parameters:
 
 doctrine:
     dbal:
-        # @todo mysql server version should NOT be hardcoded
-        server_version: '5.6'
+        server_version: '%database_version%'
         url: 'mysql://%database_user%:%database_password%@%database_host%:3306/%database_name%'
 
 framework:

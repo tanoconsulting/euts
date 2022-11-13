@@ -1,0 +1,24 @@
+# This file will replace (and then include) the equivalent one from Ibexa distribution
+# Used to set up an Ibexa env from scratch for testing purposes (eg. on GHA)
+
+imports:
+    - { resource: ibexa_orig.yaml }
+    - { resource: ../config_behat.php }
+
+parameters:
+    ibexa.kernel.root_dir: "%kernel.project_dir%/../../../vendor/ibexa/core"
+    ibexa.field_type.richtext.resources: '%kernel.project_dir%/../../../vendor/ibexa/fieldtype-richtext/src/bundle/Resources/richtext'
+    ibexa.site_access.config.default.fieldtypes.ezrichtext.output_custom_xsl:
+        -
+            path: '%kernel.project_dir%/../../../vendor/ibexa/fieldtype-richtext/src/bundle/Resources/richtext/stylesheets/docbook/xhtml5/output/core.xsl'
+            priority: 0
+
+    ibexa.site_access.config.default.fieldtypes.ezrichtext.edit_custom_xsl:
+        -
+            path: '%kernel.project_dir%/vendor/../../../ibexa/fieldtype-richtext/src/bundle/Resources/richtext/stylesheets/docbook/xhtml5/edit/core.xsl'
+            priority: 0
+
+doctrine:
+    dbal:
+        server_version: '%database_version%'
+        url: 'mysql://%database_user%:%database_password%@%database_host%:3306/%database_name%'

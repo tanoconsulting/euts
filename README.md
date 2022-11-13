@@ -1,17 +1,17 @@
 The eZPlatform Ultimate Test Stack
 ==================================
 
-Makes it easy to run _integration_ or _functional_ tests for eZPlatform/eZPublish bundles, both locally (via Docker) and
-on popular CI services (supported: Travis and GitHub Actions), by setting up automatically the CMS and database, with
-all required dependencies.
+Makes it easy to run _integration_ or _functional_ tests for Ibexa DXP/eZPlatform/eZPublish bundles, both locally (via
+Docker) and on popular CI services (supported: Travis and GitHub Actions), by setting up automatically the CMS and
+database, with all required dependencies.
 
-The target users are developers of bundles for eZPlatform/eZPublish, who want to make sure their code works with
+The target users are developers of bundles for Ibexa/eZPlatform/eZPublish, who want to make sure their code works with
 a specific version of the CMS and database, or on a combination of versions.
 
 Features:
 
-* allows to run your bundle's tests on any version of eZPublish-Community, eZPlatform 1, eZPlatform 2 and eZPlatform 3
-* allows to run your bundle's tests on multiple versions of eZPlatform/eZPublish from a single source directory
+* allows to run your bundle's tests on any version of eZPublish-Community, eZPlatform 1, eZPlatform 2, eZPlatform 3 and Ibexa 4
+* allows to run your bundle's tests on multiple versions of Ibexa/eZPlatform/eZPublish from a single source directory
 * allows specifying extra composer packages to be installed and symfony bundles or legacy extensions to be activated
 * allows to run your bundle's tests on many versions of PHP
 * allows to run your bundle's tests on many versions of MySQL/MariaDB (Docker execution only)
@@ -20,7 +20,7 @@ Features:
   such as database reset, logs cleanup, etc... (Docker execution only)
 
 It works by:
-1. setting up a set of Docker Containers as test environment, with all the components required to run eZ (php, mysql, etc...)
+1. setting up a set of Docker Containers as test environment, with all the components required to run eZ (php, mysql, nodejs, etc...)
 2. downloading and setting up the desired version of eZP and creating the database with the stock schema definition.
 At this point, the testsuite of the bundle in question can be executed.
 
@@ -153,7 +153,8 @@ Quick Start
 
 7. Set up your tests to be run on GitHub Actions
 
-   See an example configuration [github_actions.yml](doc/config_examples/github_actions.yml) file
+   The test stack is available as a custom github action, which can be easily integrated into a GHA workflow. See an
+   example [github_actions.yml](doc/config_examples/github_actions.yml) configuration file.
 
    Note that, to perform tests on GitHub workers, it is not necessary to run the whole tests stack - for most scenarios
    eZ can be set up and the test suite execute without building and starting Docker containers.
@@ -277,7 +278,7 @@ A: behat_site, behat_site_admin as well as behat_site_legacy_admin for eZPublish
 
 Q: What is installed out of the box in the test Container?
 
-A: besides php, you get apache, git, memcached, redis, varnish.
+A: besides php, you get apache, git, memcached, nodejs, redis, varnish.
    Installed php extensions are: curl gd intl json memcached mysql pgsql xdebug xsl.
 
 Q: Why not use the Docker containers definition from eZPlatform?
@@ -304,8 +305,9 @@ A: sure. Start a second shell, go to the project's folder and run `./teststack/t
 Q: Do you know of any bundles which do make use of this one for testing, so that I can explore how they do it?
 
 A: sure. At least the following ones: https://github.com/kaliop-uk/ezmigrationbundle,
-    https://github.com/kaliop-uk/ezworkfloenginebundle, https://github.com/kaliop-uk/ezloreimpsumbundle,
-    https://github.com/kaliop/ezobjectwrapper or https://github.com/tanoconsulting/ezmigrationbundle2
+    https://github.com/kaliop-uk/ezworkflowenginebundle, https://github.com/kaliop-uk/ezloreimpsumbundle,
+    https://github.com/kaliop/ezobjectwrapper, https://github.com/tanoconsulting/ezmigrationbundle2,
+    https://github.com/tanoconsulting/ibexa-migration-bundle or https://github.com/gggeek/ezdbintegrity
 
 Q: When I run the tests on GitHub using Actions, I get an error `Could not authenticate against github.com `
 

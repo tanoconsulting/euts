@@ -80,6 +80,7 @@ if [ -n "${COVERAGE_UPLOAD}" ]; then
     if [ ! -f "${COVERAGE_FILE}" ]; then
         echo "Error: code coverage data not generated"
     else
+        # @todo check if we always have curl onboard. If not, switch to wget
         if [ "${COVERAGE_UPLOAD}" = codecov ]; then
             curl -Os https://uploader.codecov.io/latest/linux/codecov && chmod +x codecov && ./codecov -f "${COVERAGE_FILE}"
         elif [ "${COVERAGE_UPLOAD}" = scrutinizer ]; then

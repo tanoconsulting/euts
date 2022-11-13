@@ -35,6 +35,7 @@ if which composer >/dev/null 2>/dev/null; then
         else
             EZ_VERSION=$(composer show | grep ezsystems/ezplatform-kernel || true)
             if [ -n "${EZ_VERSION}" ]; then
+                # @todo is it correct to check for ibexa/oss? what about EE versions?
                 EZ_VERSION=$(composer show | grep ibexa/oss || true)
                 if [ -z "${EZ_VERSION}" ]; then
                     EZ_VERSION=ezplatform3
@@ -42,8 +43,13 @@ if which composer >/dev/null 2>/dev/null; then
                     EZ_VERSION=ezplatform33
                 fi
             else
-                # @todo detect ezplatform 4
-                :
+                EZ_VERSION=$(composer show | grep ibexa/core || true)
+                if [ -n "${EZ_VERSION}" ]; then
+                    EZ_VERSION=ezplatform4
+                else
+                    # @todo give a specific error message?
+                    :
+                fi
             fi
         fi
         # No need to abort here if  EZ_VERSION is null: we do it later
@@ -64,6 +70,8 @@ else
             EZ_VERSION=ezplatform3
         elif [[ "${EZ_PACKAGES}" == *'ibexa/oss-skeleton:3.3'* ]] || [[ "${EZ_PACKAGES}" == *'ibexa/oss-skeleton:~3.3'* ]] || [[ "${EZ_PACKAGES}" == *'ibexa/oss-skeleton:^3.3'* ]]; then
             EZ_VERSION=ezplatform33
+        elif [[ "${EZ_PACKAGES}" == *'ibexa/oss-skeleton:4.'* ]] || [[ "${EZ_PACKAGES}" == *'ibexa/oss-skeleton:~4.'* ]] || [[ "${EZ_PACKAGES}" == *'ibexa/oss-skeleton:^4.'* ]]; then
+            EZ_VERSION=ezplatform4
         fi
     fi
 fi
@@ -73,7 +81,17 @@ fi
 #fi
 
 # KERNEL_CLASS, KERNEL_DIR vars need to be exported as they are used by subprocesses of the includer shell script
-if [ "${EZ_VERSION}" = "ezplatform33" ]; then
+if [ "${EZ_VERSION}" = "ezplatform4" ]; then
+    if [ -z "${KERNEL_CLASS}" ]; then
+        export KERNEL_CLASS=App\\Kernel
+    fi
+    if [ -z "${KERNEL_DIR}" ]; then
+        export KERNEL_DIR=vendor/ibexa/oss-skeleton/src
+    fi
+    if [ -z "${CONSOLE_CMD}" ]; then
+        CONSOLE_CMD=vendor/ibexa/oss-skeleton/bin/console
+    fi
+elif [ "${EZ_VERSION}" = "ezplatform33" ]; then
     if [ -z "${KERNEL_CLASS}" ]; then
         export KERNEL_CLASS=App\\Kernel
     fi
