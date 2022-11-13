@@ -74,7 +74,7 @@ if [ -f "${STACK_DIR}/config/${EZ_VERSION}/ezplatform.yml" ]; then
     cp "${STACK_DIR}/config/${EZ_VERSION}/ezplatform.yml" "${CONFIG_DIR}/packages/${SUBDIR}ezplatform.yaml"
 fi
 # only for ezplatform4
-if [ -f "${STACK_DIR}/config/${EZ_VERSION}/ezplatform.yml" ]; then
+if [ -f "${STACK_DIR}/config/${EZ_VERSION}/ibexa.yaml" ]; then
     grep -q 'ibexa_orig.yaml' "${CONFIG_DIR}/packages/ibexa.yaml" || mv "${CONFIG_DIR}/packages/ibexa.yaml" "${CONFIG_DIR}/packages/ibexa_orig.yaml"
     cp "${STACK_DIR}/config/${EZ_VERSION}/ibexa.yml" "${CONFIG_DIR}/packages/ibexa.yaml"
 fi

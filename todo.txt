@@ -13,14 +13,14 @@ v0.x - more test coverage, cleanups
 
 - add teststack/bin to $PATH of container user
 
-- when test user logs in via `teststack enter`, we should set KERNEL_DIR, COMPOSER, ... -> run set-env-vars.sh
+- when test user logs in via `teststack enter`, we should set KERNEL_DIR, COMPOSER, ... -> run set-env-vars.sh ?
 
 - improve finding ./docker vs /home/test/teststack/docker in php.sh (why cant we just use ./docker ?)
 
 - improve mysql dockerfile: bring back timezone, cleanup steps working for all base OSes
 
 - make it easier to understand which env vars apply only to the docker version of the stack and which ones apply as well
-  to the CI workers. Start with PHP_VERSION, MYSQL_VERSION
+  to the CI workers. Start with PHP_VERSION, MYSQL_VERSION, NODE_VERSION
 
 - make sure that composer cache is saved in ./docker/data/.composer from the containers (but take care about the case of
   parallel runs of composer install...)
@@ -35,6 +35,8 @@ v0.x - more test coverage, cleanups
 - add .travis.yml for self-testing on Travis (either without docker use, or using ubuntu as base for containers)
 
 - add to .gitignore the files generated during local run of teststack testing
+
+- remove all usages of curl in favout of wget (it seems not to be installed in some ubuntu versions)
 
 v0.y - features
 
@@ -52,7 +54,7 @@ v0.y - features
 - allow easy installation of LegacyBridge to test legacy extensions with eZPL 1 and 2 (eg. ezdbintegrity)
   - finish:
     - OK - test: do legacy extensions of bundles get enabled/symlinked ? (specify a dependency on such a bundle)
-    - OK - same for legacy exts as depepdency (not a bundle)
+    - OK - same for legacy exts as dependency (not a bundle)
     - test: legacy exts inside top-level bundle (ezworkflowengineb.)
     - OK - test: legacy ext as top-level bundle (ezdbi)
     - test all of the above with a CP install too
