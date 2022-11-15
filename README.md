@@ -78,7 +78,8 @@ Quick Start
 
    Add to the configuration file all required values - the full list of available config variables and their purpose is
    found in [.euts.env.example](./.euts.env.example). Some example configuration files can be found in the
-   _doc/config_examples_ folder.
+   _doc/config_examples_ folder. A note for bundles running on Ibexa DXP: it is recommended _not_ to include `symfony/flex`
+   in the EZ_PACKAGES list, as doing so will result in a polluted top-level directory when building the test stack.
 
    You can choose to use a different file name or location than `./.euts.env`, in which case you would have to tell it
    to the `teststack` command, either via usage of the `-e` option, or by setting the environment variable TESTSTACK_CONFIG_FILE.
@@ -225,11 +226,14 @@ How It Works
         - .euts.env (can be in other locations as well)
         - teststack (can be in other locations as well)
             - ...
+        - vendor (appears as a broken symlink, but it works within the container!)
         - vendor_xxx
             - ezsystems
                 - ezplatform (for eZPlatform)
                 - ezpublish-community (for eZPublish-Community)
                 - ezpublish-legacy (for eZPublish-Community or eZPlatform with LegacyBrdige)
+                - ...
+            - ibexa (for Ibexa DXP)
                 - ...
             - ... (other dependencies)
         - ... (your bundle code)
@@ -281,6 +285,14 @@ Q: What is installed out of the box in the test Container?
 
 A: besides php, you get apache, git, memcached, nodejs, redis, varnish.
    Installed php extensions are: curl gd intl json memcached mysql pgsql xdebug xsl.
+
+Q: does the test stack provide any phpunit TestCase class or other php helper code with specific support for eZ?
+
+A: no. The goal of the test stack is to allow bundle developers to be able to quickly have a working eZ installation
+   and ake it easy to troubleshoot it. The choice of a testing framework / workflow / pattern is left to each developer.
+   There is a list of bundles using the test stack, provided below, which do have fe. examples of phunit TestCase classes
+   specifically developed to ease execution of symfony console commands.
+   What is provided as part of the test stack is an easy way to reset the eZ database between test runs.
 
 Q: Why not use the Docker containers definition from eZPlatform?
 
