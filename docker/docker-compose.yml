@@ -19,11 +19,16 @@ services:
         container_name: ${COMPOSE_PROJECT_NAME:-euts}_ez
         environment:
             ## Configuration used by the boot/setup scripts
-            - COMPOSER_AUTH
             - CONTAINER_USER_UID=${CONTAINER_USER_UID:-1000}
             - CONTAINER_USER_GID=${CONTAINER_USER_GID:-1000}
             - http_proxy
             - https_proxy
+            # Composer configuration
+            - COMPOSER_AUTH
+            - COMPOSER_IGNORE_PLATFORM_REQS
+            - COMPOSER_MAX_PARALLEL_HTTP
+            - COMPOSER_PREFER_LOWEST
+            - COMPOSER_PROCESS_TIMEOUT
             # Note that leaving this an empty default ha an effect on the name of the vendor folder and composer files which get set up
             - COMPOSE_PROJECT_NAME
             - TESTSTACK_SETUP_APP_ON_BOOT

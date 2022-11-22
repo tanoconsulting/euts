@@ -1,3 +1,9 @@
+Version 0.10.0
+==============
+
+* new: support environment variables COMPOSER_IGNORE_PLATFORM_REQS, COMPOSER_MAX_PARALLEL_HTTP, COMPOSER_PREFER_LOWEST,
+  COMPOSER_PROCESS_TIMEOUT
+
 Version 0.9.0
 =============
 

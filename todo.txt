@@ -36,7 +36,9 @@ v0.x - more test coverage, cleanups
 
 - add to .gitignore the files generated during local run of teststack testing
 
-- remove all usages of curl in favout of wget (it seems not to be installed in some ubuntu versions)
+- remove all usages of curl in favour of wget (it seems not to be installed in some ubuntu versions)
+
+- improve the output when running as gha action (see shivammatur/php for an example)
 
 v0.y - features
 
@@ -59,8 +61,6 @@ v0.y - features
     - OK - test: legacy ext as top-level bundle (ezdbi)
     - test all of the above with a CP install too
   - OK - do set up legacy-routing when setting up LBridge
-
-- allow setup.sh to run composer with `--prefer-lowest`
 
 - add some browser-based tests to the GHA ones
 
