@@ -15,6 +15,7 @@ jobs:
             # step below.
             # An alternative setup is to save all the environment variables for each case of the test matrix in a dedicated
             # configuration file, and pass it to the `configuration-file` input to the action
+            # The complete list of environment variables supported by the action is documented in file .euts.env.example
             DB_HOST: localhost
             DB_TYPE: mysql
             DB_ROOT_PASSWORD: root
@@ -101,11 +102,11 @@ jobs:
             # services, etc
 
             -   name: check out the source code
-                uses: actions/checkout@v2
+                uses: actions/checkout@v3
 
             -   name: set up the test stack and run tests
                 # if you prefer to always get the freshest version of the test stack, use `main` instead of a tagged version
-                uses: tanoconsulting/euts@0.9.0
+                uses: tanoconsulting/euts@0.10.0
                 with:
                     # Generate code coverage data and upload it to an online service, only for one case of the test matrix
                     code-coverage-service: ${{ matrix.code-coverage }}
