@@ -17,7 +17,7 @@ v0.x - more test coverage, cleanups
 
 - improve finding ./docker vs /home/test/teststack/docker in php.sh (why cant we just use ./docker ?)
 
-- improve mysql dockerfile: bring back timezone, cleanup steps working for all base OSes
+- improve mysql dockerfile: bring back timezone, cleanup steps working for all base OSes (debian & centos)
 
 - make it easier to understand which env vars apply only to the docker version of the stack and which ones apply as well
   to the CI workers. Start with PHP_VERSION, MYSQL_VERSION, NODE_VERSION
@@ -55,12 +55,7 @@ v0.y - features
 
 - allow easy installation of LegacyBridge to test legacy extensions with eZPL 1 and 2 (eg. ezdbintegrity)
   - finish:
-    - OK - test: do legacy extensions of bundles get enabled/symlinked ? (specify a dependency on such a bundle)
-    - OK - same for legacy exts as dependency (not a bundle)
-    - test: legacy exts inside top-level bundle (ezworkflowengineb.)
-    - OK - test: legacy ext as top-level bundle (ezdbi)
-    - test all of the above with a CP install too
-  - OK - do set up legacy-routing when setting up LBridge
+    - test: testing of legacy exts inside top-level bundle (ezworkflowengineb.)
 
 - add some browser-based tests to the GHA ones
 
@@ -90,6 +85,8 @@ v0.z?
   (this will need to add a port mapping to mysql docker-compose file)
 
 - add support for custom db ports (is there an env var for that in stock mysql container?)
+
+- restructure Dockerfile of the 3 images we ship to make the built images as small as possible
 
 - test using ubuntu as base image for docker builds instead of debian: all php/ubuntu versions (see which docker
   images are pre-loaded on gha ubuntu 20, 22 workers)
