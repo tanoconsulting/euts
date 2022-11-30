@@ -14,7 +14,10 @@ if [ -z "${NODE_VERSION}" ]; then
     exit 1
 fi
 
-DEBIAN_VERSION=$(lsb_release -s -c)
+DEBIAN_VERSION=$(cat /etc/os-release | grep 'VERSION_CODENAME=' | sed 's/VERSION_CODENAME=//')
+if [ -z "${DEBIAN_VERSION}" ]; then
+    DEBIAN_VERSION=$(cat /etc/os-release | grep 'VERSION=' | grep 'VERSION=' | sed 's/VERSION=//' | sed 's/"[0-9.]\+ *(\?//' | sed 's/)\?"//' | tr '[:upper:]' '[:lower:]' | sed 's/lts, *//' | sed 's/ \+tahr//')
+fi
 
 # we refresh the apt cache here, in case this is executed outside getpackages.sh
 if [ "$2" != norefresh ]; then

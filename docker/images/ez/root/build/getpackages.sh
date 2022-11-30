@@ -14,10 +14,13 @@ echo "Installing software packages..."
 PHP_VERSION=$1
 NODE_VERSION=$2
 
-# `lsb-release` is not yet onboard...
+# `lsb-release` is not necessarily onboard. We parse /etc/os-release instead
 DEBIAN_VERSION=$(cat /etc/os-release | grep 'VERSION_CODENAME=' | sed 's/VERSION_CODENAME=//')
 if [ -z "${DEBIAN_VERSION}" ]; then
-    DEBIAN_VERSION=$(cat /etc/os-release | grep 'VERSION=' | sed 's/VERSION=//' | sed 's/"[0-9] *(//' | sed 's/)"//')
+    # Example strings:
+    # VERSION="14.04.6 LTS, Trusty Tahr"
+    # VERSION="8 (jessie)"
+    DEBIAN_VERSION=$(cat /etc/os-release | grep 'VERSION=' | grep 'VERSION=' | sed 's/VERSION=//' | sed 's/"[0-9.]\+ *(\?//' | sed 's/)\?"//' | tr '[:upper:]' '[:lower:]' | sed 's/lts, *//' | sed 's/ \+tahr//')
 fi
 
 if [ "${DEBIAN_VERSION}" = jessie ]; then
@@ -38,7 +41,6 @@ apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y "${FORCE_OPT
     default-jre-headless \
     "${MYSQL_CLIENT}" \
     git \
-    lsb-release \
     memcached \
     postgresql-client \
     redis-server \
