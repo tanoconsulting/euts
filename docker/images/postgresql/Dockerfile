@@ -29,6 +29,7 @@ COPY initdb.sh /docker-entrypoint-initdb.d/initdb.sh
 RUN chmod 755 /docker-entrypoint-initdb.d/initdb.sh
 
 # Clear archives in apt cache folder to slim down the image
+# NB: this in fact only works as intended if executed in the same step as the apt update and install...
 # -----------------------------------------------------------------------------
 RUN if [ "${do_shrink_container}" != "false" ]; then apt-get clean && rm -rf /var/lib/apt/lists/*; fi
 

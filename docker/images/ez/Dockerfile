@@ -14,6 +14,12 @@ ARG node_version=default
 ARG project_name=euts
 ARG timezone=none
 
+# @todo the usage of several RUN/COPY steps in this docker file will most likely result in a huge image on disk.
+# Otoh, the ordering of those steps has been devised to reduce the number of image layers to be rebuilt when the
+# underlying configuration does change, making image rebuilds faster (this of course depends on the frequency of
+# change in the image setup files). Would we be better off with using as few install steps as possible, ie. a few COPY
+# at the start and then a single RUN?
+
 # Set up debian mirror
 # (use fixed debian mirrors if you have problems building on a given day)
 # @todo if we are on jessie or stretch, we might as well add the freexian elts repos. If we are on xenial, allow the
@@ -50,6 +56,7 @@ RUN apt-get remove -y composer || echo An error on the line above is ok; \
 RUN /root/build/createuser.sh
 
 # Clear archives in apt cache folder to slim down the image
+# NB: this in fact only works as intended if executed in the same step as the apt update and install...
 # -----------------------------------------------------------------------------
 RUN if [ "${do_shrink_container}" != "false" ]; then apt-get clean && rm -rf /var/lib/apt/lists/*; fi
 

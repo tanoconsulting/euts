@@ -4,7 +4,7 @@
 
 # @todo make install of java, mysql/postgresql-client optional ?
 # @todo move apache & varnish to dedicated, optional containers ?
-# @todo move redis, memcached to dedicated, optional containers ? This allows running a user-specified version...
+# @todo move redis, memcached to dedicated, optional containers ? That would allow running a user-specified version...
 # @todo install elasticache (or is it done by the eZ bundles?)
 # @todo allow optional install of custom packages (is it better here or at boot time?)
 
@@ -20,38 +20,33 @@ if [ -z "${DEBIAN_VERSION}" ]; then
     DEBIAN_VERSION=$(cat /etc/os-release | grep 'VERSION=' | sed 's/VERSION=//' | sed 's/"[0-9] *(//' | sed 's/)"//')
 fi
 
-if [ "${DEBIAN_VERSION}" = jessie -o -z "${DEBIAN_VERSION}" ]; then
-    apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-        apache2 \
-        default-jre-headless \
-        mysql-client \
-        git \
-        lsb-release \
-        memcached \
-        postgresql-client \
-        redis-server \
-        sudo \
-        unzip \
-        varnish \
-        wget \
-        zip
+if [ "${DEBIAN_VERSION}" = jessie ]; then
+    # added on 2022/11/30: it seems there are expired keys at play now for jessie. Should we instead update it?
+    FORCE_OPT='--force-yes'
 else
-    # stretch, buster, bullseye, plus all ubuntu versions?
-    apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-        apache2 \
-        default-jre-headless \
-        default-mysql-client \
-        git \
-        lsb-release \
-        memcached \
-        postgresql-client \
-        redis-server \
-        sudo \
-        unzip \
-        varnish \
-        wget \
-        zip
+    FORCE_OPT=
 fi
+
+if [ "${DEBIAN_VERSION}" = jessie -o -z "${DEBIAN_VERSION}" ]; then
+    MYSQL_CLIENT=mysql-client
+else
+    MYSQL_CLIENT=default-mysql-client
+fi
+
+apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y "${FORCE_OPT}" \
+    apache2 \
+    default-jre-headless \
+    "${MYSQL_CLIENT}" \
+    git \
+    lsb-release \
+    memcached \
+    postgresql-client \
+    redis-server \
+    sudo \
+    unzip \
+    varnish \
+    wget \
+    zip
 
 echo Done
 

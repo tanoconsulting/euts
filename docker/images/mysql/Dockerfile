@@ -37,6 +37,7 @@ RUN if microdnf -h >/dev/null 2>/dev/null; then microdnf -y install \
 #RUN if [ "${do_update_os}" != "false" ]; then apt-get update && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --allow-unauthenticated; fi
 
 # Clear archives in apt cache folder to slim down the image
+# NB: this in fact only works as intended if executed in the same step as the apt update and install...
 # @todo make this work for apt, microdnf and yum
 # -----------------------------------------------------------------------------
 #RUN if [ "${do_shrink_container}" != "false" ]; then apt-get clean && rm -rf /var/lib/apt/lists/*; fi
