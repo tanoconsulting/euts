@@ -36,7 +36,7 @@ v0.x - more test coverage, cleanups
 
 - add to .gitignore the files generated during local run of teststack testing
 
-- remove all usages of curl in favour of wget (it seems not to be installed in some ubuntu versions)
+- remove all usages of curl in favour of `wget -q -O -` (it seems not to be installed in some ubuntu versions)
 
 - improve the output when running as gha action (see shivammatur/php for an example)
 
