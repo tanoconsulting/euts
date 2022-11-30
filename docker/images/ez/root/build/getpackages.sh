@@ -24,7 +24,15 @@ if [ -z "${DEBIAN_VERSION}" ]; then
 fi
 
 if [ "${DEBIAN_VERSION}" = jessie ]; then
-    # added on 2022/11/30: it seems there are expired keys at play now for jessie. Should we instead update it?
+    # Added on 2022/11/30: it seems there are expired keys at play now for jessie - we get error `KEYEXPIRED 1668891673`
+    # Should we instead try to update the keys?
+    # This could possibly help, but it does not seem to fix the error `KEYEXPIRED 1668891673`:
+    #     for key in $(apt-key list | grep expired | awk '{print $2}' | sed 's/4096R\///' ); do apt-key adv --keyserver 'keyserver.ubuntu.com' --recv-keys "$key"; done
+    # (note that it works in jessie but it requires previous installation of gpg in all later debian versions)
+    # Other alternatives might be to:
+    # - use `--allow-unauthenticated` instead of `--force-yes`. Possibly `-oAcquire::AllowInsecureRepositories=true`
+    # - set `Acquire::Check-Valid-Until false;` in /etc/apt/apt.conf
+    # - modify the sources.list files adding `deb [trusted=yes] etc...`
     FORCE_OPT='--force-yes'
 else
     FORCE_OPT=
