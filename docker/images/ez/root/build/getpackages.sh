@@ -36,7 +36,7 @@ else
     MYSQL_CLIENT=default-mysql-client
 fi
 
-apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y "${FORCE_OPT}" \
+apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y ${FORCE_OPT} \
     apache2 \
     default-jre-headless \
     "${MYSQL_CLIENT}" \

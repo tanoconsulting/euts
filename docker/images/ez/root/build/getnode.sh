@@ -27,6 +27,8 @@ fi
 if [ "${NODE_VERSION}" = default ]; then
     if [ "${DEBIAN_VERSION}" = jessie -o "${DEBIAN_VERSION}" = stretch ]; then
         echo "NB: not installing npm"
+        echo Done
+        exit 0
     else
         DEBIAN_FRONTEND=noninteractive apt-get install -y npm
     fi

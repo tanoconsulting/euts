@@ -44,14 +44,16 @@ if [ "${PHP_VERSION}" = default ]; then
     fi
     if [ "${DEBIAN_VERSION}" = jessie ]; then
         EXTRA_PACKAGES=php5-xsl
+        FORCE_OPT='--force-yes'
     else
         EXTRA_PACKAGES="php-mbstring php-xsl"
+        FORCE_OPT=
     fi
     if [ "${DEBIAN_VERSION}" != jammy ]; then
         EXTRA_PACKAGES="${EXTRA_PACKAGES} php${PHPSUFFIX}-json"
     fi
     # @todo check for mbstring presence in php5 (jessie) packages
-    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y ${FORCE_OPT} \
         php${PHPSUFFIX} \
         php${PHPSUFFIX}-cli \
         php${PHPSUFFIX}-curl \
