@@ -34,7 +34,7 @@ RUN if [ "${timezone}" != "none" ]; then echo "${timezone}" > /etc/timezone && d
 
 # Update the preinstalled packages
 # -----------------------------------------------------------------------------
-RUN if [ "${do_update_os}" != "false" ]; then apt-get update && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y; fi
+RUN if [ "${do_update_os}" != "false" ]; then apt-get update && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --force-yes; fi
 
 # Copy all the required shell scripts
 COPY root/build/*.sh /root/build/
