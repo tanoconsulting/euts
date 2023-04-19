@@ -1,13 +1,10 @@
-Version 0.10.1
-==============
-
-* improved: when creating the mysql db, set max concurrent connections to 256
-
 Version 0.10.0
 ==============
 
 * new: support environment variables COMPOSER_IGNORE_PLATFORM_REQS, COMPOSER_MAX_PARALLEL_HTTP, COMPOSER_PREFER_LOWEST,
   COMPOSER_PROCESS_TIMEOUT
+
+* improved: when creating the mysql db, set max concurrent connections to 256
 
 Version 0.9.0
 =============
