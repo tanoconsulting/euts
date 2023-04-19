@@ -60,6 +60,7 @@ case "${DB_TYPE}" in
         ${ROOT_DB_COMMAND} -e "DROP USER '${DB_EZ_USER}'@'%';" 2>/dev/null || :
         ${ROOT_DB_COMMAND} -e "CREATE USER '${DB_EZ_USER}'@'%' IDENTIFIED BY '${DB_EZ_PASSWORD}';" ###2>/dev/null
         ${ROOT_DB_COMMAND} -e "CREATE DATABASE ${DB_EZ_DATABASE} CHARACTER SET ${DB_CHARSET}; GRANT ALL PRIVILEGES ON ${DB_EZ_DATABASE}.* TO '${DB_EZ_USER}'@'%'"
+        ${ROOT_DB_COMMAND} -e "SET GLOBAL max_connections = 256;"
         ;;
     postgresql)
         if [ -z "${DB_CHARSET}" ]; then

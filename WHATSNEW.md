@@ -1,3 +1,8 @@
+Version 0.10.1
+==============
+
+* improved: when creating the mysql db, set max concurrent connections to 256
+
 Version 0.10.0
 ==============
 

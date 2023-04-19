@@ -18,6 +18,8 @@ parameters:
             path: '%kernel.project_dir%/vendor/../../../ibexa/fieldtype-richtext/src/bundle/Resources/richtext/stylesheets/docbook/xhtml5/edit/core.xsl'
             priority: 0
 
+    # @todo see https://github.com/tanoconsulting/ibexa-migration-bundle/commit/5a213d8ee45f5b0cf0235c4bc4c852b0fc1f17ca
+    #       for something we could have to add here for all projects using this stack
 doctrine:
     dbal:
         server_version: '%database_version%'
