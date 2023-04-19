@@ -22,10 +22,11 @@ ARG timezone=none
 
 # Set up debian mirror
 # (use fixed debian mirrors if you have problems building on a given day)
-# @todo if we are on jessie or stretch, we might as well add the freexian elts repos. If we are on xenial, allow the
+# @todo if we are on jessie or stretch, we might as well just add the freexian elts repos. If we are on xenial, allow the
 #       users who have a pro subscription (free) to use those repos (see https://ubuntu.com/pro/beta)
 # -----------------------------------------------------------------------------
-RUN if [ "${debian_mirror}" != "none" ]; then printf "deb ${debian_mirror} ${debian_version} main\ndeb http://security.debian.org ${debian_version}/updates main\ndeb ${debian_mirror} ${debian_version}-updates main" > /etc/apt/sources.list; fi
+RUN if [ "${debian_mirror}" != "none" ]; then printf "deb ${debian_mirror} ${debian_version} main\n" > /etc/apt/sources.list; fi
+RUN if [ "${debian_mirror}" != "none" -a ${debian_version} != "jessie" -a ${debian_version} != "stretch" ]; then printf "deb http://security.debian.org ${debian_version}/updates main\ndeb ${debian_mirror} ${debian_version}-updates main\n" >> /etc/apt/sources.list; fi
 
 # Configure timezone
 # -----------------------------------------------------------------------------
