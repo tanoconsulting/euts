@@ -6,6 +6,8 @@ Version 0.10.0
 
 * improved: when creating the mysql db, set max concurrent connections to 256
 
+* fix: make it possible again to use debian jessie as base image and have its packages system work, courtesy of Freexian repos
+
 Version 0.9.0
 =============
 
