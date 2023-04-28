@@ -9,8 +9,8 @@ services:
             args:
                 do_update_os: ${TESTSTACK_UPDATE_OS_ON_BUILD:-true}
                 # note: Travis Xenial images come with PG 9.4-9.6,10; Bionic with 9.3-9.6,10,11 and Focal with 12
-                #       We go with 9.5 as default because it is the lowest upstream supported version as of 11/2020...
-                postgresql_version: ${POSTGRESQL_VERSION:-9.5}
+                #       We go with 11 as default because it is the lowest upstream supported version as of 4/2023...
+                postgresql_version: ${POSTGRESQL_VERSION:-11}
                 project_name: ${COMPOSE_PROJECT_NAME:-euts}
                 timezone: ${TESTSTACK_TZ:-none}
         hostname: postgresql

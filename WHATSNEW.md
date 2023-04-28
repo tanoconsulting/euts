@@ -1,3 +1,11 @@
+Version 0.11.0 (unreleased)
+===========================
+
+* improved: default database versions have been bumped to 5.7 for mysql, 11 for postgresql, as previous default versions
+  are now End Of Life
+
+* fix: make it possible again to use mysql 5.6 as database
+
 Version 0.10.0
 ==============
 

@@ -1,10 +1,12 @@
-ARG mysql_version=5.6
+ARG mysql_version=5.7
 ARG db_vendor=mysql
 
 FROM ${db_vendor}:${mysql_version}
 LABEL mysql.version=${mysql_version}
 LABEL com.tanoconsulting.euts.project_name=${project_name}
 
+ARG mysql_version=5.7
+ARG db_vendor=mysql
 ARG do_shrink_container=true
 ARG do_update_os=true
 ARG project_name=euts
@@ -18,7 +20,8 @@ ARG timezone=none
 # Base packages
 # -----------------------------------------------------------------------------
 # debian base OS
-RUN if apt-get -h >/dev/null 2>/dev/null; then apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install \
+RUN if [ "${db_vendor}" = "mysql" -a "${mysql_version}" = "5.6" ]; then echo 'deb http://deb.freexian.com/extended-lts stretch main contrib non-free' > /etc/apt/sources.list; fi
+RUN if apt-get -h >/dev/null 2>/dev/null; then apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y --allow-unauthenticated install \
     procps; \
     fi
 # oracle base OS, mysql 5.7+
@@ -32,7 +35,8 @@ RUN if microdnf -h >/dev/null 2>/dev/null; then microdnf -y install \
     which; \
     fi
 
-# Currently fails for MySQL 5.6 image... Also: it should cater to microdnf and yum, too
+# Was failing for MySQL 5.6 image before freexian fix; it possibly fails for 5.7 now... \
+# Also: it should cater to microdnf and yum, too
 # -----------------------------------------------------------------------------
 #RUN if [ "${do_update_os}" != "false" ]; then apt-get update && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --allow-unauthenticated; fi
 

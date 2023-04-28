@@ -1,4 +1,4 @@
-ARG postgresql_version=9.5
+ARG postgresql_version=11
 
 FROM postgres:${postgresql_version}
 LABEL postgresql.version=${postgresql_version}

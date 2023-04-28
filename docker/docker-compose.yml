@@ -38,8 +38,8 @@ services:
             ## Database configuration
             - DB_TYPE=${DB_TYPE:-mysql}
             - DB_HOST
-            - MYSQL_VERSION=${MYSQL_VERSION:-5.6}
-            - POSTGRESQL_VERSION=${POSTGRESQL_VERSION:-9.5}
+            - MYSQL_VERSION=${MYSQL_VERSION:-5.7}
+            - POSTGRESQL_VERSION=${POSTGRESQL_VERSION:-11}
             - DB_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-root_test}
             - DB_CHARSET
             - DB_EZ_USER=${DB_EZ_USER:-ezp}

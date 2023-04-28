@@ -430,7 +430,7 @@ wait_for_bootstrap() {
 
     if [ -n "${BOOTSTRAP_CONTAINERS// /}" ]; then
         printf "\n\e[31mBootstrap process did not finish within ${BOOTSTRAP_TIMEOUT} seconds\e[0m\n\n" >&2
-        # @todo we could show the docker logs
+        # @todo we should show the docker logs for the failed containers
         return 1
     fi
 

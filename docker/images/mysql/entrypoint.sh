@@ -62,6 +62,7 @@ else
 fi
 
 # wait until mysql is ready to accept connections over the network before saying bootstrap is finished
+# we impose no timeout here, but have one in in the teststack script, which checks for that file
 which mysqladmin 2>/dev/null
 if [ $? -eq 0 ]; then
     while ! mysqladmin ping -h 127.0.0.1 --silent; do
