@@ -328,6 +328,9 @@ load_config() {
                     fi
                     break;
                 fi
+                if [ "${TEST_DIR}" = '/' ]; then
+                    break;
+                fi
             done
 
         fi
