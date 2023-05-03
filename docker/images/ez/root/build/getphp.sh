@@ -53,7 +53,7 @@ if [ "${PHP_VERSION}" = default ]; then
         EXTRA_PACKAGES="${EXTRA_PACKAGES} php${PHPSUFFIX}-json"
     fi
     # @todo check for mbstring presence in php5 (jessie) packages
-    DEBIAN_FRONTEND=noninteractive apt-get install -y ${FORCE_OPT} \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --allow-unauthenticated ${FORCE_OPT} \
         php${PHPSUFFIX} \
         php${PHPSUFFIX}-cli \
         php${PHPSUFFIX}-curl \
@@ -95,7 +95,7 @@ else
         EXTRA_PACKAGES="php${PHP_VERSION}-json"
     fi
 
-    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --allow-unauthenticated \
         php${PHP_VERSION} \
         php${PHP_VERSION}-cli \
         php${PHP_VERSION}-curl \
