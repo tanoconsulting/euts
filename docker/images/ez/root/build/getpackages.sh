@@ -10,6 +10,8 @@
 
 echo "Installing software packages..."
 
+set -e
+
 # @todo use option parsing for a better command api
 PHP_VERSION=$1
 NODE_VERSION=$2
@@ -23,9 +25,10 @@ if [ -z "${DEBIAN_VERSION}" ]; then
     DEBIAN_VERSION=$(cat /etc/os-release | grep 'VERSION=' | grep 'VERSION=' | sed 's/VERSION=//' | sed 's/"[0-9.]\+ *(\?//' | sed 's/)\?"//' | tr '[:upper:]' '[:lower:]' | sed 's/lts, *//' | sed 's/ \+tahr//')
 fi
 
-if [ "${DEBIAN_VERSION}" = jessie ]; then
+if [ "${DEBIAN_VERSION}" = jessie -o "${DEBIAN_VERSION}" = stretch ]; then
     # Added on 2022/11/30: it seems there are expired keys at play now for jessie - we get error `KEYEXPIRED 1668891673`
-    # Should we instead try to update the keys?
+    # Also, we get authenticated packages errors from the freexian repos.
+    # Should we instead try to install/update the relevant keys?
     # This could possibly help, but it does not seem to fix the error `KEYEXPIRED 1668891673`:
     #     for key in $(apt-key list | grep expired | awk '{print $2}' | sed 's/4096R\///' ); do apt-key adv --keyserver 'keyserver.ubuntu.com' --recv-keys "$key"; done
     # (note that it works in jessie but it requires previous installation of gpg in all later debian versions)
