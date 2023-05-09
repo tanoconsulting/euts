@@ -6,6 +6,8 @@
 
 echo "Installing Composer..."
 
+set -e
+
 COMPOSER_VERSION="$1"
 if [ -n "${COMPOSER_VERSION}" ]; then
     COMPOSER_VERSION="--${COMPOSER_VERSION}"

@@ -6,6 +6,8 @@ CONTAINER_USER=test
 
 echo "Creating user '${CONTAINER_USER}'..."
 
+set -e
+
 addgroup --gid 1013 "${CONTAINER_USER}"
 adduser --system --uid=1013 --gid=1013 --home "/home/${CONTAINER_USER}" --shell /bin/bash "${CONTAINER_USER}"
 adduser "${CONTAINER_USER}" "${CONTAINER_USER}"
